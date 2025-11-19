@@ -33,7 +33,7 @@ body {
 
 .auth-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   background: var(--white);
   padding: 30px 26px 24px;
   border-radius: 14px;
@@ -60,15 +60,20 @@ label {
   color: var(--text-muted);
 }
 
-input {
+input,
+textarea,
+select {
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid var(--border);
   font-size: 14px;
+  font-family: inherit;
 }
 
-input:focus {
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--green);
   box-shadow: 0 0 0 1px rgba(13, 138, 92, 0.2);
@@ -86,10 +91,15 @@ input:focus {
 }
 
 .btn-primary {
-  width: 100%;
-  margin-top: 14px;
   background: var(--green);
   color: var(--white);
+  margin-top: 14px;
+}
+
+.btn-primary.small-btn {
+  margin-top: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
 }
 
 .btn-primary:hover {
@@ -168,6 +178,13 @@ input:focus {
   font-size: 14px;
 }
 
+.role-badge {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
 /* LAYOUT */
 
 .layout {
@@ -178,7 +195,7 @@ input:focus {
 /* SIDEBAR */
 
 .sidebar {
-  width: 220px;
+  width: 230px;
   background: var(--white);
   border-right: 1px solid var(--border);
   padding: 14px 10px;
@@ -233,6 +250,7 @@ input:focus {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+  margin-bottom: 18px;
 }
 
 .card {
@@ -244,6 +262,35 @@ input:focus {
 
 .card h3 {
   margin-top: 0;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.small-muted {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.saved-label {
+  font-size: 12px;
+  color: var(--green-dark);
+}
+
+/* HOME GRID */
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card.tall textarea {
+  resize: vertical;
 }
 
 /* LISTE */
@@ -284,19 +331,87 @@ input:focus {
   margin-right: 6px;
 }
 
+/* DOCS LIST */
+
+.docs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.doc-pill {
+  padding: 8px 10px;
+  background: #f1f8f5;
+  border-radius: 8px;
+  font-size: 13px;
+  border: 1px solid rgba(13, 138, 92, 0.15);
+}
+
+/* ADMIN GRIDS */
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-list {
+  font-size: 13px;
+}
+
+.admin-list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-list-row:last-child {
+  border-bottom: none;
+}
+
+.admin-list-actions button {
+  margin-left: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-small-approve {
+  background: #2e7d32;
+  color: white;
+}
+
+.btn-small-reject {
+  background: #c62828;
+  color: white;
+}
+
+.btn-small-secondary {
+  background: #eeeeee;
+}
+
 /* RESPONSIVE */
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .cards-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .sidebar {
-    width: 180px;
+  .home-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
   .layout {
     flex-direction: column;
   }
@@ -307,18 +422,21 @@ input:focus {
     gap: 6px;
     border-right: none;
     border-bottom: 1px solid var(--border);
+    overflow-x: auto;
   }
 
   .nav-btn {
     flex: 1;
     text-align: center;
+    white-space: nowrap;
   }
 
   .main {
     padding: 14px 12px;
   }
 
-  .cards-grid {
+  .cards-grid,
+  .home-grid {
     grid-template-columns: 1fr;
   }
 
