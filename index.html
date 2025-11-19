@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Portale Farmacia Montesano</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="auth-container" class="center-box">
+    <h2>Accesso Dipendenti</h2>
+
+    <div id="login-box">
+        <input type="email" id="login-email" placeholder="Email">
+        <input type="password" id="login-password" placeholder="Password">
+        <button onclick="login()">Entra</button>
+        <p>Nuovo dipendente? <a href="#" onclick="showRegister()">Registrati</a></p>
+    </div>
+
+    <div id="register-box" style="display:none;">
+        <input type="text" id="reg-name" placeholder="Nome e cogome">
+        <input type="email" id="reg-email" placeholder="Email">
+        <input type="password" id="reg-password" placeholder="Password">
+        <button onclick="register()">Crea account</button>
+        <p><a href="#" onclick="showLogin()">Torna al login</a></p>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+    <header>
+        <h1>Farmacia Montesano – Portale Interno</h1>
+        <button onclick="logout()">Logout</button>
+    </header>
+
+    <div class="sidebar">
+        <button onclick="showSection('home')">🏠 Dashboard</button>
+        <button onclick="showSection('procedures')">📄 Procedure</button>
+        <button onclick="showSection('messages')">📣 Comunicazioni</button>
+    </div>
+
+    <div class="main">
+        <section id="home">
+            <h2 id="welcome"></h2>
+            <p>Benvenuto nel portale interno della Farmacia Montesano.</p>
+        </section>
+
+        <section id="procedures" class="hidden">
+            <h2>Procedure Interne</h2>
+            <ul id="procedure-list"></ul>
+        </section>
+
+        <section id="messages" class="hidden">
+            <h2>Comunicazioni interne</h2>
+            <ul id="message-list"></ul>
+        </section>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
