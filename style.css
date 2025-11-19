@@ -1,57 +1,5 @@
-/* =======================================================
-   FARMACIA MONTESANO – STYLE.CSS COMPLETO
-   Layout moderno, elegante, professionale
-   Compatibile con index.html + script.js definitivi
-======================================================== */
-
 /* ----------------------------------------------
-   RESET BASE
----------------------------------------------- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Inter, Arial, sans-serif;
-}
-
-body {
-  background: #f5f7fb;
-  color: #222;
-}
-
-/* ----------------------------------------------
-   BOTTONI PRINCIPALI
----------------------------------------------- */
-.btn-primary {
-  background: #0d8a5c;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.btn-primary:hover {
-  background: #0b6f49;
-}
-
-.btn-outline {
-  background: transparent;
-  color: #0d8a5c;
-  border: 2px solid #0d8a5c;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-}
-.btn-outline:hover {
-  background: #0d8a5c;
-  color: white;
-}
-
-/* ----------------------------------------------
-   LOGIN FULLSCREEN
+   LOGIN FULLSCREEN – CENTRATO ELEGANTE
 ---------------------------------------------- */
 
 .auth-fullscreen {
@@ -59,16 +7,19 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Immagine sfondo */
+/* Immagine di sfondo */
 .auth-bg {
   position: absolute;
   inset: 0;
-  background-image: url("farmacia-bg.jpg");
+  background-image: url("farmacia-bg.jpg"); /* tua foto */
   background-size: cover;
   background-position: center;
-  filter: brightness(0.55);
+  filter: brightness(0.50);
   z-index: 1;
 }
 
@@ -76,32 +27,25 @@ body {
 .auth-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.2),
-    rgba(0, 0, 0, 0.58)
-  );
+  background: rgba(0,0,0,0.40);
   z-index: 2;
 }
 
-/* Box login/registrazione */
+/* BOX LOGIN al centro */
 .auth-center-box {
-  position: absolute;
+  position: relative;
   z-index: 3;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   width: 380px;
   max-width: 95%;
   padding: 28px 30px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.93);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
   text-align: center;
 }
 
-/* Logo */
+/* Logo + titoli */
 .auth-logo-large {
   width: 64px;
   margin-bottom: 10px;
@@ -118,7 +62,7 @@ body {
   color: #1a5f47;
 }
 
-/* campi input */
+/* Input */
 .auth-center-box label {
   display: block;
   text-align: left;
@@ -139,269 +83,11 @@ body {
 .auth-center-box input:focus {
   outline: none;
   border-color: #0d8a5c;
-  box-shadow: 0 0 0 1px rgba(13, 138, 92, 0.25);
+  box-shadow: 0 0 0 1px rgba(13,138,92,0.25);
 }
 
-/* testo piccolo */
+/* Link */
 .small-text {
   font-size: 12px;
   margin-top: 8px;
-}
-
-/* ----------------------------------------------
-   PORTALE INTERNO – STRUTTURA GENERALE
----------------------------------------------- */
-
-.portal.hidden {
-  display: none;
-}
-
-.topbar {
-  height: 70px;
-  background: white;
-  border-bottom: 1px solid #e3e8ef;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.topbar-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.topbar-logo-img {
-  width: 40px;
-}
-
-.topbar-title {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.topbar-subtitle {
-  font-size: 12px;
-  color: #6b7a8b;
-}
-
-/* Utente a destra */
-.user-pill {
-  background: #0d8a5c;
-  color: white;
-  padding: 5px 10px;
-  font-size: 13px;
-  border-radius: 8px;
-}
-.role-badge {
-  margin-left: 6px;
-  font-size: 11px;
-  background: #083d2a;
-  padding: 2px 5px;
-  border-radius: 4px;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  height: calc(100vh - 70px);
-}
-
-/* ----------------------------------------------
-   SIDEBAR
----------------------------------------------- */
-.sidebar {
-  background: #0d3d2c;
-  padding: 18px 10px;
-  color: white;
-  overflow-y: auto;
-}
-
-.nav-label {
-  margin-left: 12px;
-  margin-bottom: 10px;
-  font-size: 13px;
-  opacity: 0.75;
-}
-
-.nav-btn {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  text-align: left;
-  padding: 10px 14px;
-  font-size: 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 4px;
-  transition: 0.2s;
-}
-.nav-btn:hover {
-  background: rgba(255,255,255,0.15);
-}
-.nav-btn.active {
-  background: #12a56c;
-}
-
-/* ----------------------------------------------
-   CONTENUTO PRINCIPALE
----------------------------------------------- */
-.main {
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.section {
-  display: none;
-}
-
-.section.visible {
-  display: block;
-}
-
-.section-header h2 {
-  font-size: 24px;
-}
-
-.subtitle {
-  font-size: 14px;
-  color: #536471;
-  margin-bottom: 15px;
-}
-
-/* ----------------------------------------------
-   CARD
----------------------------------------------- */
-.card {
-  background: white;
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  margin-bottom: 20px;
-}
-
-.card-highlight {
-  background: #e6fff2;
-}
-
-/* ----------------------------------------------
-   LISTE E ELEMENTI
----------------------------------------------- */
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.list-item {
-  background: #f6f9fc;
-  padding: 12px;
-  border-radius: 10px;
-}
-
-.list-item-title {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.list-item-meta {
-  font-size: 12px;
-  color: #687681;
-  margin-bottom: 6px;
-}
-
-/* ----------------------------------------------
-   TABELLE
----------------------------------------------- */
-.table-simple {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table-simple th {
-  background: #eef2f7;
-  padding: 10px;
-  font-size: 13px;
-  text-align: left;
-}
-
-.table-simple td {
-  padding: 8px;
-  border-bottom: 1px solid #edf1f5;
-  font-size: 13px;
-}
-
-/* ----------------------------------------------
-   TAG DI STATO
----------------------------------------------- */
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  color: white;
-}
-
-.status-approved {
-  background: #0d8a5c;
-}
-
-.status-rejected {
-  background: #d64545;
-}
-
-.status-pending {
-  background: #c8a12d;
-}
-
-.tag {
-  padding: 3px 7px;
-  border-radius: 6px;
-  font-size: 11px;
-  color: white;
-}
-
-.tag-red {
-  background: #d44242;
-}
-.tag-orange {
-  background: #f5a623;
-}
-.tag-green {
-  background: #0d8a5c;
-}
-.tag.subtle {
-  background: #c9d9d4;
-  color: #0d3d2c;
-}
-
-/* ----------------------------------------------
-   AREA PERSONALE
----------------------------------------------- */
-.saved-label {
-  display: inline-block;
-  background: #0d8a5c;
-  color: white;
-  padding: 4px 8px;
-  margin-left: 6px;
-  border-radius: 6px;
-}
-
-/* ----------------------------------------------
-   RESPONSIVE MOBILE
----------------------------------------------- */
-@media (max-width: 700px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-  .sidebar {
-    height: auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .nav-btn {
-    width: auto;
-  }
 }
