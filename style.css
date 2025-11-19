@@ -1,220 +1,169 @@
-/* ==========================================================
-   STILE PROFESSIONALE – PORTALE FARMACIA MONTESANO
-   ========================================================== */
+/* =======================================================
+   FARMACIA MONTESANO – STYLE.CSS COMPLETO
+   Layout moderno, elegante, professionale
+   Compatibile con index.html + script.js definitivi
+======================================================== */
 
-:root {
-  --brand: #0d8a5c;
-  --brand-strong: #0a6b46;
-  --brand-soft: #e3f5ee;
-  --bg: #f5f7fb;
-  --bg-soft: #ffffff;
-  --text-main: #222;
-  --text-muted: #666;
-  --border: #dde1ea;
-  --danger: #c62828;
-  --shadow-soft: 0 10px 28px rgba(12, 46, 34, 0.18);
-}
-
-/* RESET DI BASE */
-
+/* ----------------------------------------------
+   RESET BASE
+---------------------------------------------- */
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
+  font-family: Inter, Arial, sans-serif;
 }
 
 body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top left, #d5ffef, #f5f7fb 46%);
-  color: var(--text-main);
+  background: #f5f7fb;
+  color: #222;
 }
 
-/* UTILI */
-
-.hidden {
-  display: none !important;
-}
-
-/* ----------------------------------------------------------
-   SCHERMATA LOGIN
----------------------------------------------------------- */
-
-.auth-screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 16px;
-}
-
-.auth-card {
-  width: 100%;
-  max-width: 520px;
-  background: var(--bg-soft);
-  padding: 26px 26px 22px;
-  border-radius: 22px;
-  box-shadow: var(--shadow-soft);
-}
-
-.auth-logo-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 8px;
-}
-
-.auth-logo {
-  width: 64px;
-  height: auto;
-}
-
-.logo-title {
-  margin: 0 0 3px 0;
-  color: var(--brand-strong);
-  font-size: 23px;
-  letter-spacing: 0.4px;
-}
-
-.logo-subtitle {
-  margin: 0;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-/* TITOLI / TESTO */
-
-h1,
-h2,
-h3 {
-  margin: 0;
-}
-
-h2 {
-  margin-top: 12px;
-  margin-bottom: 10px;
-  font-size: 20px;
-}
-
-label {
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 4px;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-/* CAMPI */
-
-input,
-textarea,
-select {
-  width: 100%;
-  padding: 9px 11px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  font-size: 14px;
-  font-family: inherit;
-  background-color: #fff;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: var(--brand);
-  box-shadow: 0 0 0 1px rgba(13, 138, 92, 0.22);
-}
-
-/* BOTTONI */
-
-.btn-primary,
-.btn-outline {
-  display: inline-block;
-  padding: 9px 16px;
-  border-radius: 999px;
+/* ----------------------------------------------
+   BOTTONI PRINCIPALI
+---------------------------------------------- */
+.btn-primary {
+  background: #0d8a5c;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
   border: none;
   font-size: 14px;
-  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.15s ease;
+  transition: 0.2s;
 }
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--brand), #10b57a);
-  color: #fff;
-  box-shadow: 0 8px 18px rgba(13, 138, 92, 0.28);
-}
-
-.btn-primary.small {
-  padding: 7px 14px;
-  font-size: 13px;
-}
-
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(13, 138, 92, 0.32);
+  background: #0b6f49;
 }
 
 .btn-outline {
   background: transparent;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.75);
+  color: #0d8a5c;
+  border: 2px solid #0d8a5c;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
 }
-
 .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #0d8a5c;
+  color: white;
 }
 
-/* TESTI DI SUPPORTO */
+/* ----------------------------------------------
+   LOGIN FULLSCREEN
+---------------------------------------------- */
 
-.small-text {
-  font-size: 13px;
-  margin-top: 8px;
-  color: var(--text-muted);
+.auth-fullscreen {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.small-text a {
-  color: var(--brand-strong);
-  text-decoration: none;
-  font-weight: 600;
+/* Immagine sfondo */
+.auth-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("farmacia-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.55);
+  z-index: 1;
 }
 
-.small-text a:hover {
-  text-decoration: underline;
+/* Overlay scuro */
+.auth-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.58)
+  );
+  z-index: 2;
 }
 
-.muted-center {
+/* Box login/registrazione */
+.auth-center-box {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  max-width: 95%;
+  padding: 28px 30px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
   text-align: center;
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--text-muted);
 }
 
-.error-text {
-  margin-top: 10px;
+/* Logo */
+.auth-logo-large {
+  width: 64px;
+  margin-bottom: 10px;
+}
+
+.auth-title {
+  font-size: 26px;
+  color: #0d3d2c;
+}
+
+.auth-subtitle {
   font-size: 13px;
-  color: var(--danger);
+  margin-bottom: 18px;
+  color: #1a5f47;
 }
 
-/* ----------------------------------------------------------
-   STRUTTURA PORTALE
----------------------------------------------------------- */
-
-.portal {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* campi input */
+.auth-center-box label {
+  display: block;
+  text-align: left;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #444;
 }
 
-/* TOPBAR */
+.auth-center-box input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d2d9e5;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.auth-center-box input:focus {
+  outline: none;
+  border-color: #0d8a5c;
+  box-shadow: 0 0 0 1px rgba(13, 138, 92, 0.25);
+}
+
+/* testo piccolo */
+.small-text {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* ----------------------------------------------
+   PORTALE INTERNO – STRUTTURA GENERALE
+---------------------------------------------- */
+
+.portal.hidden {
+  display: none;
+}
 
 .topbar {
-  background: linear-gradient(90deg, var(--brand), #10b57a);
-  color: #fff;
-  padding: 10px 20px;
+  height: 70px;
+  background: white;
+  border-bottom: 1px solid #e3e8ef;
+  padding: 0 20px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  box-shadow: 0 4px 14px rgba(5, 35, 25, 0.3);
+  align-items: center;
 }
 
 .topbar-left {
@@ -225,99 +174,84 @@ select:focus {
 
 .topbar-logo-img {
   width: 40px;
-  height: auto;
 }
 
 .topbar-title {
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  font-size: 17px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .topbar-subtitle {
   font-size: 12px;
-  opacity: 0.9;
+  color: #6b7a8b;
 }
 
-.topbar-user {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+/* Utente a destra */
 .user-pill {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 999px;
-  padding: 4px 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  background: #0d8a5c;
+  color: white;
+  padding: 5px 10px;
   font-size: 13px;
+  border-radius: 8px;
 }
-
 .role-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 2px 9px;
-  border-radius: 999px;
+  margin-left: 6px;
   font-size: 11px;
+  background: #083d2a;
+  padding: 2px 5px;
+  border-radius: 4px;
 }
-
-/* LAYOUT PRINCIPALE */
 
 .layout {
-  display: flex;
-  min-height: calc(100vh - 56px);
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  height: calc(100vh - 70px);
 }
 
-/* SIDEBAR */
-
+/* ----------------------------------------------
+   SIDEBAR
+---------------------------------------------- */
 .sidebar {
-  width: 240px;
-  background: rgba(255, 255, 255, 0.98);
-  border-right: 1px solid var(--border);
-  padding: 14px 10px 16px;
+  background: #0d3d2c;
+  padding: 18px 10px;
+  color: white;
+  overflow-y: auto;
 }
 
 .nav-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin: 0 0 6px 6px;
-  letter-spacing: 0.08em;
+  margin-left: 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  opacity: 0.75;
 }
 
 .nav-btn {
   width: 100%;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: none;
   background: transparent;
+  border: none;
+  color: white;
   text-align: left;
-  cursor: pointer;
+  padding: 10px 14px;
   font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
   margin-bottom: 4px;
-  color: var(--text-main);
+  transition: 0.2s;
 }
-
 .nav-btn:hover {
-  background: rgba(13, 138, 92, 0.06);
+  background: rgba(255,255,255,0.15);
 }
-
 .nav-btn.active {
-  background: rgba(13, 138, 92, 0.18);
-  color: var(--brand-strong);
-  font-weight: 600;
+  background: #12a56c;
 }
 
-/* CONTENUTO */
-
+/* ----------------------------------------------
+   CONTENUTO PRINCIPALE
+---------------------------------------------- */
 .main {
-  flex: 1;
-  padding: 18px 22px 24px;
-  background: linear-gradient(180deg, rgba(13, 138, 92, 0.04), transparent 260px);
+  padding: 20px;
+  overflow-y: auto;
 }
-
-/* SEZIONI */
 
 .section {
   display: none;
@@ -327,376 +261,147 @@ select:focus {
   display: block;
 }
 
-.section-header {
-  margin-bottom: 10px;
+.section-header h2 {
+  font-size: 24px;
 }
 
 .subtitle {
-  color: var(--text-muted);
-  margin-top: 2px;
-  margin-bottom: 12px;
   font-size: 14px;
+  color: #536471;
+  margin-bottom: 15px;
 }
 
-/* ----------------------------------------------------------
-   CARDS / LISTE / BADGE
----------------------------------------------------------- */
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: 2fr 1.6fr 1.6fr;
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
+/* ----------------------------------------------
+   CARD
+---------------------------------------------- */
 .card {
-  background: var(--bg-soft);
+  background: white;
   border-radius: 14px;
-  padding: 14px 14px 12px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 20px;
 }
 
 .card-highlight {
-  border-left: 4px solid var(--brand);
+  background: #e6fff2;
 }
 
-.card h3 {
-  margin: 0 0 6px 0;
-  font-size: 16px;
-}
-
-.card p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.card-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.card-actions-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-/* LISTE */
-
+/* ----------------------------------------------
+   LISTE E ELEMENTI
+---------------------------------------------- */
 .list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .list-item {
-  background: var(--bg-soft);
+  background: #f6f9fc;
+  padding: 12px;
   border-radius: 10px;
-  padding: 8px 10px;
-  border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .list-item-title {
   font-weight: 600;
-  margin-bottom: 3px;
-  font-size: 14px;
+  margin-bottom: 4px;
 }
 
 .list-item-meta {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-
-.bullet-list {
-  padding-left: 18px;
-  margin: 0;
-}
-
-.bullet-list li {
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-
-/* TAG / PRIORITY */
-
-.tag {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  line-height: 1.4;
-}
-
-.tag.subtle {
-  background: #eef3f8;
-  color: var(--text-muted);
-}
-
-.tag-green {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.tag-orange {
-  background: #fff8e1;
-  color: #f57c00;
-}
-
-.tag-red {
-  background: #ffebee;
-  color: #c62828;
-}
-
-.saved-label {
   font-size: 12px;
-  color: var(--brand-strong);
+  color: #687681;
+  margin-bottom: 6px;
 }
 
-/* QUICK BUTTONS (DASHBOARD) */
-
-.quick-links {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.quick-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
-  border-radius: 9px;
-  background: #f2f5fb;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.quick-btn:hover {
-  background: #e5edf9;
-}
-
-/* TABELLE & STATUS */
-
+/* ----------------------------------------------
+   TABELLE
+---------------------------------------------- */
 .table-simple {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
-}
-
-.table-simple th,
-.table-simple td {
-  padding: 6px 6px;
-  border-bottom: 1px solid #eceff4;
-  text-align: left;
 }
 
 .table-simple th {
-  font-weight: 600;
-  color: var(--text-muted);
+  background: #eef2f7;
+  padding: 10px;
+  font-size: 13px;
+  text-align: left;
 }
 
+.table-simple td {
+  padding: 8px;
+  border-bottom: 1px solid #edf1f5;
+  font-size: 13px;
+}
+
+/* ----------------------------------------------
+   TAG DI STATO
+---------------------------------------------- */
 .status-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 999px;
+  padding: 4px 8px;
+  border-radius: 6px;
   font-size: 11px;
-}
-
-.status-pending {
-  background: #fff8e1;
-  color: #f57c00;
+  color: white;
 }
 
 .status-approved {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: #0d8a5c;
 }
 
 .status-rejected {
-  background: #ffebee;
-  color: #c62828;
+  background: #d64545;
 }
 
-/* GRID / LAYOUT DETTAGLIO */
-
-.home-grid {
-  display: grid;
-  grid-template-columns: 1.4fr 1.6fr 1.4fr;
-  gap: 14px;
+.status-pending {
+  background: #c8a12d;
 }
 
-.two-cols {
-  display: grid;
-  grid-template-columns: 1.5fr 2fr;
-  gap: 14px;
-}
-
-.proc-layout {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 14px;
-}
-
-/* PROCEDURE */
-
-.proc-categories {
-  background: var(--bg-soft);
-  border-radius: 12px;
-  padding: 10px 10px 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.proc-cat-title {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.proc-cat-btn {
-  width: 100%;
-  border-radius: 8px;
-  padding: 6px 9px;
-  border: none;
-  background: #f2f5fb;
-  text-align: left;
-  cursor: pointer;
-  margin-bottom: 4px;
-  font-size: 13px;
-  color: var(--text-main);
-}
-
-.proc-cat-btn:hover {
-  background: #e4ecf8;
-}
-
-.proc-cat-btn.active {
-  background: rgba(13, 138, 92, 0.15);
-  color: var(--brand-strong);
-  font-weight: 600;
-}
-
-.proc-content {
-  min-height: 120px;
-}
-
-/* CAMPI IN RIGA */
-
-.field-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 4px;
-}
-
-.field-row.wrap {
-  flex-wrap: wrap;
-}
-
-.field-flex {
-  flex: 1;
-  min-width: 180px;
-}
-
-/* FERIE */
-
-.leave-summary {
-  font-size: 13px;
-}
-
-.leave-summary p {
-  margin: 0 0 4px 0;
-}
-
-/* AREA PERSONALE / DOC PILLS (se li usi) */
-
-.doc-pill {
-  padding: 6px 8px;
-  border-radius: 10px;
-  background: #eef3f8;
-  font-size: 12px;
-  margin-bottom: 6px;
-}
-
-.doc-pill span {
-  display: block;
-  color: var(--text-muted);
+.tag {
+  padding: 3px 7px;
+  border-radius: 6px;
   font-size: 11px;
+  color: white;
 }
 
-/* ADMIN GRID */
-
-.admin-grid {
-  display: grid;
-  grid-template-columns: 1.4fr 1.6fr;
-  gap: 14px;
+.tag-red {
+  background: #d44242;
+}
+.tag-orange {
+  background: #f5a623;
+}
+.tag-green {
+  background: #0d8a5c;
+}
+.tag.subtle {
+  background: #c9d9d4;
+  color: #0d3d2c;
 }
 
-.admin-leave-status {
-  margin-top: 4px;
+/* ----------------------------------------------
+   AREA PERSONALE
+---------------------------------------------- */
+.saved-label {
+  display: inline-block;
+  background: #0d8a5c;
+  color: white;
+  padding: 4px 8px;
+  margin-left: 6px;
+  border-radius: 6px;
 }
 
-/* ----------------------------------------------------------
-   RESPONSIVE
----------------------------------------------------------- */
-
-@media (max-width: 1100px) {
-  .cards-grid,
-  .home-grid,
-  .two-cols,
-  .admin-grid,
-  .proc-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 900px) {
+/* ----------------------------------------------
+   RESPONSIVE MOBILE
+---------------------------------------------- */
+@media (max-width: 700px) {
   .layout {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    display: flex;
-    gap: 4px;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    overflow-x: auto;
-    padding-bottom: 10px;
-  }
-
-  .nav-btn {
-    flex: 1;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .main {
-    padding: 16px 14px 20px;
-  }
-
-  .cards-grid,
-  .home-grid {
     grid-template-columns: 1fr;
   }
-}
-
-@media (max-width: 600px) {
-  .auth-card {
-    padding: 20px 16px 18px;
+  .sidebar {
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
   }
-
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .topbar-user {
-    align-self: stretch;
-    justify-content: space-between;
+  .nav-btn {
+    width: auto;
   }
 }
