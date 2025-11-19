@@ -21,7 +21,7 @@ body {
   color: var(--text-main);
 }
 
-/* LOGIN */
+/* LOGIN / AUTH */
 
 .auth-screen {
   min-height: 100vh;
@@ -127,6 +127,10 @@ input:focus {
   margin-top: 10px;
   font-size: 13px;
   color: #c62828;
+}
+
+.hidden-block {
+  display: none;
 }
 
 /* PORTALE */
