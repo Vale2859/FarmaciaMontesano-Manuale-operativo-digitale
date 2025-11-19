@@ -1,14 +1,23 @@
-// --- UTILITÀ UI ---
+// --- GESTIONE UI AUTENTICAZIONE ---
 
-function showRegister() {
-  document.getElementById("login-box").style.display = "none";
-  document.getElementById("register-box").style.display = "block";
+function showLogin() {
+  document.getElementById("login-box").classList.remove("hidden-block");
+  document.getElementById("register-box").classList.add("hidden-block");
+  document.getElementById("reset-box").classList.add("hidden-block");
   hideAuthError();
 }
 
-function showLogin() {
-  document.getElementById("login-box").style.display = "block";
-  document.getElementById("register-box").style.display = "none";
+function showRegister() {
+  document.getElementById("login-box").classList.add("hidden-block");
+  document.getElementById("register-box").classList.remove("hidden-block");
+  document.getElementById("reset-box").classList.add("hidden-block");
+  hideAuthError();
+}
+
+function showReset() {
+  document.getElementById("login-box").classList.add("hidden-block");
+  document.getElementById("register-box").classList.add("hidden-block");
+  document.getElementById("reset-box").classList.remove("hidden-block");
   hideAuthError();
 }
 
@@ -71,33 +80,60 @@ function login() {
   initPortal(user);
 }
 
+// --- RESET PASSWORD ---
+
+function resetPassword() {
+  const email = document.getElementById("reset-email").value.trim();
+  const pwd = document.getElementById("reset-password").value;
+  const pwd2 = document.getElementById("reset-password-confirm").value;
+
+  if (!email || !pwd || !pwd2) {
+    showAuthError("Compila tutti i campi per reimpostare la password.");
+    return;
+  }
+
+  if (pwd !== pwd2) {
+    showAuthError("Le password non coincidono.");
+    return;
+  }
+
+  let users = JSON.parse(localStorage.getItem("dipendenti") || "[]");
+  const index = users.findIndex((u) => u.email === email);
+
+  if (index === -1) {
+    showAuthError("Nessun utente registrato con questa email.");
+    return;
+  }
+
+  users[index].password = pwd;
+  localStorage.setItem("dipendenti", JSON.stringify(users));
+
+  alert("Password aggiornata! Ora effettua il login con la nuova password.");
+  showLogin();
+}
+
 // --- LOGOUT ---
 
 function logout() {
   localStorage.removeItem("utenteAttivo");
-  // Torna alla schermata di login
   document.getElementById("portal").classList.add("hidden");
   document.getElementById("auth-screen").classList.remove("hidden");
   document.getElementById("login-email").value = "";
   document.getElementById("login-password").value = "";
 }
 
-// --- INIZIALIZZAZIONE PORTALE ---
+// --- INIZIALIZZA PORTALE ---
 
 function initPortal(user) {
-  // Nascondi login
   document.getElementById("auth-screen").classList.add("hidden");
-  // Mostra portale
   document.getElementById("portal").classList.remove("hidden");
 
   document.getElementById("user-name-display").textContent =
     user.name || user.email;
 
-  // Carica contenuti demo
   loadProcedures();
   loadMessages();
 
-  // Mostra sezione iniziale
   activateNavButton(document.getElementById("nav-home"));
   showOnlySection("home");
 }
@@ -117,7 +153,9 @@ function showOnlySection(sectionId) {
 }
 
 function activateNavButton(btn) {
-  document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach((b) => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
 }
 
@@ -253,5 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const active = localStorage.getItem("utenteAttivo");
   if (active) {
     initPortal(JSON.parse(active));
+  } else {
+    showLogin();
   }
 });
