@@ -4,93 +4,428 @@
   <meta charset="UTF-8" />
   <title>Portale Farmacia Montesano</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    :root {
+      --green: #0d8a5c;
+      --green-dark: #0a6c45;
+      --bg: #f5f7fb;
+      --text-main: #222;
+      --text-muted: #666;
+      --border: #dddddd;
+      --white: #ffffff;
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top left, #c3ffe8, #f5f7fb 40%);
+      color: var(--text-main);
+    }
+
+    .hidden { display: none !important; }
+
+    /* LOGIN / AUTH */
+
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 16px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 460px;
+      background: var(--white);
+      padding: 32px 30px 26px;
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(13,138,92,0.08), transparent 40%);
+      pointer-events: none;
+    }
+
+    .auth-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-title {
+      margin-top: 0;
+      color: var(--green-dark);
+      font-size: 26px;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-card h2 {
+      margin-top: 2px;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px rgba(13, 138, 92, 0.2);
+    }
+
+    .btn-primary, .btn-outline {
+      display: inline-block;
+      padding: 11px 16px;
+      border-radius: 999px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      width: 100%;
+      margin-top: 16px;
+      background: linear-gradient(135deg, #0d8a5c, #0fb67b);
+      color: white;
+      box-shadow: 0 8px 18px rgba(13,138,92,0.25);
+      transition: transform 0.05s ease, box-shadow 0.05s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(13,138,92,0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      padding-inline: 14px;
+    }
+
+    .small-text {
+      font-size: 13px;
+      margin-top: 10px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .small-text a {
+      color: var(--green-dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .small-text a:hover { text-decoration: underline; }
+
+    .error-text {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #c62828;
+    }
+
+    /* PORTALE */
+
+    .portal {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: linear-gradient(90deg, #0d8a5c, #0fb67b);
+      color: white;
+      padding: 12px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    }
+
+    .topbar-logo {
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      font-size: 18px;
+    }
+
+    .topbar-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .role-badge {
+      background: rgba(255,255,255,0.16);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 60px);
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #fdfefe;
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 6px 6px;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-btn {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .nav-btn:hover { background: rgba(13,138,92,0.06); }
+
+    .nav-btn.active {
+      background: rgba(13,138,92,0.15);
+      color: var(--green-dark);
+      font-weight: 600;
+    }
+
+    .main {
+      flex: 1;
+      padding: 22px 26px 26px;
+      background: linear-gradient(180deg, rgba(13,138,92,0.05), transparent 220px);
+    }
+
+    .section { display: none; }
+    .section.visible { display: block; }
+
+    h2 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      margin-top: 4px;
+      margin-bottom: 20px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: auto -40px -40px auto;
+      width: 70px;
+      height: 70px;
+      background: radial-gradient(circle, rgba(13,138,92,0.15), transparent 60%);
+    }
+
+    .card h3 { margin-top: 0; }
+
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .small-muted {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .saved-label {
+      font-size: 12px;
+      color: var(--green-dark);
+      margin-left: 8px;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .list-item {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(0,0,0,0.03);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .list-item-title { font-weight: 600; margin-bottom: 4px; }
+    .list-item-meta  { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+
+    .admin-list-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+    }
+
+    .admin-list-row:last-child { border-bottom: none; }
+
+    .admin-list-actions button {
+      margin-left: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-small-secondary { background:#eeeeee; }
+    .btn-small-danger   { background:#c62828; color:white; }
+    .btn-small-primary  { background:#0d8a5c; color:white; }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 13px;
+      border-bottom: 1px dashed #eee;
+    }
+
+    .toggle-row:last-child { border-bottom: none; }
+
+    @media (max-width: 1000px) {
+      .cards-grid,
+      .home-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 800px) {
+      .layout { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        display: flex;
+        gap: 6px;
+        border-right:none;
+        border-bottom:1px solid var(--border);
+        overflow-x:auto;
+      }
+      .nav-btn { flex:1; text-align:center; white-space:nowrap; }
+      .main { padding:16px 14px 20px; }
+      .cards-grid,
+      .home-grid { grid-template-columns:1fr; }
+      .auth-card { max-width: 100%; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- SCHERMATA LOGIN / REGISTRAZIONE / RESET -->
-  <div id="auth-screen" class="auth-screen">
+  <!-- LOGIN / REGISTRAZIONE -->
+  <div id="auth" class="auth-screen">
     <div class="auth-card">
-      <h1 class="logo-title">Farmacia Montesano</h1>
-      <h2>Accesso Dipendenti</h2>
+      <div class="auth-inner">
+        <h1 class="logo-title">Farmacia Montesano</h1>
+        <h2>Portale Dipendenti</h2>
 
-      <!-- LOGIN -->
-      <div id="login-box">
-        <label>Email</label>
-        <input type="email" id="login-email" placeholder="nome@farmaciamontesano.it" />
+        <!-- LOGIN -->
+        <div id="login-box">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="nome@farmaciamontesano.it" />
 
-        <label>Password</label>
-        <input type="password" id="login-password" placeholder="Password" />
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="Password" />
 
-        <button class="btn-primary" onclick="login()">Entra</button>
+          <button class="btn-primary" onclick="login()">Entra</button>
 
-        <p class="small-text">
-          Non hai ancora un account?
-          <a href="#" onclick="showRegister()">Richiedi accesso</a>
-        </p>
+          <p class="small-text">
+            Non hai ancora un account?
+            <a href="#" onclick="showRegister()">Registrati</a>
+          </p>
+          <p class="small-text">
+            Se dimentichi la password, contatta il titolare: solo l’admin può reimpostarla.
+          </p>
+        </div>
 
-        <p class="small-text">
-          Hai dimenticato la password?
-          <a href="#" onclick="showReset()">Reimposta password</a>
-        </p>
+        <!-- REGISTRAZIONE -->
+        <div id="register-box" class="hidden">
+          <label>Nome e cognome</label>
+          <input type="text" id="reg-name" placeholder="Es. Daniela Andrisani" />
+
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="Email aziendale" />
+
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="Crea una password" />
+
+          <button class="btn-primary" onclick="registerUser()">Crea account</button>
+
+          <p class="small-text">
+            Hai già un account?
+            <a href="#" onclick="showLogin()">Torna al login</a>
+          </p>
+        </div>
+
+        <p id="auth-error" class="error-text hidden"></p>
       </div>
-
-      <!-- RICHIESTA ACCESSO (registrazione) -->
-      <div id="register-box" class="hidden-block">
-        <h3>Richiesta di accesso</h3>
-        <p class="small-text">
-          La tua richiesta sarà inviata al titolare che dovrà <strong>approvarla</strong>
-          prima di poterti attivare.
-        </p>
-
-        <label>Nome e cognome</label>
-        <input type="text" id="reg-name" placeholder="Es. Daniela Andrisani" />
-
-        <label>Email</label>
-        <input type="email" id="reg-email" placeholder="Email aziendale" />
-
-        <label>Nota per il titolare (opzionale)</label>
-        <textarea id="reg-note" rows="3" placeholder="Es. Nuova collaboratrice reparto dermocosmesi…"></textarea>
-
-        <button class="btn-primary" onclick="sendAccessRequest()">Invia richiesta</button>
-
-        <p class="small-text">
-          Hai già un account approvato?
-          <a href="#" onclick="showLogin()">Torna al login</a>
-        </p>
-      </div>
-
-      <!-- RESET PASSWORD -->
-      <div id="reset-box" class="hidden-block">
-        <h3>Reimposta password</h3>
-
-        <label>Email</label>
-        <input type="email" id="reset-email" placeholder="Email registrata" />
-
-        <label>Nuova password</label>
-        <input type="password" id="reset-password" placeholder="Nuova password" />
-
-        <label>Conferma nuova password</label>
-        <input type="password" id="reset-password-confirm" placeholder="Ripeti password" />
-
-        <button class="btn-primary" onclick="resetPassword()">Imposta nuova password</button>
-
-        <p class="small-text">
-          Torna al
-          <a href="#" onclick="showLogin()">login</a>.
-        </p>
-      </div>
-
-      <p id="auth-error" class="error-text" style="display:none;"></p>
     </div>
   </div>
 
-  <!-- PORTALE INTERNO (VISIBILE SOLO DOPO LOGIN) -->
+  <!-- PORTALE -->
   <div id="portal" class="portal hidden">
     <header class="topbar">
-      <div>
-        <span class="topbar-logo">Farmacia Montesano – Portale Interno</span>
-      </div>
+      <div class="topbar-logo">Farmacia Montesano – Portale Interno</div>
       <div class="topbar-user">
         <span id="user-name-display"></span>
         <span id="user-role-display" class="role-badge"></span>
@@ -99,91 +434,61 @@
     </header>
 
     <div class="layout">
-      <!-- MENU LATERALE -->
       <aside class="sidebar">
+        <div class="nav-label">Navigazione</div>
         <button class="nav-btn active" id="nav-home" onclick="showSection('home', this)">🏠 Dashboard</button>
-        <button class="nav-btn" id="nav-procedures" onclick="showSection('procedures', this)">📄 Procedure</button>
-        <button class="nav-btn" id="nav-messages" onclick="showSection('messages', this)">📣 Comunicazioni</button>
-
-        <!-- Visibili solo all'admin -->
-        <button class="nav-btn admin-only hidden-block" id="nav-admin-users" onclick="showSection('admin-users', this)">👥 Utenti</button>
-        <button class="nav-btn admin-only hidden-block" id="nav-admin-docs" onclick="showSection('admin-docs', this)">📂 Documenti</button>
+        <button class="nav-btn" id="nav-proc" onclick="showSection('procedures', this)">📄 Procedure</button>
+        <button class="nav-btn" id="nav-msg" onclick="showSection('messages', this)">📣 Comunicazioni</button>
+        <button class="nav-btn hidden" id="nav-admin" onclick="showSection('admin', this)">👑 Admin</button>
       </aside>
 
-      <!-- CONTENUTO PRINCIPALE -->
       <main class="main">
-        <!-- HOME / DASHBOARD -->
+        <!-- HOME -->
         <section id="home" class="section visible">
           <h2 id="home-title">Benvenuto nel Portale Interno</h2>
           <p class="subtitle">
-            Qui trovi tutte le <strong>procedure</strong>, le <strong>comunicazioni interne</strong>
-            e gli <strong>strumenti di lavoro</strong> della Farmacia Montesano.
+            Tutte le <strong>procedure</strong>, le <strong>comunicazioni</strong> e i tuoi strumenti di lavoro
+            in un’unica pagina.
           </p>
 
-          <!-- 3 CARDS INTRODUTTIVE -->
           <div class="cards-grid">
             <div class="card">
               <h3>📄 Procedure cassa</h3>
-              <p>
-                Anticipi, ticket, scontrini, gestione POS, sotto cassa…
-                Tutto in un unico posto, sempre aggiornato.
-              </p>
+              <p>Anticipi, ticket, POS, sotto cassa: tutto raccolto e aggiornato.</p>
             </div>
-
             <div class="card">
               <h3>📣 Comunicazioni veloci</h3>
-              <p>
-                Note importanti di giornata: errori da evitare, nuove promo,
-                consegne in arrivo, turni extra, ecc.
-              </p>
+              <p>Note importanti di giornata, consegne, promo, turni extra.</p>
             </div>
-
             <div class="card">
-              <h3>📂 Documenti per te</h3>
-              <p>
-                Procedure, promemoria e file condivisi dal titolare,
-                visibili solo ai dipendenti autorizzati.
-              </p>
+              <h3>📚 Area personale</h3>
+              <p>Appunti privati solo tuoi, visibili solo sul tuo accesso.</p>
             </div>
           </div>
 
-          <!-- GRID STRUMENTI OPERATIVI -->
           <div class="home-grid">
-            <!-- BACHECA DI OGGI (condivisa) -->
-            <div class="card tall">
-              <h3>📝 Bacheca di oggi (condivisa)</h3>
-              <p class="small-muted">
-                Messaggi veloci per il collega del turno successivo (promemoria, avvisi, note di reparto).
-              </p>
-              <textarea id="board-text" rows="6"
-                placeholder="Es. Controllare scadenze antibiotici scaffale 3, ricordarsi modulo per il corriere…"></textarea>
-              <div class="card-footer">
-                <button class="btn-primary small-btn" onclick="saveBoard()">Salva bacheca</button>
-                <span id="board-saved" class="saved-label" style="display:none;">Salvato ✔</span>
-              </div>
+            <div class="card" id="card-board">
+              <h3>📝 Bacheca condivisa</h3>
+              <p class="small-muted">Messaggi per il collega del turno successivo.</p>
+              <textarea id="board-text" rows="5"
+                placeholder="Es. Controllare scadenze scaffale 3, ricordarsi modulo per il corriere…"></textarea>
+              <button class="btn-primary" onclick="saveBoard()">Salva bacheca</button>
+              <span id="board-saved" class="saved-label hidden">Salvato ✔</span>
             </div>
 
-            <!-- APPUNTI PERSONALI (solo per l'utente) -->
-            <div class="card tall">
-              <h3>📚 Appunti personali</h3>
-              <p class="small-muted">
-                Spazio privato: solo tu puoi vedere questi appunti sul tuo dispositivo.
-              </p>
-              <textarea id="notes-text" rows="6"
-                placeholder="Es. Cose da chiedere a Valerio, prodotti da studiare, dubbi sulle procedure…"></textarea>
-              <div class="card-footer">
-                <button class="btn-primary small-btn" onclick="savePersonalNotes()">Salva appunti</button>
-                <span id="notes-saved" class="saved-label" style="display:none;">Salvato ✔</span>
-              </div>
+            <div class="card" id="card-notes">
+              <h3>📚 I tuoi appunti</h3>
+              <p class="small-muted">Spazio privato, visibile solo a questo account.</p>
+              <textarea id="notes-text" rows="5"
+                placeholder="Es. cose da chiedere a Valerio, prodotti da studiare…"></textarea>
+              <button class="btn-primary" onclick="saveNotes()">Salva appunti</button>
+              <span id="notes-saved" class="saved-label hidden">Salvato ✔</span>
             </div>
 
-            <!-- DOCUMENTI CONDIVISI CON TE -->
-            <div class="card tall">
-              <h3>📂 Documenti per te</h3>
-              <p class="small-muted">
-                Documenti approvati dal titolare e assegnati a te o a tutti i dipendenti.
-              </p>
-              <div id="user-documents" class="docs-list"></div>
+            <div class="card" id="card-info">
+              <h3>👤 Dati del tuo profilo</h3>
+              <p class="small-muted">Riepilogo informazioni di questo accesso.</p>
+              <div id="user-info"></div>
             </div>
           </div>
         </section>
@@ -200,63 +505,455 @@
           <div id="message-list" class="list"></div>
         </section>
 
-        <!-- GESTIONE UTENTI (ADMIN) -->
-        <section id="admin-users" class="section">
-          <h2>Gestione utenti</h2>
+        <!-- ADMIN -->
+        <section id="admin" class="section">
+          <h2>Gestione admin</h2>
+          <p class="subtitle">
+            Qui puoi vedere tutti gli account, le loro password e decidere cosa mostrare ai dipendenti.
+          </p>
 
-          <div class="admin-grid">
-            <div class="card">
-              <h3>Richieste di accesso in attesa</h3>
-              <div id="requests-list"></div>
-            </div>
-
-            <div class="card">
-              <h3>Utenti registrati</h3>
-              <div id="users-list"></div>
-              <p class="small-muted">
-                L'utente con ruolo <strong>Admin</strong> sei tu (Valerio) e può gestire tutti gli account.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- GESTIONE DOCUMENTI (ADMIN) -->
-        <section id="admin-docs" class="section">
-          <h2>Documenti e contenuti</h2>
-
-          <div class="card">
-            <h3>Nuovo documento</h3>
-            <label>Titolo</label>
-            <input type="text" id="doc-title" placeholder="Es. Procedura cambio cassa" />
-
-            <label>Contenuto / descrizione</label>
-            <textarea id="doc-content" rows="4" placeholder="Testo della procedura o descrizione del file allegato…"></textarea>
-
-            <label>Destinatario</label>
-            <select id="doc-target">
-              <option value="all">Tutti i dipendenti</option>
-            </select>
-
-            <label>
-              <input type="checkbox" id="doc-publish" checked />
-              Pubblica subito (visibile ai destinatari)
-            </label>
-
-            <button class="btn-primary" onclick="createDocument()">Salva documento</button>
+          <div class="card" style="margin-bottom: 18px;">
+            <h3>👥 Utenti registrati</h3>
+            <div id="user-list-admin"></div>
             <p class="small-muted">
-              Qui salvi il <strong>testo</strong> della procedura o una <strong>nota con link</strong> al file vero (PDF, Word, ecc.).
+              Le password sono memorizzate in chiaro solo in questo portale interno (localStorage del browser).
             </p>
           </div>
 
           <div class="card">
-            <h3>Documenti esistenti</h3>
-            <div id="docs-list"></div>
+            <h3>🎚️ Cosa vedono i dipendenti</h3>
+            <p class="small-muted">
+              Attiva o disattiva le sezioni visibili ai dipendenti (gli admin vedono sempre tutto).
+            </p>
+
+            <div id="settings-toggles">
+              <div class="toggle-row">
+                <span>Dashboard – Bacheca condivisa</span>
+                <input type="checkbox" id="cfg-show-board" />
+              </div>
+              <div class="toggle-row">
+                <span>Dashboard – Appunti personali</span>
+                <input type="checkbox" id="cfg-show-notes" />
+              </div>
+              <div class="toggle-row">
+                <span>Dashboard – Dati profilo</span>
+                <input type="checkbox" id="cfg-show-info" />
+              </div>
+              <div class="toggle-row">
+                <span>Sezione “Procedure interne”</span>
+                <input type="checkbox" id="cfg-show-proc" />
+              </div>
+              <div class="toggle-row">
+                <span>Sezione “Comunicazioni interne”</span>
+                <input type="checkbox" id="cfg-show-msg" />
+              </div>
+            </div>
+
+            <button class="btn-primary" style="margin-top: 14px;" onclick="saveSettings()">
+              Salva impostazioni visibilità
+            </button>
           </div>
         </section>
       </main>
     </div>
   </div>
 
-  <script src="script.js" defer></script>
+  <script>
+    const LS_USERS = "fm_users_simple_v2";
+    const LS_ACTIVE = "fm_active_simple_v2";
+    const LS_BOARD = "fm_board_simple_v2";
+    const LS_NOTES_PREFIX = "fm_notes_simple_v2_";
+    const LS_CFG = "fm_cfg_visibility_v1";
+
+    function showError(msg) {
+      const e = document.getElementById("auth-error");
+      e.textContent = msg;
+      e.classList.remove("hidden");
+    }
+
+    function clearError() {
+      const e = document.getElementById("auth-error");
+      e.textContent = "";
+      e.classList.add("hidden");
+    }
+
+    function showLogin() {
+      clearError();
+      document.getElementById("login-box").classList.remove("hidden");
+      document.getElementById("register-box").classList.add("hidden");
+    }
+
+    function showRegister() {
+      clearError();
+      document.getElementById("login-box").classList.add("hidden");
+      document.getElementById("register-box").classList.remove("hidden");
+    }
+
+    function loadUsers() {
+      try {
+        const raw = localStorage.getItem(LS_USERS);
+        if (!raw) return [];
+        return JSON.parse(raw);
+      } catch { return []; }
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem(LS_USERS, JSON.stringify(users));
+    }
+
+    function seedAdmin() {
+      let users = loadUsers();
+      if (users.length === 0) {
+        users.push({
+          id: "admin-1",
+          name: "Valerio Montesano",
+          email: "admin@farmaciamontesano.it",
+          password: "admin123",
+          role: "admin"
+        });
+        saveUsers(users);
+        alert(
+          "Creato utente titolare:\nEmail: admin@farmaciamontesano.it\nPassword: admin123\n(cambiala appena possibile dal pannello Admin)."
+        );
+      }
+    }
+
+    function registerUser() {
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      const pass = document.getElementById("reg-password").value;
+
+      if (!name || !email || !pass) {
+        showError("Compila tutti i campi.");
+        return;
+      }
+
+      let users = loadUsers();
+      if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+        showError("Esiste già un utente con questa email.");
+        return;
+      }
+
+      users.push({
+        id: "u-" + Date.now(),
+        name,
+        email,
+        password: pass,
+        role: "dipendente"
+      });
+      saveUsers(users);
+
+      alert("Account creato! Ora effettua il login.");
+      document.getElementById("reg-password").value = "";
+      showLogin();
+    }
+
+    function login() {
+      const email = document.getElementById("login-email").value.trim();
+      const pass  = document.getElementById("login-password").value;
+
+      let users = loadUsers();
+      const user = users.find(
+        u => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
+      );
+      if (!user) {
+        showError("Email o password errate.");
+        return;
+      }
+
+      localStorage.setItem(LS_ACTIVE, JSON.stringify(user));
+      openPortal(user);
+    }
+
+    function logout() {
+      localStorage.removeItem(LS_ACTIVE);
+      document.getElementById("portal").classList.add("hidden");
+      document.getElementById("auth").classList.remove("hidden");
+      showLogin();
+    }
+
+    function notesKey(user) {
+      return LS_NOTES_PREFIX + user.id;
+    }
+
+    function openPortal(user) {
+      document.getElementById("auth").classList.add("hidden");
+      document.getElementById("portal").classList.remove("hidden");
+
+      document.getElementById("user-name-display").textContent = user.name;
+      document.getElementById("user-role-display").textContent =
+        user.role === "admin" ? "Titolare / Admin" : "Dipendente";
+
+      document.getElementById("home-title").textContent =
+        "Ciao " + user.name + ", benvenuto nel Portale Interno";
+
+      document.getElementById("user-info").innerHTML =
+        "<strong>Nome:</strong> " + user.name + "<br>" +
+        "<strong>Email:</strong> " + user.email + "<br>" +
+        "<strong>Ruolo:</strong> " + (user.role === "admin" ? "Titolare" : "Dipendente");
+
+      if (user.role === "admin") {
+        document.getElementById("nav-admin").classList.remove("hidden");
+        renderUserAdminList();
+        loadSettingsIntoUI();
+      } else {
+        document.getElementById("nav-admin").classList.add("hidden");
+      }
+
+      loadBoard();
+      loadNotes(user);
+      loadProcedures();
+      loadMessages();
+      applyVisibilityConfig(user);
+
+      showSection("home", document.getElementById("nav-home"));
+    }
+
+    function showSection(id, btn) {
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("visible"));
+      document.getElementById(id).classList.add("visible");
+
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+    }
+
+    // BACHECA
+    function loadBoard() {
+      const txt = localStorage.getItem(LS_BOARD) || "";
+      document.getElementById("board-text").value = txt;
+    }
+
+    function saveBoard() {
+      const txt = document.getElementById("board-text").value;
+      localStorage.setItem(LS_BOARD, txt);
+      const lab = document.getElementById("board-saved");
+      lab.classList.remove("hidden");
+      setTimeout(() => lab.classList.add("hidden"), 1200);
+    }
+
+    // NOTE PERSONALI
+    function loadNotes(user) {
+      const key = notesKey(user);
+      const txt = localStorage.getItem(key) || "";
+      document.getElementById("notes-text").value = txt;
+    }
+
+    function saveNotes() {
+      const user = JSON.parse(localStorage.getItem(LS_ACTIVE) || "null");
+      if (!user) return;
+      const key = notesKey(user);
+      const txt = document.getElementById("notes-text").value;
+      localStorage.setItem(key, txt);
+      const lab = document.getElementById("notes-saved");
+      lab.classList.remove("hidden");
+      setTimeout(() => lab.classList.add("hidden"), 1200);
+    }
+
+    // PROCEDURE & MESSAGGI DEMO
+    function loadProcedures() {
+      const procs = [
+        {
+          title: "Anticipi – clienti pagano subito",
+          meta: "Cassa / Ricette SSN",
+          text: "Il cliente paga subito. Quando porta la ricetta, emetti il ticket e restituisci l'eventuale differenza dalla scatoletta sotto cassa."
+        },
+        {
+          title: "POS collegato al gestionale",
+          meta: "POS",
+          text: "Usare SEMPRE il POS collegato al gestionale, non fare vendite manuali salvo emergenza."
+        },
+        {
+          title: "Sotto cassa",
+          meta: "Cassa",
+          text: "Anticipi e differenze da restituire sempre nella scatoletta sotto cassa, con bigliettino se necessario."
+        }
+      ];
+
+      const c = document.getElementById("procedure-list");
+      c.innerHTML = "";
+      procs.forEach(p => {
+        const d = document.createElement("div");
+        d.className = "list-item";
+        d.innerHTML =
+          "<div class='list-item-title'>" + p.title + "</div>" +
+          "<div class='list-item-meta'>" + p.meta + "</div>" +
+          "<div>" + p.text + "</div>";
+        c.appendChild(d);
+      });
+    }
+
+    function loadMessages() {
+      const msgs = [
+        {
+          title: "Controllare incassi mattina",
+          when: "Oggi",
+          text: "Al cambio turno verifica che contante e gestionale coincidano."
+        },
+        {
+          title: "Ordine Uriage arrivato",
+          when: "Oggi",
+          text: "Sistemare i prodotti in esposizione promo vicino alla vetrina."
+        }
+      ];
+      const c = document.getElementById("message-list");
+      c.innerHTML = "";
+      msgs.forEach(m => {
+        const d = document.createElement("div");
+        d.className = "list-item";
+        d.innerHTML =
+          "<div class='list-item-title'>" + m.title + "</div>" +
+          "<div class='list-item-meta'>" + m.when + "</div>" +
+          "<div>" + m.text + "</div>";
+        c.appendChild(d);
+      });
+    }
+
+    // ADMIN – LISTA UTENTI + PASSWORD IN CHIARO
+    function renderUserAdminList() {
+      const users = loadUsers();
+      const c = document.getElementById("user-list-admin");
+      c.innerHTML = "";
+
+      users.forEach(u => {
+        const row = document.createElement("div");
+        row.className = "admin-list-row";
+
+        const left = document.createElement("div");
+        left.innerHTML =
+          "<strong>" + u.name + "</strong> " +
+          (u.role === "admin" ? "(Admin)" : "") +
+          "<br><span class='small-muted'>" + u.email + "</span>" +
+          "<br><span class='small-muted'>Password: <strong>" + (u.password || "—") + "</strong></span>";
+
+        const actions = document.createElement("div");
+        actions.className = "admin-list-actions";
+
+        if (u.role !== "admin") {
+          const btnPwd = document.createElement("button");
+          btnPwd.className = "btn-small-primary";
+          btnPwd.textContent = "Cambia password";
+          btnPwd.onclick = function () {
+            const np = prompt("Nuova password per " + u.name + ":");
+            if (!np) return;
+            u.password = np;
+            saveUsers(users);
+            renderUserAdminList();
+            alert("Password aggiornata per " + u.name);
+          };
+
+          const btnDel = document.createElement("button");
+          btnDel.className = "btn-small-danger";
+          btnDel.textContent = "Elimina";
+          btnDel.onclick = function () {
+            if (!confirm("Eliminare questo utente?")) return;
+            const updated = users.filter(x => x.id !== u.id);
+            saveUsers(updated);
+            renderUserAdminList();
+          };
+
+          actions.appendChild(btnPwd);
+          actions.appendChild(btnDel);
+        }
+
+        row.appendChild(left);
+        row.appendChild(actions);
+        c.appendChild(row);
+      });
+    }
+
+    // VISIBILITÀ – COSA VEDONO I DIPENDENTI
+    function defaultConfig() {
+      return {
+        showBoard: true,
+        showNotes: true,
+        showInfo: true,
+        showProc: true,
+        showMsg: true
+      };
+    }
+
+    function loadConfig() {
+      try {
+        const raw = localStorage.getItem(LS_CFG);
+        if (!raw) return defaultConfig();
+        const cfg = JSON.parse(raw);
+        return Object.assign(defaultConfig(), cfg);
+      } catch { return defaultConfig(); }
+    }
+
+    function saveConfig(cfg) {
+      localStorage.setItem(LS_CFG, JSON.stringify(cfg));
+    }
+
+    function applyVisibilityConfig(user) {
+      const cfg = loadConfig();
+      const isAdmin = user.role === "admin";
+
+      // Dashboard cards (per i dipendenti)
+      document.getElementById("card-board").style.display =
+        !isAdmin && !cfg.showBoard ? "none" : "block";
+      document.getElementById("card-notes").style.display =
+        !isAdmin && !cfg.showNotes ? "none" : "block";
+      document.getElementById("card-info").style.display =
+        !isAdmin && !cfg.showInfo ? "none" : "block";
+
+      // Nav + sezioni
+      const navProc = document.getElementById("nav-proc");
+      const navMsg  = document.getElementById("nav-msg");
+      const secProc = document.getElementById("procedures");
+      const secMsg  = document.getElementById("messages");
+
+      if (!isAdmin && !cfg.showProc) {
+        navProc.classList.add("hidden");
+        secProc.classList.add("hidden");
+      } else {
+        navProc.classList.remove("hidden");
+        secProc.classList.remove("hidden");
+      }
+
+      if (!isAdmin && !cfg.showMsg) {
+        navMsg.classList.add("hidden");
+        secMsg.classList.add("hidden");
+      } else {
+        navMsg.classList.remove("hidden");
+        secMsg.classList.remove("hidden");
+      }
+    }
+
+    function loadSettingsIntoUI() {
+      const cfg = loadConfig();
+      document.getElementById("cfg-show-board").checked = cfg.showBoard;
+      document.getElementById("cfg-show-notes").checked = cfg.showNotes;
+      document.getElementById("cfg-show-info").checked  = cfg.showInfo;
+      document.getElementById("cfg-show-proc").checked  = cfg.showProc;
+      document.getElementById("cfg-show-msg").checked   = cfg.showMsg;
+    }
+
+    function saveSettings() {
+      const cfg = {
+        showBoard: document.getElementById("cfg-show-board").checked,
+        showNotes: document.getElementById("cfg-show-notes").checked,
+        showInfo:  document.getElementById("cfg-show-info").checked,
+        showProc:  document.getElementById("cfg-show-proc").checked,
+        showMsg:   document.getElementById("cfg-show-msg").checked
+      };
+      saveConfig(cfg);
+      const user = JSON.parse(localStorage.getItem(LS_ACTIVE) || "null");
+      if (user) applyVisibilityConfig(user);
+      alert("Impostazioni aggiornate.");
+    }
+
+    // AVVIO
+    document.addEventListener("DOMContentLoaded", function () {
+      seedAdmin();
+      const activeRaw = localStorage.getItem(LS_ACTIVE);
+      if (activeRaw) {
+        const user = JSON.parse(activeRaw);
+        openPortal(user);
+      } else {
+        showLogin();
+      }
+    });
+  </script>
 </body>
 </html>
