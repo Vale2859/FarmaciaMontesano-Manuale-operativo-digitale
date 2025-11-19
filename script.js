@@ -46,15 +46,10 @@ function uid(prefix = "id") {
    CREA / AGGIORNA L’ADMIN IN AUTOMATICO
 ----------------------------------------------------------- */
 function seedAdmin() {
-  let users = load(LS_USERS, []);
-
-  // Controllo se esiste già un admin
-  let admin = users.find(
-    (u) => u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()
-  );
-
-  if (!admin) {
-    admin = {
+  // ⚠ ATTENZIONE: questo AZZERA tutti gli utenti esistenti
+  // e ricrea solo l'admin da zero.
+  const users = [
+    {
       id: "admin1",
       name: ADMIN_NAME,
       email: ADMIN_EMAIL,
@@ -62,15 +57,11 @@ function seedAdmin() {
       role: "admin",
       active: true,
       createdAt: new Date().toISOString(),
-    };
-    users.push(admin);
-  } else {
-    admin.name = ADMIN_NAME;
-    admin.password = ADMIN_PASSWORD;
-    admin.role = "admin";
-    admin.active = true;
-  }
+    },
+  ];
 
+  save(LS_USERS, users);
+}
   save(LS_USERS, users);
 }
 
