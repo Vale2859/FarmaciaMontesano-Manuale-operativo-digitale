@@ -1,93 +1,395 @@
+/* =======================================================
+   FARMACIA MONTESANO – STYLE.CSS COMPLETO
+   Versione definitiva – Grafica moderna, elegante
+   Compatibile con index.html + script.js COMPLETO
+======================================================== */
+
 /* ----------------------------------------------
-   LOGIN FULLSCREEN – CENTRATO ELEGANTE
+   RESET BASE
+---------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+body {
+  background: #f5f7fb;
+  color: #222;
+}
+
+/* ----------------------------------------------
+   BOTTONI
 ---------------------------------------------- */
 
+.btn-primary {
+  background: #0d8a5c;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+.btn-primary:hover {
+  background: #0b6f49;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #0d8a5c;
+  border: 2px solid #0d8a5c;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn-outline:hover {
+  background: #0d8a5c;
+  color: white;
+}
+
+/* -----------------------------------------------------
+   LOGIN FULLSCREEN – CON BOX CENTRALE
+------------------------------------------------------ */
+
 .auth-fullscreen {
-  position: relative;
+  position: fixed;
+  inset: 0;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 
-/* Immagine di sfondo */
+/* sfondo immagine */
 .auth-bg {
   position: absolute;
   inset: 0;
-  background-image: url("farmacia-bg.jpg"); /* tua foto */
+  background-image: url("farmacia-bg.jpg");
   background-size: cover;
   background-position: center;
   filter: brightness(0.50);
   z-index: 1;
 }
 
-/* Overlay scuro */
+/* overlay scuro */
 .auth-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.40);
+  background: rgba(0,0,0,0.45);
   z-index: 2;
 }
 
-/* BOX LOGIN al centro */
+/* box login */
 .auth-center-box {
   position: relative;
   z-index: 3;
   width: 380px;
-  max-width: 95%;
-  padding: 28px 30px;
-  background: rgba(255, 255, 255, 0.93);
-  backdrop-filter: blur(10px);
+  max-width: 90%;
+  background: rgba(255,255,255,0.93);
+  padding: 32px 30px;
   border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.35);
   text-align: center;
 }
 
-/* Logo + titoli */
 .auth-logo-large {
-  width: 64px;
+  width: 65px;
   margin-bottom: 10px;
 }
 
 .auth-title {
   font-size: 26px;
-  color: #0d3d2c;
+  font-weight: 600;
+  color: #083d2a;
 }
 
 .auth-subtitle {
   font-size: 13px;
-  margin-bottom: 18px;
-  color: #1a5f47;
+  margin-bottom: 20px;
+  color: #1c6a4e;
 }
 
-/* Input */
+/* input */
 .auth-center-box label {
-  display: block;
   text-align: left;
+  display: block;
   margin-bottom: 4px;
-  font-size: 13px;
   color: #444;
+  font-size: 13px;
 }
 
 .auth-center-box input {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #d2d9e5;
-  margin-bottom: 12px;
+  border: 1px solid #d0d7e1;
+  margin-bottom: 14px;
   font-size: 14px;
 }
-
 .auth-center-box input:focus {
   outline: none;
   border-color: #0d8a5c;
-  box-shadow: 0 0 0 1px rgba(13,138,92,0.25);
+  box-shadow: 0 0 5px rgba(13,138,92,0.3);
 }
 
-/* Link */
 .small-text {
   font-size: 12px;
-  margin-top: 8px;
+  margin-top: 10px;
+}
+
+/* -----------------------------------------------------
+   PORTALE INTERNO
+------------------------------------------------------ */
+
+.portal.hidden {
+  display: none;
+}
+
+/* TOPBAR */
+.topbar {
+  height: 72px;
+  background: #fff;
+  border-bottom: 1px solid #e3e8ef;
+  padding: 0 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-logo-img {
+  width: 42px;
+}
+
+.topbar-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.topbar-subtitle {
+  font-size: 12px;
+  color: #6b7788;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-pill {
+  background: #0d8a5c;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.role-badge {
+  background: #072a1d;
+  padding: 2px 6px;
+  font-size: 11px;
+  border-radius: 5px;
+  margin-left: 6px;
+}
+
+/* -----------------------------------------------------
+   LAYOUT PRINCIPALE
+------------------------------------------------------ */
+.layout {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  height: calc(100vh - 72px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: #083d2a;
+  color: white;
+  padding: 20px 12px;
+  overflow-y: auto;
+}
+
+.nav-label {
+  opacity: 0.75;
+  margin-left: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.nav-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.nav-btn.active {
+  background: #12a56c;
+}
+
+/* MAIN CONTENT */
+.main {
+  padding: 22px;
+  overflow-y: auto;
+}
+
+.section {
+  display: none;
+}
+.section.visible {
+  display: block;
+}
+
+.section-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #5f6a75;
+  margin-bottom: 15px;
+}
+
+/* -----------------------------------------------------
+   CARD
+------------------------------------------------------ */
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+  margin-bottom: 20px;
+}
+
+.card-highlight {
+  background: #e6fff2;
+}
+
+/* -----------------------------------------------------
+   LISTE
+------------------------------------------------------ */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.list-item {
+  background: #f6f9fc;
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.list-item-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.list-item-meta {
+  font-size: 12px;
+  color: #687685;
+  margin-bottom: 6px;
+}
+
+/* -----------------------------------------------------
+   TABELLE
+------------------------------------------------------ */
+
+.table-simple {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-simple th {
+  background: #eef2f7;
+  padding: 11px;
+  font-size: 13px;
+  text-align: left;
+}
+
+.table-simple td {
+  padding: 10px;
+  font-size: 13px;
+  border-bottom: 1px solid #e8edf2;
+}
+
+/* -----------------------------------------------------
+   TAG STATO
+------------------------------------------------------ */
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #fff;
+}
+
+.status-approved { background: #0d8a5c; }
+.status-rejected { background: #d64545; }
+.status-pending  { background: #c8a12d; }
+
+.tag {
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: white;
+}
+
+.tag-red    { background: #d44242; }
+.tag-orange { background: #f5a623; }
+.tag-green  { background: #0d8a5c; }
+.tag.subtle { background: #c9d9d4; color: #083d2a; }
+
+/* -----------------------------------------------------
+   AREA PERSONALE
+------------------------------------------------------ */
+
+.saved-label {
+  display: inline-block;
+  background: #0d8a5c;
+  color: white;
+  padding: 4px 8px;
+  margin-left: 6px;
+  border-radius: 6px;
+}
+
+/* -----------------------------------------------------
+   RESPONSIVE
+------------------------------------------------------ */
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .nav-btn {
+    width: auto;
+  }
 }
