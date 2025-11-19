@@ -1,63 +1,132 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <title>Portale Farmacia Montesano</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Portale Farmacia Montesano</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div id="auth-container" class="center-box">
-    <h2>Accesso Dipendenti</h2>
+  <!-- SCHERMATA LOGIN / REGISTRAZIONE -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <h1 class="logo-title">Farmacia Montesano</h1>
+      <h2>Accesso Dipendenti</h2>
 
-    <div id="login-box">
-        <input type="email" id="login-email" placeholder="Email">
-        <input type="password" id="login-password" placeholder="Password">
-        <button onclick="login()">Entra</button>
-        <p>Nuovo dipendente? <a href="#" onclick="showRegister()">Registrati</a></p>
+      <!-- LOGIN -->
+      <div id="login-box">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="nome@farmaciamontesano.it" />
+
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Password" />
+
+        <button class="btn-primary" onclick="login()">Entra</button>
+
+        <p class="small-text">
+          Nuovo dipendente?
+          <a href="#" onclick="showRegister()">Registrati</a>
+        </p>
+      </div>
+
+      <!-- REGISTRAZIONE -->
+      <div id="register-box" style="display: none;">
+        <label>Nome e cognome</label>
+        <input type="text" id="reg-name" placeholder="Es. Daniela Andrisani" />
+
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="Email aziendale" />
+
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="Crea una password" />
+
+        <button class="btn-primary" onclick="register()">Crea account</button>
+
+        <p class="small-text">
+          Hai già un account?
+          <a href="#" onclick="showLogin()">Torna al login</a>
+        </p>
+      </div>
+
+      <p id="auth-error" class="error-text" style="display:none;"></p>
     </div>
+  </div>
 
-    <div id="register-box" style="display:none;">
-        <input type="text" id="reg-name" placeholder="Nome e cogome">
-        <input type="email" id="reg-email" placeholder="Email">
-        <input type="password" id="reg-password" placeholder="Password">
-        <button onclick="register()">Crea account</button>
-        <p><a href="#" onclick="showLogin()">Torna al login</a></p>
-    </div>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
-    <header>
-        <h1>Farmacia Montesano – Portale Interno</h1>
-        <button onclick="logout()">Logout</button>
+  <!-- PORTALE INTERNO (VISIBILE SOLO DOPO LOGIN) -->
+  <div id="portal" class="portal hidden">
+    <header class="topbar">
+      <div>
+        <span class="topbar-logo">Farmacia Montesano – Portale Interno</span>
+      </div>
+      <div class="topbar-user">
+        <span id="user-name-display"></span>
+        <button class="btn-outline" onclick="logout()">Logout</button>
+      </div>
     </header>
 
-    <div class="sidebar">
-        <button onclick="showSection('home')">🏠 Dashboard</button>
-        <button onclick="showSection('procedures')">📄 Procedure</button>
-        <button onclick="showSection('messages')">📣 Comunicazioni</button>
+    <div class="layout">
+      <!-- MENU LATERALE -->
+      <aside class="sidebar">
+        <button class="nav-btn active" id="nav-home" onclick="showSection('home', this)">🏠 Dashboard</button>
+        <button class="nav-btn" id="nav-procedures" onclick="showSection('procedures', this)">📄 Procedure</button>
+        <button class="nav-btn" id="nav-messages" onclick="showSection('messages', this)">📣 Comunicazioni</button>
+      </aside>
+
+      <!-- CONTENUTO PRINCIPALE -->
+      <main class="main">
+        <!-- HOME -->
+        <section id="home" class="section visible">
+          <h2>Benvenuto nel Portale Interno</h2>
+          <p class="subtitle">
+            Qui trovi tutte le <strong>procedure</strong> e le <strong>comunicazioni interne</strong>
+            della Farmacia Montesano.
+          </p>
+
+          <div class="cards-grid">
+            <div class="card">
+              <h3>📄 Procedure cassa</h3>
+              <p>
+                Anticipi, ticket, scontrini, gestione POS, sotto cassa…
+                Tutto in un unico posto, sempre aggiornato.
+              </p>
+            </div>
+
+            <div class="card">
+              <h3>📣 Comunicazioni veloci</h3>
+              <p>
+                Note importanti di giornata: errori da evitare, nuove promo,
+                consegne in arrivo, turni extra, ecc.
+              </p>
+            </div>
+
+            <div class="card">
+              <h3>✅ Formazione</h3>
+              <p>
+                In futuro possiamo aggiungere quiz veloci per verificare che
+                tutti abbiano letto e compreso le procedure.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROCEDURE -->
+        <section id="procedures" class="section">
+          <h2>Procedure interne</h2>
+          <div id="procedure-list" class="list"></div>
+        </section>
+
+        <!-- COMUNICAZIONI -->
+        <section id="messages" class="section">
+          <h2>Comunicazioni interne</h2>
+          <div id="message-list" class="list"></div>
+        </section>
+      </main>
     </div>
+  </div>
 
-    <div class="main">
-        <section id="home">
-            <h2 id="welcome"></h2>
-            <p>Benvenuto nel portale interno della Farmacia Montesano.</p>
-        </section>
-
-        <section id="procedures" class="hidden">
-            <h2>Procedure Interne</h2>
-            <ul id="procedure-list"></ul>
-        </section>
-
-        <section id="messages" class="hidden">
-            <h2>Comunicazioni interne</h2>
-            <ul id="message-list"></ul>
-        </section>
-    </div>
-</div>
-
-<script src="script.js"></script>
-
+  <!-- JS -->
+  <script src="script.js"></script>
 </body>
 </html>
