@@ -1,760 +1,562 @@
-// Chiavi di localStorage
+// Gestionale essenziale Portale Farmacia Montesano
+// Tutto in locale con localStorage (nessun server).
+// CHIAVI DI STORAGE
 const LS_USERS = "fm_users";
-const LS_ACTIVE = "fm_active_user";
-const LS_REQUESTS = "fm_access_requests";
-const LS_DOCS = "fm_documents";
-const LS_BOARD = "fm_board_note";
-const LS_NOTES_PREFIX = "fm_notes_";
-
-// --------- HELPER STORAGE ---------
-
-function loadJson(key, defaultValue) {
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return defaultValue;
-    return JSON.parse(raw);
-  } catch {
-    return defaultValue;
-  }
+const LS_ACTIVE = "fm_activeUser";
+const LS_MSGS = "fm_messages";
+const LS_PROCS = "fm_procedures";
+const LS_LEAVE = "fm_leave";
+// UTILS
+function loadJson(key, fallback) {
+try {
+const raw = localStorage.getItem(key);
+if (!raw) return fallback;
+return JSON.parse(raw);
+} catch {
+return fallback;
 }
-
+}
 function saveJson(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
+localStorage.setItem(key, JSON.stringify(value));
 }
-
-// --------- UI AUTH ---------
-
-function showLogin() {
-  document.getElementById("login-box").classList.remove("hidden-block");
-  document.getElementById("register-box").classList.add("hidden-block");
-  document.getElementById("reset-box").classList.add("hidden-block");
-  hideAuthError();
+// AUTH UI
+function showError(msg) {
+const e = document.getElementById("auth-error");
+e.textContent = msg;
+e.classList.remove("hidden");
 }
-
-function showRegister() {
-  document.getElementById("login-box").classList.add("hidden-block");
-  document.getElementById("register-box").classList.remove("hidden-block");
-  document.getElementById("reset-box").classList.add("hidden-block");
-  hideAuthError();
+function clearError() {
+const e = document.getElementById("auth-error");
+e.textContent = "";
+e.classList.add("hidden");
 }
-
-function showReset() {
-  document.getElementById("login-box").classList.add("hidden-block");
-  document.getElementById("register-box").classList.add("hidden-block");
-  document.getElementById("reset-box").classList.remove("hidden-block");
-  hideAuthError();
+function showLogin(ev) {
+if (ev) ev.preventDefault();
+clearError();
+document.getElementById("login-box").classList.remove("hidden");
+document.getElementById("register-box").classList.add("hidden");
 }
-
-function showAuthError(msg) {
-  const el = document.getElementById("auth-error");
-  el.textContent = msg;
-  el.style.display = "block";
+function showRegister(ev) {
+if (ev) ev.preventDefault();
+clearError();
+document.getElementById("login-box").classList.add("hidden");
+document.getElementById("register-box").classList.remove("hidden");
 }
-
-function hideAuthError() {
-  const el = document.getElementById("auth-error");
-  el.textContent = "";
-  el.style.display = "none";
+// USERS
+function loadUsers() {
+return loadJson(LS_USERS, []);
 }
-
-// --------- ADMIN SEED (crea account titolare la prima volta) ---------
-
+function saveUsers(users) {
+saveJson(LS_USERS, users);
+}
 function seedAdminIfNeeded() {
-  let users = loadJson(LS_USERS, []);
-  if (users.length === 0) {
-    const adminUser = {
-      id: "admin-1",
-      name: "Valerio Montesano",
-      email: "admin@farmaciamontesano.it",
-      password: "admin123", // cambia appena entri
-      role: "admin",
-      status: "attivo",
-    };
-    users.push(adminUser);
-    saveJson(LS_USERS, users);
-    alert(
-      "Creato utente amministratore:\nEmail: admin@farmaciamontesano.it\nPassword: admin123\nCambia subito la password dal pannello 'Reimposta password'."
-    );
-  }
+let users = loadUsers();
+if (users.length === 0) {
+users.push({
+id: "admin-1",
+name: "Valerio Montesano",
+email: "admin@farmaciamontesano.it",
+password: "admin123",
+role: "admin",
+createdAt: new Date().toISOString()
+});
+saveUsers(users);
+alert(
+"Creato utente Admin iniziale:\\nEmail: admin@farmaciamontesano.it\\nPassword: admin123"
+);
 }
-
-// --------- REGISTRAZIONE / RICHIESTA ACCESSO ---------
-
-function sendAccessRequest() {
-  const name = document.getElementById("reg-name").value.trim();
-  const email = document.getElementById("reg-email").value.trim();
-  const note = document.getElementById("reg-note").value.trim();
-
-  if (!name || !email) {
-    showAuthError("Inserisci almeno nome e email.");
-    return;
-  }
-
-  const requests = loadJson(LS_REQUESTS, []);
-  const exists = requests.find(
-    (r) => r.email.toLowerCase() === email.toLowerCase() && r.status === "pending"
-  );
-  if (exists) {
-    showAuthError("Hai già una richiesta in attesa di approvazione.");
-    return;
-  }
-
-  const req = {
-    id: "req-" + Date.now(),
-    name,
-    email,
-    note,
-    createdAt: new Date().toISOString(),
-    status: "pending",
-  };
-  requests.push(req);
-  saveJson(LS_REQUESTS, requests);
-
-  alert(
-    "Richiesta inviata.\nIl titolare dovrà approvarla e impostare una password per te."
-  );
-  document.getElementById("reg-name").value = "";
-  document.getElementById("reg-email").value = "";
-  document.getElementById("reg-note").value = "";
-  showLogin();
 }
-
-// --------- LOGIN ---------
-
+// REGISTRAZIONE
+function registerUser() {
+const name = document.getElementById("reg-name").value.trim();
+const email = document.getElementById("reg-email").value.trim();
+const pass = document.getElementById("reg-password").value;
+if (!name || !email || !pass) {
+showError("Compila tutti i campi per registrarti.");
+return;
+}
+let users = loadUsers();
+if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
+showError("Esiste già un utente con questa email.");
+return;
+}
+users.push({
+id: "u-" + Date.now(),
+name,
+email,
+password: pass,
+role: "dipendente",
+createdAt: new Date().toISOString()
+});
+saveUsers(users);
+alert("Account creato! Ora effettua il login.");
+document.getElementById("reg-password").value = "";
+showLogin();
+}
+// LOGIN
 function login() {
-  const email = document.getElementById("login-email").value.trim();
-  const password = document.getElementById("login-password").value;
-
-  const users = loadJson(LS_USERS, []);
-  const user = users.find(
-    (u) =>
-      u.email.toLowerCase() === email.toLowerCase() &&
-      u.password === password &&
-      u.status === "attivo"
-  );
-
-  if (!user) {
-    showAuthError(
-      "Credenziali non valide oppure account non approvato. Contatta il titolare."
-    );
-    return;
-  }
-
-  saveJson(LS_ACTIVE, user);
-  initPortal(user);
+const email = document.getElementById("login-email").value.trim();
+const pass = document.getElementById("login-password").value;
+let users = loadUsers();
+const user = users.find(
+(u) => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
+);
+if (!user) {
+showError("Email o password non corretti.");
+return;
 }
-
-// --------- RESET PASSWORD ---------
-
-function resetPassword() {
-  const email = document.getElementById("reset-email").value.trim();
-  const pwd = document.getElementById("reset-password").value;
-  const pwd2 = document.getElementById("reset-password-confirm").value;
-
-  if (!email || !pwd || !pwd2) {
-    showAuthError("Compila tutti i campi per reimpostare la password.");
-    return;
-  }
-
-  if (pwd !== pwd2) {
-    showAuthError("Le password non coincidono.");
-    return;
-  }
-
-  let users = loadJson(LS_USERS, []);
-  const index = users.findIndex(
-    (u) => u.email.toLowerCase() === email.toLowerCase()
-  );
-
-  if (index === -1) {
-    showAuthError("Nessun utente registrato con questa email.");
-    return;
-  }
-
-  users[index].password = pwd;
-  saveJson(LS_USERS, users);
-
-  alert("Password aggiornata! Ora effettua il login con la nuova password.");
-  showLogin();
+saveJson(LS_ACTIVE, user);
+openPortal(user);
 }
-
-// --------- LOGOUT ---------
-
 function logout() {
-  localStorage.removeItem(LS_ACTIVE);
-  document.getElementById("portal").classList.add("hidden");
-  document.getElementById("auth-screen").classList.remove("hidden");
-  document.getElementById("login-email").value = "";
-  document.getElementById("login-password").value = "";
+localStorage.removeItem(LS_ACTIVE);
+document.getElementById("portal").classList.add("hidden");
+document.getElementById("auth").classList.remove("hidden");
+showLogin();
 }
-
-// --------- INIZIALIZZA PORTALE ---------
-
-function initPortal(user) {
-  document.getElementById("auth-screen").classList.add("hidden");
-  document.getElementById("portal").classList.remove("hidden");
-
-  document.getElementById("user-name-display").textContent = user.name;
-  document.getElementById("user-role-display").textContent =
-    user.role === "admin" ? "Admin / Titolare" : "Dipendente";
-
-  const title = document.getElementById("home-title");
-  title.textContent = `Ciao ${user.name}, benvenuto nel Portale Interno`;
-
-  // mostra voci admin se admin
-  const adminButtons = document.querySelectorAll(".admin-only");
-  adminButtons.forEach((btn) => {
-    if (user.role === "admin") {
-      btn.classList.remove("hidden-block");
-    } else {
-      btn.classList.add("hidden-block");
-    }
-  });
-
-  // Carica contenuti
-  loadProcedures();
-  loadMessages();
-  loadBoard();
-  loadPersonalNotes(user);
-  loadUserDocuments(user);
-
-  if (user.role === "admin") {
-    renderAccessRequests();
-    renderUsers();
-    renderDocuments();
-    populateDocTargetSelect();
-  }
-
-  activateNavButton(document.getElementById("nav-home"));
-  showOnlySection("home");
+// PORTALE
+function openPortal(user) {
+document.getElementById("auth").classList.add("hidden");
+document.getElementById("portal").classList.remove("hidden");
+document.getElementById("user-name-display").textContent = user.name;
+document.getElementById("user-role-display").textContent =
+user.role === "admin" ? "Titolare / Admin" : "Dipendente";
+document.getElementById("home-title").textContent =
+"Ciao " + user.name + ", benvenuto nel portale";
+document.getElementById("user-info").innerHTML =
+"<strong>Nome:</strong> " +
+user.name +
+"<br><strong>Email:</strong> " +
+user.email +
+"<br><strong>Ruolo:</strong> " +
+(user.role === "admin" ? "Titolare / Admin" : "Dipendente");
+if (user.role === "admin") {
+document.getElementById("nav-admin").classList.remove("hidden");
+renderAdminUsers();
+fillAdminMessageTargets();
+renderAdminProcedures();
+renderAdminLeave();
+} else {
+document.getElementById("nav-admin").classList.add("hidden");
 }
-
-// --------- NAVIGAZIONE SEZIONI ---------
-
-function showSection(sectionId, btn) {
-  showOnlySection(sectionId);
-  activateNavButton(btn);
+seedProceduresIfNeeded();
+renderProcedures();
+loadMessagesForUser(user);
+loadLeaveForUser(user);
+showSection("home", document.getElementById("nav-home"));
 }
-
-function showOnlySection(sectionId) {
-  document
-    .querySelectorAll(".section")
-    .forEach((sec) => sec.classList.remove("visible"));
-  document.getElementById(sectionId).classList.add("visible");
+function showSection(id, btn) {
+document.querySelectorAll(".section").forEach((s) => s.classList.remove("visible"));
+document.getElementById(id).classList.add("visible");
+document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+if (btn) btn.classList.add("active");
 }
-
-function activateNavButton(btn) {
-  document
-    .querySelectorAll(".nav-btn")
-    .forEach((b) => b.classList.remove("active"));
-  if (btn) btn.classList.add("active");
+// PROCEDURE (SEMPLICI)
+function seedProceduresIfNeeded() {
+let procs = loadJson(LS_PROCS, null);
+if (!procs) {
+procs = [
+{
+id: "p1",
+body:
+title: "Anticipi – i clienti pagano subito",
+"Il cliente paga subito l'importo del farmaco. Quando porta la ricetta, " +
+"emetti il ticket e restituisci l'eventuale differenza dalla scatoletta sotto cassa."
+},
+{
+id: "p2",
+title: "Ticket – gestione ricette SSN",
+body:
+"Controlla sempre i dati del paziente, applica il ticket corretto dal gestionale " +
+"e verifica il codice fiscale prima di chiudere."
+},
+{
+id: "p3",
+title: "POS collegato al gestionale",
+body:
+"Le vendite con carta vanno fatte partendo dal gestionale collegato al POS. " +
+"Evita gli inserimenti manuali sul POS salvo emergenza."
+},
+{
+id: "p4",
+title: "Sotto cassa",
+body:
+"Anticipi o differenze da restituire vanno sempre nella scatoletta sotto cassa, " +
+"con un bigliettino se serve ricordare il motivo."
 }
-
-// --------- BACHECA CONDIVISA ---------
-
-function loadBoard() {
-  const text = localStorage.getItem(LS_BOARD) || "";
-  const el = document.getElementById("board-text");
-  if (el) el.value = text;
+];
+saveJson(LS_PROCS, procs);
 }
-
-function saveBoard() {
-  const text = document.getElementById("board-text").value;
-  localStorage.setItem(LS_BOARD, text);
-  const label = document.getElementById("board-saved");
-  label.style.display = "inline";
-  setTimeout(() => (label.style.display = "none"), 1200);
 }
-
-// --------- APPUNTI PERSONALI ---------
-
-function getNotesKeyForUser(user) {
-  return LS_NOTES_PREFIX + user.id;
+function renderProcedures() {
+const procs = loadJson(LS_PROCS, []);
+const list = document.getElementById("proc-list");
+list.innerHTML = "";
+if (procs.length === 0) {
+list.innerHTML = "<p class='small-text'>Nessuna procedura definita.</p>";
+return;
 }
-
-function loadPersonalNotes(user) {
-  const key = getNotesKeyForUser(user);
-  const text = localStorage.getItem(key) || "";
-  const el = document.getElementById("notes-text");
-  if (el) el.value = text;
+procs.forEach((p) => {
+const div = document.createElement("div");
+div.className = "list-item";
+div.innerHTML =
+"<div class='list-item-title'>" +
+p.title +
+"</div><div>" +
+(p.body || "") +
+"</div>";
+list.appendChild(div);
+});
 }
-
-function savePersonalNotes() {
-  const user = loadJson(LS_ACTIVE, null);
-  if (!user) return;
-  const key = getNotesKeyForUser(user);
-  const text = document.getElementById("notes-text").value;
-  localStorage.setItem(key, text);
-  const label = document.getElementById("notes-saved");
-  label.style.display = "inline";
-  setTimeout(() => (label.style.display = "none"), 1200);
+// COMUNICAZIONI
+function loadMessagesForUser(user) {
+const msgs = loadJson(LS_MSGS, []);
+const container = document.getElementById("message-list");
+container.innerHTML = "";
+const visible = msgs.filter(
+(m) => m.target === "all" || m.target === user.id
+);
+if (visible.length === 0) {
+container.innerHTML = "<p class='small-text'>Nessuna comunicazione.</p>";
+return;
 }
-
-// --------- PROCEDURE DEMO ---------
-
-function loadProcedures() {
-  const procedures = [
-    {
-      title: "Anticipi – i clienti pagano subito",
-      important: true,
-      meta: "Cassa / Ricette SSN",
-      text:
-        "Il cliente paga subito l'importo del farmaco. Quando porta la ricetta, si emette il ticket e si restituisce l'eventuale differenza dalla scatoletta sotto cassa.",
-    },
-    {
-      title: "Scontrino POS – niente vendite manuali",
-      important: true,
-      meta: "POS / Gestionale",
-      text:
-        "Le vendite con carta vanno sempre fatte partendo dal gestionale collegato al POS. Evitare lo scontrino manuale sul POS, salvo emergenze.",
-    },
-    {
-      title: "Sotto cassa – gestione contanti",
-      important: false,
-      meta: "Cassa",
-      text:
-        "Eventuali anticipi o differenze da restituire vanno sempre messi nella scatoletta sotto cassa, con bigliettino di riferimento se necessario.",
-    },
-    {
-      title: "Codice fiscale obbligatorio",
-      important: false,
-      meta: "Ticket / Detrazione",
-      text:
-        "Per le spese detraibili, controllare sempre il codice fiscale del cliente prima di chiudere lo scontrino.",
-    },
-  ];
-
-  const container = document.getElementById("procedure-list");
-  container.innerHTML = "";
-
-  procedures.forEach((p) => {
-    const div = document.createElement("div");
-    div.className = "list-item";
-
-    const titleRow = document.createElement("div");
-    titleRow.className = "list-item-title";
-
-    if (p.important) {
-      const badge = document.createElement("span");
-      badge.className = "badge-important";
-      badge.textContent = "IMPORTANTE";
-      titleRow.appendChild(badge);
-    }
-
-    const spanTitle = document.createElement("span");
-    spanTitle.textContent = p.title;
-    titleRow.appendChild(spanTitle);
-
-    const meta = document.createElement("div");
-    meta.className = "list-item-meta";
-    meta.textContent = p.meta;
-
-    const text = document.createElement("div");
-    text.textContent = p.text;
-
-    div.appendChild(titleRow);
-    div.appendChild(meta);
-    div.appendChild(text);
-
-    container.appendChild(div);
-  });
+visible
+.slice()
+.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+.forEach((m) => {
+const div = document.createElement("div");
+div.className = "list-item";
+div.innerHTML =
+"<div class='list-item-title'>" +
+m.title +
+"</div><div class='list-item-meta'>" +
+(m.target === "all" ? "Tutti i dipendenti" : "Solo: " + (m.targetName || "")) +
+" • " +
+new Date(m.createdAt).toLocaleString("it-IT") +
+"</div><div>" +
+m.body +
+"</div>";
+container.appendChild(div);
+});
 }
-
-// --------- COMUNICAZIONI DEMO ---------
-
-function loadMessages() {
-  const messages = [
-    {
-      title: "Controllare incassi turno mattina",
-      when: "Oggi",
-      text:
-        "Al cambio turno verificare che il contante in cassa coincida con il totale gestionale.",
-    },
-    {
-      title: "Arrivato ordine Uriage",
-      when: "Ieri",
-      text:
-        "Controllare i colli e sistemare i prodotti in esposizione promo vicino alla vetrina.",
-    },
-    {
-      title: "Nuove regole anticipi ASL",
-      when: "Questa settimana",
-      text:
-        "Le nuove procedure sono caricate nella sezione 'Procedure interne'. Tutti i collaboratori devono leggerle.",
-    },
-    {
-      title: "POS lento – riavviare prima di chiamare assistenza",
-      when: "Nota fissa",
-      text:
-        "Se il POS non comunica con il gestionale, riavviare prima il POS, poi il PC, e solo dopo contattare l'assistenza.",
-    },
-  ];
-
-  const container = document.getElementById("message-list");
-  container.innerHTML = "";
-
-  messages.forEach((m) => {
-    const div = document.createElement("div");
-    div.className = "list-item";
-
-    const title = document.createElement("div");
-    title.className = "list-item-title";
-    title.textContent = m.title;
-
-    const meta = document.createElement("div");
-    meta.className = "list-item-meta";
-    meta.textContent = m.when;
-
-    const text = document.createElement("div");
-    text.textContent = m.text;
-
-    div.appendChild(title);
-    div.appendChild(meta);
-    div.appendChild(text);
-
-    container.appendChild(div);
-  });
+// FERIE & PERMESSI (DIPENDENTE)
+function sendLeaveRequest() {
+const user = loadJson(LS_ACTIVE, null);
+if (!user) return;
+const type = document.getElementById("leave-type").value;
+const start = document.getElementById("leave-start").value;
+const end = document.getElementById("leave-end").value;
+const note = document.getElementById("leave-note").value.trim();
+if (!start) {
+alert("Inserisci almeno la data di inizio.");
+return;
 }
-
-// --------- DOCUMENTI (ADMIN + VISTA DIPENDENTE) ---------
-
-function loadUserDocuments(user) {
-  const docs = loadJson(LS_DOCS, []);
-  const visible = docs.filter(
-    (d) =>
-      d.status === "published" &&
-      (d.target === "all" || d.target === user.id)
-  );
-  const container = document.getElementById("user-documents");
-  container.innerHTML = "";
-
-  if (visible.length === 0) {
-    container.textContent = "Nessun documento condiviso con te.";
-    return;
-  }
-
-  visible.forEach((d) => {
-    const pill = document.createElement("div");
-    pill.className = "doc-pill";
-    pill.innerHTML = `<strong>${d.title}</strong><br/><span>${d.content}</span>`;
-    container.appendChild(pill);
-  });
+let leaves = loadJson(LS_LEAVE, []);
+leaves.push({
+id: "l-" + Date.now(),
+userId: user.id,
+userName: user.name,
+type,
+startDate: start,
+endDate: end || "",
+note,
+status: "in_attesa",
+createdAt: new Date().toISOString()
+});
+saveJson(LS_LEAVE, leaves);
+document.getElementById("leave-note").value = "";
+document.getElementById("leave-end").value = "";
+loadLeaveForUser(user);
+if (user.role === "admin") renderAdminLeave();
+alert("Richiesta inviata.");
 }
-
-// Admin: riempi select destinatario
-function populateDocTargetSelect() {
-  const select = document.getElementById("doc-target");
-  if (!select) return;
-  const users = loadJson(LS_USERS, []);
-  // reset lasciando "Tutti"
-  select.innerHTML = '<option value="all">Tutti i dipendenti</option>';
-  users
-    .filter((u) => u.role !== "admin")
-    .forEach((u) => {
-      const opt = document.createElement("option");
-      opt.value = u.id;
-      opt.textContent = u.name + " (" + u.email + ")";
-      select.appendChild(opt);
-    });
+function typeLabel(t) {
+switch (t) {
+case "ferie":
+return "Ferie";
+case "permesso_orario":
+return "Permesso orario";
+case "permesso_giornata":
+return "Permesso giornata";
+default:
+return t;
 }
-
-function createDocument() {
-  const active = loadJson(LS_ACTIVE, null);
-  if (!active || active.role !== "admin") return;
-
-  const title = document.getElementById("doc-title").value.trim();
-  const content = document.getElementById("doc-content").value.trim();
-  const target = document.getElementById("doc-target").value;
-  const publish = document.getElementById("doc-publish").checked;
-
-  if (!title || !content) {
-    alert("Inserisci almeno titolo e contenuto.");
-    return;
-  }
-
-  let docs = loadJson(LS_DOCS, []);
-  const doc = {
-    id: "doc-" + Date.now(),
-    title,
-    content,
-    target, // "all" o userId
-    status: publish ? "published" : "draft",
-    createdAt: new Date().toISOString(),
-  };
-  docs.push(doc);
-  saveJson(LS_DOCS, docs);
-
-  document.getElementById("doc-title").value = "";
-  document.getElementById("doc-content").value = "";
-  document.getElementById("doc-publish").checked = true;
-
-  renderDocuments();
-  loadUserDocuments(active);
 }
-
-// Lista documenti per admin
-function renderDocuments() {
-  const docs = loadJson(LS_DOCS, []);
-  const users = loadJson(LS_USERS, []);
-  const container = document.getElementById("docs-list");
-  if (!container) return;
-
-  if (docs.length === 0) {
-    container.innerHTML = "<p class='small-muted'>Nessun documento creato.</p>";
-    return;
-  }
-
-  container.innerHTML = "";
-
-  docs
-    .slice()
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .forEach((d) => {
-      const row = document.createElement("div");
-      row.className = "admin-list-row";
-
-      const left = document.createElement("div");
-      const targetLabel =
-        d.target === "all"
-          ? "Tutti"
-          : (users.find((u) => u.id === d.target)?.name || "Sconosciuto");
-      left.innerHTML = `<strong>${d.title}</strong><br/>
-        <span class="small-muted">${targetLabel} • ${
-        d.status === "published" ? "Pubblicato" : "Bozza"
-      }</span>`;
-
-      const actions = document.createElement("div");
-      actions.className = "admin-list-actions";
-
-      const toggleBtn = document.createElement("button");
-      toggleBtn.className = "btn-small-secondary";
-      toggleBtn.textContent =
-        d.status === "published" ? "Metti in bozza" : "Pubblica";
-      toggleBtn.onclick = () => toggleDocumentStatus(d.id);
-
-      const delBtn = document.createElement("button");
-      delBtn.className = "btn-small-reject";
-      delBtn.textContent = "Elimina";
-      delBtn.onclick = () => deleteDocument(d.id);
-
-      actions.appendChild(toggleBtn);
-      actions.appendChild(delBtn);
-
-      row.appendChild(left);
-      row.appendChild(actions);
-      container.appendChild(row);
-    });
+function loadLeaveForUser(user) {
+const leaves = loadJson(LS_LEAVE, []);
+const my = leaves.filter((l) => l.userId === user.id);
+const tbody = document.querySelector("#leave-table tbody");
+tbody.innerHTML = "";
+if (my.length === 0) {
+const tr = document.createElement("tr");
+tr.innerHTML = "<td colspan='4'>Nessuna richiesta inviata.</td>";
+tbody.appendChild(tr);
+return;
 }
-
-function toggleDocumentStatus(id) {
-  let docs = loadJson(LS_DOCS, []);
-  const idx = docs.findIndex((d) => d.id === id);
-  if (idx === -1) return;
-  docs[idx].status = docs[idx].status === "published" ? "draft" : "published";
-  saveJson(LS_DOCS, docs);
-
-  const active = loadJson(LS_ACTIVE, null);
-  if (active) {
-    renderDocuments();
-    loadUserDocuments(active);
-  }
+my
+.slice()
+.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+.forEach((l) => {
+const tr = document.createElement("tr");
+let statusClass = "status-pending";
+let statusLabel = "In attesa";
+if (l.status === "approvata") {
+statusClass = "status-approved";
+statusLabel = "Approvata";
+} else if (l.status === "rifiutata") {
+statusClass = "status-rejected";
+statusLabel = "Rifiutata";
 }
-
-function deleteDocument(id) {
-  if (!confirm("Eliminare definitivamente questo documento?")) return;
-  let docs = loadJson(LS_DOCS, []);
-  docs = docs.filter((d) => d.id !== id);
-  saveJson(LS_DOCS, docs);
-
-  const active = loadJson(LS_ACTIVE, null);
-  if (active) {
-    renderDocuments();
-    loadUserDocuments(active);
-  }
+let period = l.startDate;
+if (l.endDate && l.endDate !== l.startDate) {
+period += " → " + l.endDate;
 }
-
-// --------- GESTIONE UTENTI (ADMIN) ---------
-
-function renderAccessRequests() {
-  const active = loadJson(LS_ACTIVE, null);
-  if (!active || active.role !== "admin") return;
-
-  const requests = loadJson(LS_REQUESTS, []);
-  const container = document.getElementById("requests-list");
-  if (!container) return;
-
-  const pending = requests.filter((r) => r.status === "pending");
-  if (pending.length === 0) {
-    container.innerHTML =
-      "<p class='small-muted'>Nessuna richiesta in attesa.</p>";
-    return;
-  }
-
-  container.innerHTML = "";
-  const wrapper = document.createElement("div");
-  wrapper.className = "admin-list";
-
-  pending.forEach((r) => {
-    const row = document.createElement("div");
-    row.className = "admin-list-row";
-
-    const left = document.createElement("div");
-    left.innerHTML = `<strong>${r.name}</strong><br/>
-      <span class="small-muted">${r.email}</span><br/>
-      <span class="small-muted">${r.note || ""}</span>`;
-
-    const actions = document.createElement("div");
-    actions.className = "admin-list-actions";
-
-    const approveBtn = document.createElement("button");
-    approveBtn.className = "btn-small-approve";
-    approveBtn.textContent = "Approva";
-    approveBtn.onclick = () => approveRequest(r.id);
-
-    const rejectBtn = document.createElement("button");
-    rejectBtn.className = "btn-small-reject";
-    rejectBtn.textContent = "Rifiuta";
-    rejectBtn.onclick = () => rejectRequest(r.id);
-
-    actions.appendChild(approveBtn);
-    actions.appendChild(rejectBtn);
-
-    row.appendChild(left);
-    row.appendChild(actions);
-    wrapper.appendChild(row);
-  });
-
-  container.appendChild(wrapper);
+tr.innerHTML =
+"<td>" +
+new Date(l.createdAt).toLocaleDateString("it-IT") +
+"</td><td>" +
+typeLabel(l.type) +
+"</td><td>" +
+period +
+"</td><td><span class='status-badge " +
+statusClass +
+"'>" +
+statusLabel +
+"</span></td>";
+tbody.appendChild(tr);
+});
 }
-
-function approveRequest(id) {
-  let requests = loadJson(LS_REQUESTS, []);
-  const req = requests.find((r) => r.id === id);
-  if (!req) return;
-
-  const pwd = prompt(
-    `Imposta la password per ${req.name} (${req.email}):`
-  );
-  if (!pwd) {
-    alert("Password non impostata. Richiesta ancora in attesa.");
-    return;
-  }
-
-  let users = loadJson(LS_USERS, []);
-  const newUser = {
-    id: "user-" + Date.now(),
-    name: req.name,
-    email: req.email,
-    password: pwd,
-    role: "dipendente",
-    status: "attivo",
-  };
-  users.push(newUser);
-  saveJson(LS_USERS, users);
-
-  req.status = "approved";
-  saveJson(LS_REQUESTS, requests);
-
-  alert(
-    `Utente creato.\nComunica a ${req.name} questa password iniziale:\n${pwd}`
-  );
-
-  renderAccessRequests();
-  renderUsers();
-  populateDocTargetSelect();
+// ADMIN - UTENTI
+function renderAdminUsers() {
+const users = loadUsers();
+const container = document.getElementById("admin-users");
+container.innerHTML = "";
+if (users.length === 0) {
+container.innerHTML = "<p class='small-text'>Nessun utente.</p>";
+return;
 }
-
-function rejectRequest(id) {
-  let requests = loadJson(LS_REQUESTS, []);
-  const req = requests.find((r) => r.id === id);
-  if (!req) return;
-  req.status = "rejected";
-  saveJson(LS_REQUESTS, requests);
-  renderAccessRequests();
+users.forEach((u) => {
+const row = document.createElement("div");
+row.className = "list-item";
+let html =
+"<div class='list-item-title'>" +
+u.name +
+(u.role === "admin" ? " (Admin)" : "") +
+"</div>";
+html +=
+"<div class='list-item-meta'>" +
+u.email +
+" • creato il " +
+new Date(u.createdAt).toLocaleDateString("it-IT") +
+"</div>";
+html +=
+"<div class='list-item-meta'>Password attuale: <strong>" +
+(u.password || "—") +
+"</strong></div>";
+row.innerHTML = html;
+if (u.role !== "admin") {
+const btn = document.createElement("button");
+btn.className = "btn-primary";
+btn.style.width = "auto";
+btn.style.marginTop = "6px";
+btn.textContent = "Reimposta password";
+btn.onclick = () => {
+const np = prompt("Nuova password per " + u.name + ":");
+if (!np) return;
+u.password = np;
+saveUsers(users);
+renderAdminUsers();
+alert("Password aggiornata.");
+};
+row.appendChild(btn);
 }
-
-function renderUsers() {
-  const active = loadJson(LS_ACTIVE, null);
-  if (!active || active.role !== "admin") return;
-
-  const users = loadJson(LS_USERS, []);
-  const container = document.getElementById("users-list");
-  if (!container) return;
-
-  if (users.length === 0) {
-    container.innerHTML = "<p class='small-muted'>Nessun utente.</p>";
-    return;
-  }
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "admin-list";
-
-  users.forEach((u) => {
-    const row = document.createElement("div");
-    row.className = "admin-list-row";
-
-    const left = document.createElement("div");
-    left.innerHTML = `<strong>${u.name}</strong> ${
-      u.role === "admin" ? "(Admin)" : ""
-    }<br/>
-      <span class="small-muted">${u.email}</span><br/>
-      <span class="small-muted">Stato: ${u.status}</span>`;
-
-    const actions = document.createElement("div");
-    actions.className = "admin-list-actions";
-
-    if (u.role !== "admin") {
-      const toggleBtn = document.createElement("button");
-      toggleBtn.className = "btn-small-secondary";
-      toggleBtn.textContent =
-        u.status === "attivo" ? "Blocca" : "Sblocca";
-      toggleBtn.onclick = () => toggleUserStatus(u.id);
-
-      const delBtn = document.createElement("button");
-      delBtn.className = "btn-small-reject";
-      delBtn.textContent = "Elimina";
-      delBtn.onclick = () => deleteUser(u.id);
-
-      actions.appendChild(toggleBtn);
-      actions.appendChild(delBtn);
-    }
-
-    row.appendChild(left);
-    row.appendChild(actions);
-    wrapper.appendChild(row);
-  });
-
-  container.innerHTML = "";
-  container.appendChild(wrapper);
+container.appendChild(row);
+});
 }
-
-function toggleUserStatus(id) {
-  let users = loadJson(LS_USERS, []);
-  const idx = users.findIndex((u) => u.id === id);
-  if (idx === -1) return;
-  users[idx].status = users[idx].status === "attivo" ? "bloccato" : "attivo";
-  saveJson(LS_USERS, users);
-  renderUsers();
+// ADMIN - MESSAGGI
+function fillAdminMessageTargets() {
+const users = loadUsers();
+const sel = document.getElementById("admin-msg-target");
+sel.innerHTML = '<option value="all">Tutti i dipendenti</option>';
+users.forEach((u) => {
+if (u.role !== "admin") {
+const opt = document.createElement("option");
+opt.value = u.id;
+opt.textContent = u.name + " (" + u.email + ")";
+sel.appendChild(opt);
 }
-
-function deleteUser(id) {
-  if (!confirm("Eliminare definitivamente questo utente?")) return;
-  let users = loadJson(LS_USERS, []);
-  users = users.filter((u) => u.id !== id);
-  saveJson(LS_USERS, users);
-  renderUsers();
-  populateDocTargetSelect();
+});
 }
-
-// --------- AVVIO APP ---------
-
+function adminSendMessage() {
+const title = document.getElementById("admin-msg-title").value.trim();
+const body = document.getElementById("admin-msg-body").value.trim();
+const target = document.getElementById("admin-msg-target").value;
+if (!title || !body) {
+alert("Inserisci titolo e testo.");
+return;
+}
+const users = loadUsers();
+const targetUser = users.find((u) => u.id === target);
+let msgs = loadJson(LS_MSGS, []);
+msgs.push({
+id: "m-" + Date.now(),
+title,
+body,
+target,
+targetName: targetUser ? targetUser.name : "",
+createdAt: new Date().toISOString()
+});
+saveJson(LS_MSGS, msgs);
+document.getElementById("admin-msg-title").value = "";
+document.getElementById("admin-msg-body").value = "";
+const active = loadJson(LS_ACTIVE, null);
+if (active) {
+loadMessagesForUser(active);
+}
+alert("Comunicazione inviata.");
+}
+// ADMIN - PROCEDURE (SEMPLICE)
+function adminSaveProcedure() {
+const title = document.getElementById("admin-proc-title").value.trim();
+const body = document.getElementById("admin-proc-body").value.trim();
+if (!title || !body) {
+alert("Compila titolo e testo.");
+return;
+}
+let procs = loadJson(LS_PROCS, []);
+const existing = procs.find(
+(p) => p.title.toLowerCase() === title.toLowerCase()
+);
+if (existing) {
+existing.body = body;
+} else {
+procs.push({
+id: "p-" + Date.now(),
+title,
+body
+});
+}
+saveJson(LS_PROCS, procs);
+renderProcedures();
+renderAdminProcedures();
+alert("Procedura salvata / aggiornata.");
+}
+function renderAdminProcedures() {
+const procs = loadJson(LS_PROCS, []);
+const container = document.getElementById("admin-proc-list");
+container.innerHTML = "";
+if (procs.length === 0) {
+container.innerHTML = "<p class='small-text'>Nessuna procedura.</p>";
+return;
+}
+procs.forEach((p) => {
+const div = document.createElement("div");
+div.className = "list-item";
+div.innerHTML =
+"<div class='list-item-title'>" +
+p.title +
+"</div><div class='list-item-meta'>" +
+(p.body.length > 100 ? p.body.slice(0, 100) + "..." : p.body) +
+"</div>";
+const btn = document.createElement("button");
+btn.textContent = "Modifica";
+btn.className = "btn-primary";
+btn.style.width = "auto";
+btn.style.marginTop = "4px";
+btn.onclick = () => {
+document.getElementById("admin-proc-title").value = p.title;
+document.getElementById("admin-proc-body").value = p.body;
+};
+div.appendChild(btn);
+container.appendChild(div);
+});
+}
+// ADMIN - LEAVE (FERIE)
+function renderAdminLeave() {
+const leaves = loadJson(LS_LEAVE, []);
+const list = document.getElementById("admin-leave-list");
+list.innerHTML = "";
+if (leaves.length === 0) {
+list.innerHTML = "<p class='small-text'>Nessuna richiesta ferie/permessi.</p>";
+return;
+}
+leaves
+.slice()
+.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+.forEach((l) => {
+const row = document.createElement("div");
+row.className = "list-item";
+let statusClass = "status-pending";
+let statusLabel = "In attesa";
+if (l.status === "approvata") {
+statusClass = "status-approved";
+statusLabel = "Approvata";
+} else if (l.status === "rifiutata") {
+statusClass = "status-rejected";
+statusLabel = "Rifiutata";
+}
+let period = l.startDate;
+if (l.endDate && l.endDate !== l.startDate) {
+period += " → " + l.endDate;
+}
+row.innerHTML =
+"<div class='list-item-title'>" +
+(l.userName || l.userId) +
+" – " +
+typeLabel(l.type) +
+"</div>" +
+"<div class='list-item-meta'>" +
+period +
+" • richiesta il " +
+new Date(l.createdAt).toLocaleDateString("it-IT") +
+"</div>" +
+"<div class='list-item-meta'>" +
+(l.note || "") +
+"</div>" +
+"<div><span class='status-badge " +
+statusClass +
+"'>" +
+statusLabel +
+"</span></div>";
+if (l.status === "in_attesa") {
+const btnOk = document.createElement("button");
+btnOk.textContent = "Approva";
+btnOk.className = "btn-primary";
+btnOk.style.width = "auto";
+btnOk.style.marginTop = "4px";
+btnOk.onclick = () => updateLeaveStatus(l.id, "approvata");
+const btnKo = document.createElement("button");
+btnKo.textContent = "Rifiuta";
+btnKo.className = "btn-primary";
+btnKo.style.width = "auto";
+btnKo.style.marginTop = "4px";
+btnKo.style.marginLeft = "6px";
+btnKo.onclick = () => updateLeaveStatus(l.id, "rifiutata");
+row.appendChild(btnOk);
+row.appendChild(btnKo);
+}
+});
+list.appendChild(row);
+}
+function updateLeaveStatus(id, status) {
+let leaves = loadJson(LS_LEAVE, []);
+const idx = leaves.findIndex((l) => l.id === id);
+if (idx === -1) return;
+leaves[idx].status = status;
+saveJson(LS_LEAVE, leaves);
+const active = loadJson(LS_ACTIVE, null);
+if (active) {
+loadLeaveForUser(active);
+}
+renderAdminLeave();
+}
+// AVVIO
 document.addEventListener("DOMContentLoaded", () => {
-  seedAdminIfNeeded();
-
-  const active = loadJson(LS_ACTIVE, null);
-  if (active) {
-    initPortal(active);
-  } else {
-    showLogin();
-  }
+seedAdminIfNeeded();
+const active = loadJson(LS_ACTIVE, null);
+if (active) {
+openPortal(active);
+} else {
+showLogin();
+}
 });
