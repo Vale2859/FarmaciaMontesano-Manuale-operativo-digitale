@@ -25,8 +25,8 @@
         <button class="btn-primary" onclick="login()">Entra</button>
 
         <p class="small-text">
-          Nuovo dipendente?
-          <a href="#" onclick="showRegister()">Registrati</a>
+          Non hai ancora un account?
+          <a href="#" onclick="showRegister()">Richiedi accesso</a>
         </p>
 
         <p class="small-text">
@@ -35,27 +35,35 @@
         </p>
       </div>
 
-      <!-- REGISTRAZIONE -->
+      <!-- RICHIESTA ACCESSO (registrazione) -->
       <div id="register-box" class="hidden-block">
+        <h3>Richiesta di accesso</h3>
+        <p class="small-text">
+          La tua richiesta sarà inviata al titolare che dovrà <strong>approvarla</strong>
+          prima di poterti attivare.
+        </p>
+
         <label>Nome e cognome</label>
         <input type="text" id="reg-name" placeholder="Es. Daniela Andrisani" />
 
         <label>Email</label>
         <input type="email" id="reg-email" placeholder="Email aziendale" />
 
-        <label>Password</label>
-        <input type="password" id="reg-password" placeholder="Crea una password" />
+        <label>Nota per il titolare (opzionale)</label>
+        <textarea id="reg-note" rows="3" placeholder="Es. Nuova collaboratrice reparto dermocosmesi…"></textarea>
 
-        <button class="btn-primary" onclick="register()">Crea account</button>
+        <button class="btn-primary" onclick="sendAccessRequest()">Invia richiesta</button>
 
         <p class="small-text">
-          Hai già un account?
+          Hai già un account approvato?
           <a href="#" onclick="showLogin()">Torna al login</a>
         </p>
       </div>
 
       <!-- RESET PASSWORD -->
       <div id="reset-box" class="hidden-block">
+        <h3>Reimposta password</h3>
+
         <label>Email</label>
         <input type="email" id="reset-email" placeholder="Email registrata" />
 
@@ -69,9 +77,7 @@
 
         <p class="small-text">
           Torna al
-          <a href="#" onclick="showLogin()">login</a>
-          o alla
-          <a href="#" onclick="showRegister()">registrazione</a>.
+          <a href="#" onclick="showLogin()">login</a>.
         </p>
       </div>
 
@@ -87,6 +93,7 @@
       </div>
       <div class="topbar-user">
         <span id="user-name-display"></span>
+        <span id="user-role-display" class="role-badge"></span>
         <button class="btn-outline" onclick="logout()">Logout</button>
       </div>
     </header>
@@ -97,18 +104,23 @@
         <button class="nav-btn active" id="nav-home" onclick="showSection('home', this)">🏠 Dashboard</button>
         <button class="nav-btn" id="nav-procedures" onclick="showSection('procedures', this)">📄 Procedure</button>
         <button class="nav-btn" id="nav-messages" onclick="showSection('messages', this)">📣 Comunicazioni</button>
+
+        <!-- Visibili solo all'admin -->
+        <button class="nav-btn admin-only hidden-block" id="nav-admin-users" onclick="showSection('admin-users', this)">👥 Utenti</button>
+        <button class="nav-btn admin-only hidden-block" id="nav-admin-docs" onclick="showSection('admin-docs', this)">📂 Documenti</button>
       </aside>
 
       <!-- CONTENUTO PRINCIPALE -->
       <main class="main">
-        <!-- HOME -->
+        <!-- HOME / DASHBOARD -->
         <section id="home" class="section visible">
-          <h2>Benvenuto nel Portale Interno</h2>
+          <h2 id="home-title">Benvenuto nel Portale Interno</h2>
           <p class="subtitle">
-            Qui trovi tutte le <strong>procedure</strong> e le <strong>comunicazioni interne</strong>
-            della Farmacia Montesano.
+            Qui trovi tutte le <strong>procedure</strong>, le <strong>comunicazioni interne</strong>
+            e gli <strong>strumenti di lavoro</strong> della Farmacia Montesano.
           </p>
 
+          <!-- 3 CARDS INTRODUTTIVE -->
           <div class="cards-grid">
             <div class="card">
               <h3>📄 Procedure cassa</h3>
@@ -127,11 +139,51 @@
             </div>
 
             <div class="card">
-              <h3>✅ Formazione</h3>
+              <h3>📂 Documenti per te</h3>
               <p>
-                In futuro possiamo aggiungere quiz veloci per verificare che
-                tutti abbiano letto e compreso le procedure.
+                Procedure, promemoria e file condivisi dal titolare,
+                visibili solo ai dipendenti autorizzati.
               </p>
+            </div>
+          </div>
+
+          <!-- GRID STRUMENTI OPERATIVI -->
+          <div class="home-grid">
+            <!-- BACHECA DI OGGI (condivisa) -->
+            <div class="card tall">
+              <h3>📝 Bacheca di oggi (condivisa)</h3>
+              <p class="small-muted">
+                Messaggi veloci per il collega del turno successivo (promemoria, avvisi, note di reparto).
+              </p>
+              <textarea id="board-text" rows="6"
+                placeholder="Es. Controllare scadenze antibiotici scaffale 3, ricordarsi modulo per il corriere…"></textarea>
+              <div class="card-footer">
+                <button class="btn-primary small-btn" onclick="saveBoard()">Salva bacheca</button>
+                <span id="board-saved" class="saved-label" style="display:none;">Salvato ✔</span>
+              </div>
+            </div>
+
+            <!-- APPUNTI PERSONALI (solo per l'utente) -->
+            <div class="card tall">
+              <h3>📚 Appunti personali</h3>
+              <p class="small-muted">
+                Spazio privato: solo tu puoi vedere questi appunti sul tuo dispositivo.
+              </p>
+              <textarea id="notes-text" rows="6"
+                placeholder="Es. Cose da chiedere a Valerio, prodotti da studiare, dubbi sulle procedure…"></textarea>
+              <div class="card-footer">
+                <button class="btn-primary small-btn" onclick="savePersonalNotes()">Salva appunti</button>
+                <span id="notes-saved" class="saved-label" style="display:none;">Salvato ✔</span>
+              </div>
+            </div>
+
+            <!-- DOCUMENTI CONDIVISI CON TE -->
+            <div class="card tall">
+              <h3>📂 Documenti per te</h3>
+              <p class="small-muted">
+                Documenti approvati dal titolare e assegnati a te o a tutti i dipendenti.
+              </p>
+              <div id="user-documents" class="docs-list"></div>
             </div>
           </div>
         </section>
@@ -147,11 +199,64 @@
           <h2>Comunicazioni interne</h2>
           <div id="message-list" class="list"></div>
         </section>
+
+        <!-- GESTIONE UTENTI (ADMIN) -->
+        <section id="admin-users" class="section">
+          <h2>Gestione utenti</h2>
+
+          <div class="admin-grid">
+            <div class="card">
+              <h3>Richieste di accesso in attesa</h3>
+              <div id="requests-list"></div>
+            </div>
+
+            <div class="card">
+              <h3>Utenti registrati</h3>
+              <div id="users-list"></div>
+              <p class="small-muted">
+                L'utente con ruolo <strong>Admin</strong> sei tu (Valerio) e può gestire tutti gli account.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- GESTIONE DOCUMENTI (ADMIN) -->
+        <section id="admin-docs" class="section">
+          <h2>Documenti e contenuti</h2>
+
+          <div class="card">
+            <h3>Nuovo documento</h3>
+            <label>Titolo</label>
+            <input type="text" id="doc-title" placeholder="Es. Procedura cambio cassa" />
+
+            <label>Contenuto / descrizione</label>
+            <textarea id="doc-content" rows="4" placeholder="Testo della procedura o descrizione del file allegato…"></textarea>
+
+            <label>Destinatario</label>
+            <select id="doc-target">
+              <option value="all">Tutti i dipendenti</option>
+            </select>
+
+            <label>
+              <input type="checkbox" id="doc-publish" checked />
+              Pubblica subito (visibile ai destinatari)
+            </label>
+
+            <button class="btn-primary" onclick="createDocument()">Salva documento</button>
+            <p class="small-muted">
+              Qui salvi il <strong>testo</strong> della procedura o una <strong>nota con link</strong> al file vero (PDF, Word, ecc.).
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Documenti esistenti</h3>
+            <div id="docs-list"></div>
+          </div>
+        </section>
       </main>
     </div>
   </div>
 
-  <!-- JS -->
   <script src="script.js" defer></script>
 </body>
 </html>
