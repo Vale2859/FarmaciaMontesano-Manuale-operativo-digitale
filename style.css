@@ -1,17 +1,14 @@
 /* =======================================================
    FARMACIA MONTESANO – STYLE.CSS COMPLETO
-   Versione definitiva – Grafica moderna, elegante
-   Compatibile con index.html + script.js COMPLETO
+   Stile A: bianco/verde elegante
 ======================================================== */
 
-/* ----------------------------------------------
-   RESET BASE
----------------------------------------------- */
+/* RESET BASE */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", Arial, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 }
 
 body {
@@ -19,16 +16,22 @@ body {
   color: #222;
 }
 
-/* ----------------------------------------------
-   BOTTONI
----------------------------------------------- */
+/* Utility */
+.hidden { display: none; }
+.error-text {
+  color: #d64545;
+  font-size: 13px;
+  margin-top: 8px;
+  text-align: center;
+}
 
+/* Pulsanti */
 .btn-primary {
   background: #0d8a5c;
   color: #fff;
   padding: 10px 15px;
-  border: none;
   border-radius: 8px;
+  border: none;
   cursor: pointer;
   font-size: 14px;
   transition: 0.2s;
@@ -36,6 +39,7 @@ body {
 .btn-primary:hover {
   background: #0b6f49;
 }
+.btn-full { width: 100%; }
 
 .btn-outline {
   background: transparent;
@@ -44,35 +48,33 @@ body {
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 13px;
 }
 .btn-outline:hover {
   background: #0d8a5c;
-  color: white;
+  color: #fff;
 }
 
-/* -----------------------------------------------------
-   LOGIN FULLSCREEN – CON BOX CENTRALE
------------------------------------------------------- */
-
+/* =======================================================
+   LOGIN FULLSCREEN
+======================================================== */
 .auth-fullscreen {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 }
 
-/* sfondo immagine */
+/* sfondo con foto farmacia */
 .auth-bg {
   position: absolute;
   inset: 0;
   background-image: url("farmacia-bg.jpg");
   background-size: cover;
   background-position: center;
-  filter: brightness(0.50);
+  filter: brightness(0.5);
   z-index: 1;
 }
 
@@ -80,179 +82,180 @@ body {
 .auth-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(0,0,0,0.25),
+    rgba(0,0,0,0.55)
+  );
   z-index: 2;
 }
 
-/* box login */
+/* box centrale */
 .auth-center-box {
   position: relative;
   z-index: 3;
   width: 380px;
-  max-width: 90%;
-  background: rgba(255,255,255,0.93);
-  padding: 32px 30px;
-  border-radius: 20px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+  max-width: 95%;
+  padding: 28px 30px 22px;
+  background: rgba(255,255,255,0.94);
+  border-radius: 22px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.4);
+  backdrop-filter: blur(14px);
   text-align: center;
 }
 
-.auth-logo-large {
-  width: 65px;
-  margin-bottom: 10px;
+.auth-logo-wrapper {
+  margin-bottom: 8px;
 }
-
+.auth-logo-large {
+  width: 64px;
+  margin-bottom: 6px;
+}
 .auth-title {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 600;
   color: #083d2a;
 }
-
 .auth-subtitle {
   font-size: 13px;
-  margin-bottom: 20px;
-  color: #1c6a4e;
+  color: #1a5f47;
+  margin-bottom: 16px;
 }
 
-/* input */
+/* campi login/registrazione */
 .auth-center-box label {
-  text-align: left;
   display: block;
-  margin-bottom: 4px;
-  color: #444;
+  text-align: left;
+  margin-bottom: 3px;
   font-size: 13px;
+  color: #555;
 }
-
 .auth-center-box input {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #d0d7e1;
-  margin-bottom: 14px;
+  border: 1px solid #cfd7e2;
+  margin-bottom: 12px;
   font-size: 14px;
 }
 .auth-center-box input:focus {
   outline: none;
   border-color: #0d8a5c;
-  box-shadow: 0 0 5px rgba(13,138,92,0.3);
+  box-shadow: 0 0 0 1px rgba(13,138,92,0.25);
 }
 
 .small-text {
   font-size: 12px;
-  margin-top: 10px;
+  margin-top: 8px;
+}
+.small-text a {
+  color: #0d8a5c;
+  text-decoration: none;
+}
+.small-text a:hover {
+  text-decoration: underline;
+}
+.muted-center {
+  text-align: center;
+  color: #6b7788;
 }
 
-/* -----------------------------------------------------
+/* =======================================================
    PORTALE INTERNO
------------------------------------------------------- */
+======================================================== */
+.portal.hidden { display: none; }
 
-.portal.hidden {
-  display: none;
-}
-
-/* TOPBAR */
+/* Topbar */
 .topbar {
   height: 72px;
-  background: #fff;
-  border-bottom: 1px solid #e3e8ef;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
   padding: 0 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
-
 .topbar-logo-img {
-  width: 42px;
+  width: 40px;
 }
-
 .topbar-title {
   font-size: 18px;
   font-weight: 600;
 }
-
 .topbar-subtitle {
   font-size: 12px;
-  color: #6b7788;
+  color: #6b7a8b;
 }
-
 .topbar-user {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
 .user-pill {
   background: #0d8a5c;
-  color: white;
-  padding: 6px 12px;
+  color: #fff;
+  padding: 5px 10px;
   border-radius: 8px;
   font-size: 13px;
 }
-
 .role-badge {
   background: #072a1d;
   padding: 2px 6px;
   font-size: 11px;
-  border-radius: 5px;
+  border-radius: 6px;
   margin-left: 6px;
 }
 
-/* -----------------------------------------------------
-   LAYOUT PRINCIPALE
------------------------------------------------------- */
+/* Layout */
 .layout {
   display: grid;
   grid-template-columns: 230px 1fr;
   height: calc(100vh - 72px);
 }
 
-/* SIDEBAR */
+/* Sidebar */
 .sidebar {
   background: #083d2a;
-  color: white;
-  padding: 20px 12px;
+  color: #ffffff;
+  padding: 18px 10px;
   overflow-y: auto;
 }
-
 .nav-label {
-  opacity: 0.75;
-  margin-left: 8px;
+  margin-left: 10px;
   margin-bottom: 10px;
   font-size: 13px;
+  opacity: 0.8;
 }
-
 .nav-btn {
   width: 100%;
   background: transparent;
   border: none;
-  color: white;
+  color: #ffffff;
   text-align: left;
-  padding: 12px 14px;
+  padding: 10px 14px;
   border-radius: 8px;
-  margin-bottom: 6px;
   cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 4px;
   transition: 0.2s;
 }
 .nav-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255,255,255,0.15);
 }
 .nav-btn.active {
   background: #12a56c;
 }
 
-/* MAIN CONTENT */
+/* Main content */
 .main {
-  padding: 22px;
+  padding: 20px;
   overflow-y: auto;
 }
-
 .section {
   display: none;
 }
@@ -262,134 +265,220 @@ body {
 
 .section-header h2 {
   font-size: 24px;
-  font-weight: 600;
+  margin-bottom: 4px;
 }
-
 .subtitle {
   font-size: 14px;
-  color: #5f6a75;
-  margin-bottom: 15px;
+  color: #5f6b77;
+  margin-bottom: 16px;
 }
 
-/* -----------------------------------------------------
-   CARD
------------------------------------------------------- */
+/* Card */
 .card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.07);
-  margin-bottom: 20px;
+  padding: 18px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  margin-bottom: 18px;
 }
-
 .card-highlight {
   background: #e6fff2;
 }
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
 
-/* -----------------------------------------------------
-   LISTE
------------------------------------------------------- */
+/* Liste */
 .list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
-
 .list-item {
   background: #f6f9fc;
-  padding: 14px;
-  border-radius: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
 }
-
 .list-item-title {
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
 }
-
 .list-item-meta {
   font-size: 12px;
-  color: #687685;
-  margin-bottom: 6px;
+  color: #6b7788;
+  margin-bottom: 4px;
 }
 
-/* -----------------------------------------------------
-   TABELLE
------------------------------------------------------- */
+.bullet-list {
+  margin-left: 18px;
+  font-size: 14px;
+}
+.bullet-list li {
+  margin-bottom: 4px;
+}
 
+/* Tabelle */
 .table-simple {
   width: 100%;
   border-collapse: collapse;
 }
-
 .table-simple th {
   background: #eef2f7;
-  padding: 11px;
-  font-size: 13px;
+  padding: 9px;
   text-align: left;
-}
-
-.table-simple td {
-  padding: 10px;
   font-size: 13px;
-  border-bottom: 1px solid #e8edf2;
+}
+.table-simple td {
+  padding: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
 }
 
-/* -----------------------------------------------------
-   TAG STATO
------------------------------------------------------- */
+/* Tag e Badge stato */
+.tag {
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #ffffff;
+}
+.tag.subtle {
+  background: #c9d9d4;
+  color: #083d2a;
+}
 
 .status-badge {
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 11px;
-  color: #fff;
+  color: #ffffff;
+}
+.status-approved {
+  background: #0d8a5c;
+}
+.status-rejected {
+  background: #d64545;
+}
+.status-pending {
+  background: #c8a12d;
 }
 
-.status-approved { background: #0d8a5c; }
-.status-rejected { background: #d64545; }
-.status-pending  { background: #c8a12d; }
-
-.tag {
-  padding: 3px 7px;
-  border-radius: 6px;
-  font-size: 11px;
-  color: white;
+/* Griglie */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+.two-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr;
+  gap: 16px;
+}
+.admin-separator {
+  margin: 16px 0;
+  border: none;
+  border-top: 1px solid #e0e4ef;
 }
 
-.tag-red    { background: #d44242; }
-.tag-orange { background: #f5a623; }
-.tag-green  { background: #0d8a5c; }
-.tag.subtle { background: #c9d9d4; color: #083d2a; }
+/* Procedure layout */
+.proc-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+}
+.proc-categories {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.proc-category-btn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.proc-category-btn:hover {
+  background: #f0f4f8;
+}
+.proc-category-btn.active {
+  background: #12a56c;
+  color: #ffffff;
+}
+.proc-content {
+  min-height: 220px;
+}
 
-/* -----------------------------------------------------
-   AREA PERSONALE
------------------------------------------------------- */
+/* Form campi */
+select,
+textarea,
+input[type="date"],
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  font-family: inherit;
+}
+select,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #cfd7e2;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+textarea {
+  resize: vertical;
+}
+.field-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.field-flex {
+  flex: 1;
+}
 
+/* Area personale / formazione */
 .saved-label {
   display: inline-block;
   background: #0d8a5c;
-  color: white;
+  color: #ffffff;
   padding: 4px 8px;
-  margin-left: 6px;
   border-radius: 6px;
+  font-size: 11px;
+  margin-left: 6px;
 }
 
-/* -----------------------------------------------------
-   RESPONSIVE
------------------------------------------------------- */
-
-@media (max-width: 800px) {
+/* Responsive */
+@media (max-width: 780px) {
   .layout {
     grid-template-columns: 1fr;
   }
-
   .sidebar {
     display: flex;
-    gap: 6px;
     flex-wrap: wrap;
+    gap: 4px;
+    height: auto;
   }
-
   .nav-btn {
     width: auto;
+  }
+  .proc-layout {
+    grid-template-columns: 1fr;
+  }
+  .admin-grid {
+    grid-template-columns: 1fr;
   }
 }
