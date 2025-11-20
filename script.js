@@ -182,6 +182,74 @@ function openPortal(user) {
   const portal = document.getElementById("portal");
   const loginBox = document.getElementById("login-box");
   const registerBox = document.getElementById("register-box");
+  const authCard = document.querySelector(".auth-card");
+  const authScreen = document.querySelector(".auth-screen");
+
+  // 🔴 Nascondi TUTTO quello che riguarda il login
+  if (auth) auth.classList.add("hidden");
+  if (loginBox) loginBox.classList.add("hidden");
+  if (registerBox) registerBox.classList.add("hidden");
+  if (authCard) authCard.style.display = "none";
+  if (authScreen) authScreen.style.display = "none";
+
+  // ✅ Mostra il portale
+  if (portal) portal.classList.remove("hidden");
+
+  // Dati utente in alto
+  const nameDisplay = document.getElementById("user-name-display");
+  const roleDisplay = document.getElementById("user-role-display");
+  if (nameDisplay) nameDisplay.textContent = user.name || "";
+  if (roleDisplay) {
+    roleDisplay.textContent =
+      user.role === "admin" ? "Titolare / Admin" : "Dipendente";
+  }
+
+  // Titolo dashboard
+  const homeTitle = document.getElementById("home-title");
+  if (homeTitle) {
+    homeTitle.textContent = "Ciao " + user.name + ", benvenuto nel portale";
+  }
+
+  // Riepilogo profilo
+  const info = document.getElementById("user-info");
+  if (info) {
+    info.innerHTML =
+      "<strong>Nome:</strong> " +
+      user.name +
+      "<br><strong>Email:</strong> " +
+      user.email +
+      "<br><strong>Ruolo:</strong> " +
+      (user.role === "admin" ? "Titolare / Admin" : "Dipendente");
+  }
+
+  // Mostra voce Admin solo a te
+  const navAdmin = document.getElementById("nav-admin");
+  if (navAdmin) {
+    if (user.role === "admin") navAdmin.classList.remove("hidden");
+    else navAdmin.classList.add("hidden");
+  }
+
+  // Inizializza contenuti
+  initHome(user);
+  renderProcedures(user);
+  renderMessages(user);
+  renderLeaveTable(user);
+  renderTraining(user);
+  renderLogistics();
+  loadPersonalData(user);
+  if (user.role === "admin") {
+    renderAdminUsers();
+    renderAdminProceduresList();
+    renderAdminLeaveList();
+    populateMessageTargets();
+  }
+
+  // Vai su Dashboard
+  showSection("home", document.getElementById("nav-home"));
+}  const auth = document.getElementById("auth");
+  const portal = document.getElementById("portal");
+  const loginBox = document.getElementById("login-box");
+  const registerBox = document.getElementById("register-box");
 
   if (auth) auth.classList.add("hidden");
   if (loginBox) loginBox.classList.add("hidden");
