@@ -25,50 +25,42 @@
         </div>
 
         <!-- LOGIN -->
-        <div id="login-box">
-          <h2 class="login-title">Accesso al portale</h2>
+<div id="login-box">
+  <h2 class="login-title">Accesso al portale</h2>
 
-          <label for="login-role">Tipo di accesso</label>
-          <select id="login-role">
-            <option value="dipendente">Dipendente</option>
-            <option value="admin">Titolare</option>
-            <option value="cliente">Cliente</option>
-          </select>
+  <label for="login-email">Email</label>
+  <input
+    type="email"
+    id="login-email"
+    placeholder="nome@farmaciamontesano.it"
+  />
 
-          <label for="login-email">Email</label>
-          <input
-            type="email"
-            id="login-email"
-            placeholder="nome@farmaciamontesano.it"
-          />
+  <label for="login-password">Password</label>
+  <div class="password-row">
+    <input
+      type="password"
+      id="login-password"
+      placeholder="Password"
+    />
+    <button
+      type="button"
+      class="btn-eye"
+      onclick="togglePassword()"
+      aria-label="Mostra / nascondi password"
+    >
+      👁
+    </button>
+  </div>
 
-          <label for="login-password">Password</label>
-          <div class="password-row">
-            <input
-              type="password"
-              id="login-password"
-              placeholder="Password"
-            />
-            <button
-              type="button"
-              class="btn-eye"
-              onclick="togglePassword()"
-              aria-label="Mostra / nascondi password"
-            >
-              👁
-            </button>
-          </div>
+  <button class="btn-primary" onclick="login()">Entra</button>
 
-          <button class="btn-primary" onclick="login()">Entra</button>
+  <p class="small-text">
+    Non hai ancora un account?
+    <a href="#" onclick="showRegister(event)">Registrati</a>
+  </p>
 
-          <p class="small-text">
-            Non hai ancora un account?
-            <a href="#" onclick="showRegister(event)">Registrati</a>
-          </p>
-
-          <p id="auth-error" class="error hidden"></p>
-        </div>
-
+  <p id="auth-error" class="error hidden"></p>
+</div>
         <!-- REGISTRAZIONE DIPENDENTI -->
         <div id="register-box" class="hidden">
           <h2 class="login-title">Richiesta registrazione</h2>
