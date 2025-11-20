@@ -5,6 +5,7 @@
 
 const LS_USERS = "fm_users";
 const LS_ACTIVE = "fm_activeUser";
+const LS_ABSENCES = "fm_absences"; // assenze dipendenti
 const LS_PROCEDURES = "fm_procedures";
 const LS_MESSAGES = "fm_messages";
 const LS_LEAVE = "fm_leave";
