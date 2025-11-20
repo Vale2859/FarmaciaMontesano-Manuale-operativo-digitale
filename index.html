@@ -117,60 +117,86 @@
       <main class="main">
         <!-- DASHBOARD -->
         <section id="home" class="section visible">
-          <div class="section-header">
-            <h2 id="home-title">Benvenuto nel Portale</h2>
-            <p class="subtitle">
-              Riepilogo rapido di ciò che è importante oggi in farmacia: avvisi, procedure veloci, ferie e comunicazioni.
-            </p>
-          </div>
+  <div class="home-app-wrapper">
+    <div class="app-phone">
+      <div class="app-header">
+        <div class="app-header-top">
+          <span class="app-status-pill">FARMACIA APERTA</span>
+          <span class="app-header-time">08:00–13:00 · 15:00–20:00</span>
+          <span class="app-header-city">Matera</span>
+        </div>
+        <div class="app-header-title">
+          <span class="app-header-name">Farmacia Montesano</span>
+          <span class="app-header-sub">Portale dipendenti</span>
+        </div>
+      </div>
 
-          <div class="cards-grid">
-            <div class="card card-highlight">
-              <div class="card-header-row">
-                <h3>📌 Avvisi del giorno</h3>
-                <span class="tag subtle" id="home-daytag"></span>
-              </div>
-              <ul id="home-highlights" class="bullet-list"></ul>
-            </div>
+      <div class="app-grid">
+        <!-- PRIMA RIGA -->
+        <button class="app-tile app-tile-orange"
+          onclick="showSection('leave', document.getElementById('nav-leave'))">
+          <span class="app-tile-icon">🗓</span>
+          <span class="app-tile-text">Prenota ferie</span>
+        </button>
 
-            <div class="card">
-              <h3>📄 Procedure rapide di cassa</h3>
-              <div id="home-quick-proc" class="quick-links"></div>
-            </div>
+        <button class="app-tile app-tile-green"
+          onclick="showSection('procedures', document.getElementById('nav-proc'))">
+          <span class="app-tile-icon">📄</span>
+          <span class="app-tile-text">Procedure</span>
+        </button>
 
-            <div class="card">
-              <h3>🗓 Prossime assenze</h3>
-              <div id="home-leave-summary" class="leave-summary"></div>
-            </div>
-          </div>
+        <!-- SECONDA RIGA -->
+        <button class="app-tile app-tile-pink"
+          onclick="showSection('messages', document.getElementById('nav-msg'))">
+          <span class="app-tile-icon">📣</span>
+          <span class="app-tile-text">Comunicazioni</span>
+        </button>
 
-          <div class="home-grid">
-            <div class="card">
-              <h3>👤 Profilo dipendente</h3>
-              <div id="user-info"></div>
-            </div>
+        <button class="app-tile app-tile-blue"
+          onclick="showSection('training', document.getElementById('nav-train'))">
+          <span class="app-tile-icon">🎓</span>
+          <span class="app-tile-text">Formazione</span>
+        </button>
 
-            <div class="card">
-              <h3>📝 Appunti rapidi (solo per te)</h3>
-              <textarea id="quick-notes" rows="5"
-                placeholder="Es. Cose da chiedere al titolare, prodotti da approfondire..."></textarea>
-              <div class="card-actions-row">
-                <button class="btn-primary small" onclick="saveQuickNotes()">Salva</button>
-                <span id="quick-saved" class="saved-label hidden">Salvato ✔</span>
-              </div>
-            </div>
+        <!-- TERZA RIGA -->
+        <button class="app-tile app-tile-yellow"
+          onclick="showSection('logistics', document.getElementById('nav-log'))">
+          <span class="app-tile-icon">📦</span>
+          <span class="app-tile-text">Logistica</span>
+        </button>
 
-            <div class="card">
-              <h3>📦 Riepilogo logistica</h3>
-              <ul class="bullet-list" id="home-logistics-summary"></ul>
-            </div>
-          </div>
+        <button class="app-tile app-tile-purple"
+          onclick="showSection('personal', document.getElementById('nav-personal'))">
+          <span class="app-tile-icon">🔐</span>
+          <span class="app-tile-text">Area personale</span>
+        </button>
 
-          <div class="card">
-            <h3>Ultime comunicazioni interne</h3>
-            <div id="home-last-messages" class="list"></div>
-          </div>
-        </section>
+        <!-- QUARTA RIGA -->
+        <button class="app-tile app-tile-grey" onclick="showSection('home', document.getElementById('nav-home'))">
+          <span class="app-tile-icon">💊</span>
+          <span class="app-tile-text">Consigli banco</span>
+        </button>
+
+        <button class="app-tile app-tile-teal"
+          onclick="showSection('admin', document.getElementById('nav-admin'))">
+          <span class="app-tile-icon">👑</span>
+          <span class="app-tile-text">Admin</span>
+        </button>
+      </div>
+
+      <div class="app-bottom-nav">
+        <button class="app-nav-btn app-nav-btn-active"
+          onclick="showSection('home', document.getElementById('nav-home'))">Home</button>
+        <button class="app-nav-btn"
+          onclick="showSection('procedures', document.getElementById('nav-proc'))">Procedure</button>
+        <button class="app-nav-btn"
+          onclick="showSection('messages', document.getElementById('nav-msg'))">Messaggi</button>
+        <button class="app-nav-btn"
+          onclick="showSection('leave', document.getElementById('nav-leave'))">Ferie</button>
+      </div>
+    </div>
+  </div>
+</section>
 
         <!-- PROCEDURE -->
         <section id="procedures" class="section">
