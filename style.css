@@ -924,3 +924,52 @@ button {
     box-shadow: none;
   }
 }
+
+/* ====== FIX VISUALIZZAZIONE PC – SCHERMO INTERO ====== */
+
+/* Su schermi larghi (PC) disattiva la modalità telefono */
+@media (min-width: 900px) {
+
+  /* Contenitore della home: schermo intero */
+  .home-app-wrapper {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    display: block !important;
+  }
+
+  /* Rimuove il bordo del telefono */
+  .app-phone {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 20px !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 25px !important;
+    background: #ffffff !important;
+  }
+
+  /* Griglia dei pulsanti più grande e più bella su PC */
+  .app-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 18px !important;
+  }
+
+  .app-tile {
+    min-height: 110px !important;
+    font-size: 18px !important;
+    padding: 16px !important;
+  }
+
+  /* Card iniziale più larga */
+  .app-header {
+    padding: 20px !important;
+    font-size: 18px !important;
+  }
+
+  /* Bottom nav adattata */
+  .app-bottom-nav {
+    margin-top: 20px !important;
+    padding: 10px 12px !important;
+  }
+}
