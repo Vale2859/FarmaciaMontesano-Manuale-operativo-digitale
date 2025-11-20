@@ -7,40 +7,63 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- SCHERMATA LOGIN / REGISTRAZIONE -->
-  <div id="auth" class="auth-screen">
+ <!-- SCHERMATA LOGIN / REGISTRAZIONE -->
+<div id="auth" class="auth-screen">
+
     <div class="auth-card">
-     <div class="auth-logo-only">
-  <img src="logo-farmacia-montesano.png" alt="Farmacia Montesano" class="auth-logo-img" />
+
+        <!-- LOGO SOLO -->
+        <div class="auth-logo-only">
+            <img src="logo-farmacia-montesano.jpg"
+                 alt="Farmacia Montesano"
+                 class="auth-logo-img" />
+        </div>
+
+        <!-- LOGIN -->
+        <div id="login-box">
+            <h2 class="login-title">Accesso Dipendenti</h2>
+
+            <label>Email</label>
+            <input type="email" id="login-email" placeholder="nome@farmaciamontesano.it" />
+
+            <label>Password</label>
+            <div class="password-row">
+                <input type="password" id="login-password" placeholder="Password" />
+                <button type="button" class="btn-eye" onclick="togglePassword()" aria-label="Mostra / nascondi password">👁</button>
+            </div>
+
+            <button class="btn-primary" onclick="login()">Entra</button>
+
+            <p class="small-text">
+                Non hai ancora un account?
+                <a href="#" onclick="showRegister()">Registrati</a>
+            </p>
+        </div>
+
+        <!-- REGISTRAZIONE -->
+        <div id="register-box" class="hidden">
+            <h2 class="login-title">Registrazione</h2>
+
+            <label>Nome e Cognome</label>
+            <input type="text" id="reg-name" placeholder="Mario Rossi" />
+
+            <label>Email</label>
+            <input type="email" id="reg-email" placeholder="nome@farmaciamontesano.it" />
+
+            <label>Password</label>
+            <input type="password" id="reg-password" placeholder="Password" />
+
+            <button class="btn-primary" onclick="registerUser()">Crea account</button>
+
+            <p class="small-text">
+                Hai già un account?
+                <a href="#" onclick="showLogin()">Accedi</a>
+            </p>
+        </div>
+
+        <p id="auth-error" class="error hidden"></p>
+    </div>
 </div>
-
-      <!-- LOGIN -->
-     <div id="login-box">
-  <h2>Accesso dipendenti</h2>
-
-  <label>Email</label>
-  <input type="email" id="login-email" placeholder="nome@farmaciamontesano.it" />
-
-  <label>Password</label>
-  <div class="password-row">
-    <input type="password" id="login-password" placeholder="Password" />
-    <button type="button" class="btn-eye" onclick="togglePassword()" aria-label="Mostra / nascondi password">
-      👁
-    </button>
-  </div>
-
-  <button class="btn-primary" onclick="login()">Entra</button>
-
-  <p class="small-text">
-    Non hai un account?
-    <a href="#" onclick="showRegister(event)">Richiedi registrazione</a>
-  </p>
-  <p class="small-text">
-    Password dimenticata? <br />
-    <strong>Solo il titolare può reimpostarla dall'area Admin.</strong>
-  </p>
-</div>
-
       <!-- REGISTRAZIONE -->
       <div id="register-box" class="hidden">
         <h2>Nuovo dipendente</h2>
