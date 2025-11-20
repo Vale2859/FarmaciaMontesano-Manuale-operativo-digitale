@@ -204,7 +204,12 @@ function openPortal(user) {
 
   // Mostra sezione HOME e schermata app principale
   showSection("home");
+   function goHome() {
+  showSection("home");
   if (typeof showAppScreen === "function") {
+    showAppScreen("home");
+  }
+}  if (typeof showAppScreen === "function") {
     showAppScreen("home");
   }
   if (typeof renderApprovedAbsences === "function") {
