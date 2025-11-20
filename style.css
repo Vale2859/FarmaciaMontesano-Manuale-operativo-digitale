@@ -733,3 +733,130 @@ body {
     font-size: 34px;
   }
 }
+/* =======================================================
+   ACCESSIBILITÀ – TUTTO PIÙ GRANDE (PC + MOBILE)
+   ======================================================= */
+
+/* Font base un po' più grande ovunque */
+body {
+  font-size: 18px;
+}
+
+/* --- TOP BAR IN ALTO (logo, nome operatore, Home, Logout) --- */
+
+.topbar {
+  padding: 14px 28px;
+}
+
+.topbar-title {
+  font-size: 22px;
+}
+
+.topbar-subtitle {
+  font-size: 15px;
+}
+
+.topbar-user {
+  gap: 10px;
+}
+
+.user-pill {
+  font-size: 16px;
+  padding: 6px 14px;
+}
+
+.role-badge {
+  font-size: 14px;
+  padding: 4px 10px;
+}
+
+/* pulsanti Home / Logout */
+.btn-outline {
+  font-size: 16px;
+  padding: 8px 18px;
+}
+
+/* --- CARD CENTRALE TIPO APP --- */
+
+/* Il “telefono” al centro diventa molto più grande sul PC */
+.home-app-wrapper {
+  padding-top: 12px;
+}
+
+.app-phone {
+  max-width: 1100px;       /* PRIMA era molto più stretto */
+  padding: 24px 20px 18px;
+}
+
+/* Testi parte alta verde della card */
+.app-header-name {
+  font-size: 22px;
+}
+
+.app-header-sub {
+  font-size: 15px;
+}
+
+.app-status-pill {
+  font-size: 13px;
+  padding: 4px 10px;
+}
+
+/* --- PIASTRE (Assenze, Procedure, …) --- */
+
+.app-grid {
+  gap: 14px;
+}
+
+.app-tile {
+  min-height: 120px;       /* box più alti */
+  padding: 16px 14px;
+}
+
+.app-tile-icon {
+  font-size: 32px;         /* icone molto più grandi */
+}
+
+.app-tile-text {
+  font-size: 18px;         /* scritta del pulsante più grande */
+}
+
+/* --- NAVIGAZIONE IN BASSO (Home, Assenze, ecc.) --- */
+
+.app-bottom-nav {
+  padding: 8px 10px;
+}
+
+.app-nav-btn {
+  font-size: 16px;
+  padding: 8px 6px;
+}
+
+/* --- Testi interni (liste, assenze, comunicazioni) --- */
+
+.app-section-title {
+  font-size: 18px;
+}
+
+.list-item {
+  font-size: 16px;
+}
+
+.list-item-meta {
+  font-size: 14px;
+}
+
+.absence-pill {
+  font-size: 15px;
+}
+
+.absence-pill span.absence-meta {
+  font-size: 14px;
+}
+
+/* Su schermi grandi ancora un filo più grande */
+@media (min-width: 1200px) {
+  .app-phone {
+    max-width: 1250px;
+  }
+}
