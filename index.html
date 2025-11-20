@@ -20,27 +20,31 @@
       </div>
 
       <!-- LOGIN -->
-      <div id="login-box">
-        <h2>Accesso dipendenti</h2>
+     <div id="login-box">
+  <h2>Accesso dipendenti</h2>
 
-        <label>Email</label>
-        <input type="email" id="login-email" placeholder="nome@farmaciamontesano.it" />
+  <label>Email</label>
+  <input type="email" id="login-email" placeholder="nome@farmaciamontesano.it" />
 
-        <label>Password</label>
-        <input type="password" id="login-password" placeholder="Password" />
+  <label>Password</label>
+  <div class="password-row">
+    <input type="password" id="login-password" placeholder="Password" />
+    <button type="button" class="btn-eye" onclick="togglePassword()" aria-label="Mostra / nascondi password">
+      👁
+    </button>
+  </div>
 
-        <button class="btn-primary" onclick="login()">Entra</button>
+  <button class="btn-primary" onclick="login()">Entra</button>
 
-        <p class="small-text">
-          Non hai un account?
-          <a href="#" onclick="showRegister(event)">Richiedi registrazione</a>
-        </p>
-
-        <p class="small-text">
-          Password dimenticata? <br />
-          <strong>Solo il titolare può reimpostarla dall'Area Admin.</strong>
-        </p>
-      </div>
+  <p class="small-text">
+    Non hai un account?
+    <a href="#" onclick="showRegister(event)">Richiedi registrazione</a>
+  </p>
+  <p class="small-text">
+    Password dimenticata? <br />
+    <strong>Solo il titolare può reimpostarla dall'area Admin.</strong>
+  </p>
+</div>
 
       <!-- REGISTRAZIONE -->
       <div id="register-box" class="hidden">
