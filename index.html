@@ -7,43 +7,27 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <!-- =========================================================
-       LOGIN FULLSCREEN – FARMACIA MONTESANO
-       Schermata di accesso per dipendenti + registrazione
-  ========================================================== -->
-  <div id="auth" class="auth-fullscreen">
-    <!-- Sfondo a tutto schermo (foto farmacia-bg.jpg) -->
-    <div class="auth-bg"></div>
-    <!-- Velo scuro sopra lo sfondo -->
-    <div class="auth-overlay"></div>
-
-    <!-- Box centrale con login / registrazione -->
-    <div class="auth-center-box">
-
-      <!-- Logo + titoli -->
-      <div class="auth-logo-wrapper">
-        <!-- Usa il tuo logo con questo nome file -->
-        <img src="logo-farmacia-montesano.png"
-             alt="Farmacia Montesano"
-             class="auth-logo-large" />
-        <h1 class="auth-title">Farmacia Montesano</h1>
-        <p class="auth-subtitle">Portale professionale interno</p>
+  <!-- SCHERMATA LOGIN / REGISTRAZIONE -->
+  <div id="auth" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo-row">
+        <!-- Metti nella stessa cartella un file chiamato logo-farmacia-montesano.png -->
+        <img src="logo-farmacia-montesano.png" alt="Farmacia Montesano" class="auth-logo" />
+        <div>
+          <h1 class="logo-title">Farmacia Montesano</h1>
+          <p class="logo-subtitle">Portale professionale interno</p>
+        </div>
       </div>
 
-      <!-- BOX LOGIN (predefinito visibile) -->
+      <!-- LOGIN -->
       <div id="login-box">
-        <label for="login-email">Email</label>
-        <input
-          type="email"
-          id="login-email"
-          placeholder="nome@farmaciamontesano.it" />
+        <h2>Accesso dipendenti</h2>
 
-        <label for="login-password">Password</label>
-        <input
-          type="password"
-          id="login-password"
-          placeholder="Password" />
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="nome@farmaciamontesano.it" />
+
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Password" />
 
         <button class="btn-primary" onclick="login()">Entra</button>
 
@@ -53,36 +37,29 @@
         </p>
 
         <p class="small-text">
-          Password dimenticata?<br />
-          <strong>Solo il titolare può reimpostarla dall'area Admin.</strong>
+          Password dimenticata? <br />
+          <strong>Solo il titolare può reimpostarla dall'Area Admin.</strong>
         </p>
       </div>
 
-      <!-- BOX REGISTRAZIONE (inizialmente nascosto da .hidden) -->
+      <!-- REGISTRAZIONE -->
       <div id="register-box" class="hidden">
         <h2>Nuovo dipendente</h2>
 
-        <label for="reg-name">Nome e cognome</label>
-        <input
-          type="text"
-          id="reg-name"
-          placeholder="Es. Daniela Andrisani" />
+        <label>Nome e cognome</label>
+        <input type="text" id="reg-name" placeholder="Es. Daniela Andrisani" />
 
-        <label for="reg-email">Email aziendale</label>
-        <input
-          type="email"
-          id="reg-email"
-          placeholder="Es. daniela@farmaciamontesano.it" />
+        <label>Email aziendale</label>
+        <input type="email" id="reg-email" placeholder="Es. daniela@farmaciamontesano.it" />
 
-        <label for="reg-password">Password iniziale</label>
-        <input
-          type="password"
-          id="reg-password"
-          placeholder="Crea una password" />
+        <label>Password iniziale</label>
+        <input type="password" id="reg-password" placeholder="Crea una password" />
 
-        <button class="btn-primary" onclick="registerUser()">
-          Crea account
-        </button>
+        <button class="btn-primary" onclick="registerUser()">Invia richiesta</button>
+
+        <p class="small-text">
+          L'account resterà in attesa finché l'Admin non lo approva.
+        </p>
 
         <p class="small-text">
           Hai già un account?
@@ -90,169 +67,175 @@
         </p>
       </div>
 
-      <!-- Messaggi di errore login/registrazione -->
       <p id="auth-error" class="error-text hidden"></p>
 
-      <!-- Nota legale in basso nel box -->
-      <p class="small-text muted-center" style="margin-top: 10px;">
-        L'utilizzo del portale è riservato al personale autorizzato della
-        Farmacia Montesano.
+      <p class="small-text muted-center">
+        L'utilizzo del portale è riservato al personale autorizzato della Farmacia Montesano.
       </p>
     </div>
   </div>
 
-  <!-- =========================================================
-       PORTALE INTERNO – VISIBILE DOPO LOGIN
-  ========================================================== -->
+  <!-- PORTALE INTERNO -->
   <div id="portal" class="portal hidden">
-
-    <!-- ================== TOPBAR ================== -->
+    <!-- TOPBAR -->
     <header class="topbar">
       <div class="topbar-left">
-        <img
-          src="logo-farmacia-montesano.png"
-          class="topbar-logo-img"
-          alt="Logo Farmacia Montesano" />
+        <img src="logo-farmacia-montesano.png" alt="Farmacia Montesano" class="topbar-logo-img" />
         <div>
           <div class="topbar-title">Farmacia Montesano</div>
-          <div class="topbar-subtitle">Portale operativo interno</div>
+          <div class="topbar-subtitle">Portale professionale interno</div>
         </div>
       </div>
-
       <div class="topbar-user">
-        <span class="user-pill">
-          <span id="user-name-display">Utente</span>
-          <span id="user-role-display" class="role-badge">Ruolo</span>
-        </span>
+        <div class="user-pill">
+          <span id="user-name-display"></span>
+          <span id="user-role-display" class="role-badge"></span>
+        </div>
         <button class="btn-outline" onclick="logout()">Logout</button>
       </div>
     </header>
 
-    <!-- ================== LAYOUT PRINCIPALE ================== -->
     <div class="layout">
-      <!-- ---------- SIDEBAR DI NAVIGAZIONE ---------- -->
+      <!-- SIDEBAR -->
       <aside class="sidebar">
         <div class="nav-label">Navigazione</div>
-
-        <button
-          id="nav-home"
-          class="nav-btn active"
-          onclick="showSection('home', this)">
-          Dashboard
-        </button>
-
-        <button
-          id="nav-procedure"
-          class="nav-btn"
-          onclick="showSection('procedure', this)">
-          Procedure
-        </button>
-
-        <button
-          id="nav-comunicazioni"
-          class="nav-btn"
-          onclick="showSection('comunicazioni', this)">
-          Comunicazioni
-        </button>
-
-        <button
-          id="nav-leave"
-          class="nav-btn"
-          onclick="showSection('leave', this)">
-          Ferie &amp; permessi
-        </button>
-
-        <button
-          id="nav-training"
-          class="nav-btn"
-          onclick="showSection('training', this)">
-          Formazione
-        </button>
-
-        <button
-          id="nav-personal"
-          class="nav-btn"
-          onclick="showSection('personal', this)">
-          Area personale
-        </button>
-
-        <button
-          id="nav-admin"
-          class="nav-btn hidden"
-          onclick="showSection('admin', this)">
-          Area Admin
-        </button>
+        <button class="nav-btn active" id="nav-home" onclick="showSection('home', this)">🏠 Dashboard</button>
+        <button class="nav-btn" id="nav-proc" onclick="showSection('procedures', this)">📄 Procedure</button>
+        <button class="nav-btn" id="nav-msg" onclick="showSection('messages', this)">📣 Comunicazioni</button>
+        <button class="nav-btn" id="nav-leave" onclick="showSection('leave', this)">🗓 Ferie &amp; permessi</button>
+        <button class="nav-btn" id="nav-train" onclick="showSection('training', this)">🎓 Formazione</button>
+        <button class="nav-btn" id="nav-log" onclick="showSection('logistics', this)">📦 Logistica &amp; scadenze</button>
+        <button class="nav-btn" id="nav-personal" onclick="showSection('personal', this)">🔐 Area personale</button>
+        <button class="nav-btn hidden" id="nav-admin" onclick="showSection('admin', this)">👑 Area Admin</button>
       </aside>
 
-      <!-- ---------- CONTENUTO PRINCIPALE ---------- -->
+      <!-- CONTENUTO -->
       <main class="main">
-
-        <!-- =========================================
-             SEZIONE: DASHBOARD
-        ========================================== -->
+        <!-- DASHBOARD -->
         <section id="home" class="section visible">
           <div class="section-header">
-            <h2>Dashboard</h2>
+            <h2 id="home-title">Benvenuto nel Portale</h2>
             <p class="subtitle">
-              Riepilogo rapido di ciò che è importante oggi in farmacia:
-              avvisi, procedure veloci, richieste ferie e comunicazioni.
+              Riepilogo rapido di ciò che è importante oggi in farmacia: avvisi, procedure veloci, ferie e comunicazioni.
             </p>
           </div>
 
           <div class="cards-grid">
-            <!-- Avvisi del giorno -->
             <div class="card card-highlight">
               <div class="card-header-row">
-                <h3>Avvisi del giorno</h3>
-                <span id="home-daytag" class="tag subtle"></span>
+                <h3>📌 Avvisi del giorno</h3>
+                <span class="tag subtle" id="home-daytag"></span>
               </div>
-              <ul id="home-highlights" class="bullet-list">
-                <!-- Popolato dallo script -->
-              </ul>
+              <ul id="home-highlights" class="bullet-list"></ul>
             </div>
 
-            <!-- Procedure rapide -->
             <div class="card">
-              <h3>Procedure rapide di cassa</h3>
-              <p class="subtitle">
-                Le procedure che usiamo più spesso: anticipi, ticket,
-                scontrini particolari, sotto cassa, ecc.
-              </p>
-              <div id="home-quick-proc" class="quick-links">
-                <!-- Link generati dallo script -->
-              </div>
+              <h3>📄 Procedure rapide di cassa</h3>
+              <div id="home-quick-proc" class="quick-links"></div>
             </div>
 
-            <!-- Logistica -->
             <div class="card">
-              <h3>Logistica &amp; scadenze</h3>
-              <p class="subtitle">
-                Note su spedizioni in arrivo, scadenze importanti, turni,
-                consegne, ritiro resi.
-              </p>
-              <ul id="home-logistics-summary" class="bullet-list">
-                <!-- Voci generate dallo script -->
-              </ul>
+              <h3>🗓 Prossime assenze</h3>
+              <div id="home-leave-summary" class="leave-summary"></div>
             </div>
           </div>
 
-          <div class="cards-grid">
-            <!-- Comunicazioni recenti -->
+          <div class="home-grid">
             <div class="card">
-              <h3>Ultime comunicazioni interne</h3>
-              <div id="home-messages" class="list">
-                <!-- Replica delle comunicazioni principali -->
+              <h3>👤 Profilo dipendente</h3>
+              <div id="user-info"></div>
+            </div>
+
+            <div class="card">
+              <h3>📝 Appunti rapidi (solo per te)</h3>
+              <textarea id="quick-notes" rows="5"
+                placeholder="Es. Cose da chiedere al titolare, prodotti da approfondire..."></textarea>
+              <div class="card-actions-row">
+                <button class="btn-primary small" onclick="saveQuickNotes()">Salva</button>
+                <span id="quick-saved" class="saved-label hidden">Salvato ✔</span>
               </div>
             </div>
 
-            <!-- Riepilogo ferie personali -->
             <div class="card">
-              <h3>Le tue richieste ferie / permessi</h3>
-              <p class="subtitle">
-                Stato rapido delle tue ultime richieste, per sapere cosa è
-                approvato e cosa è ancora in attesa.
-              </p>
-              <table class="table-simple" id="home-leave-table">
+              <h3>📦 Riepilogo logistica</h3>
+              <ul class="bullet-list" id="home-logistics-summary"></ul>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Ultime comunicazioni interne</h3>
+            <div id="home-last-messages" class="list"></div>
+          </div>
+        </section>
+
+        <!-- PROCEDURE -->
+        <section id="procedures" class="section">
+          <h2>Procedure interne</h2>
+          <p class="subtitle">
+            Tutte le procedure ufficiali della Farmacia Montesano, sempre aggiornate.
+          </p>
+
+          <div class="proc-layout">
+            <div class="proc-categories">
+              <div class="proc-cat-title">Categorie</div>
+              <div id="proc-categories"></div>
+            </div>
+            <div class="proc-content">
+              <div id="proc-list" class="list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMUNICAZIONI -->
+        <section id="messages" class="section">
+          <h2>Comunicazioni interne</h2>
+          <p class="subtitle">
+            Messaggi ufficiali dal titolare o dai responsabili. Le comunicazioni urgenti sono evidenziate.
+          </p>
+          <div id="message-list" class="list"></div>
+        </section>
+
+        <!-- FERIE & PERMESSI -->
+        <section id="leave" class="section">
+          <h2>Ferie &amp; permessi</h2>
+          <p class="subtitle">
+            Invia richieste e controlla lo stato di ferie, permessi e recuperi ore.
+          </p>
+
+          <div class="two-cols">
+            <div class="card">
+              <h3>Nuova richiesta</h3>
+              <label>Tipo</label>
+              <select id="leave-type">
+                <option value="ferie">Ferie</option>
+                <option value="permesso_orario">Permesso orario</option>
+                <option value="permesso_giornata">Permesso giornata</option>
+                <option value="recupero_ore">Recupero ore</option>
+              </select>
+
+              <div class="field-row">
+                <div>
+                  <label>Data / inizio</label>
+                  <input type="date" id="leave-start" />
+                </div>
+                <div>
+                  <label>Data fine (opzionale)</label>
+                  <input type="date" id="leave-end" />
+                </div>
+              </div>
+
+              <label>Note (opzionali)</label>
+              <textarea id="leave-note" rows="3"
+                placeholder="Es. permesso per visita medica, ferie estive, ecc."></textarea>
+
+              <button class="btn-primary small" style="margin-top:10px;" onclick="sendLeaveRequest()">
+                Invia richiesta
+              </button>
+            </div>
+
+            <div class="card">
+              <h3>Le tue richieste</h3>
+              <table class="table-simple" id="leave-table">
                 <thead>
                   <tr>
                     <th>Data richiesta</th>
@@ -261,371 +244,179 @@
                     <th>Stato</th>
                   </tr>
                 </thead>
-                <tbody id="home-leave-body">
-                  <!-- Popolato dallo script -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Promemoria area personale -->
-            <div class="card">
-              <h3>Area personale</h3>
-              <p class="subtitle">
-                Nella tua area privata puoi annotare appunti personali,
-                promemoria documenti, cose da ricordare per i prossimi
-                turni o corsi.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- =========================================
-             SEZIONE: PROCEDURE
-        ========================================== -->
-        <section id="procedure" class="section">
-          <div class="section-header">
-            <h2>Procedure interne</h2>
-            <p class="subtitle">
-              Anticipi, ticket, scontrini particolari, gestione POS,
-              sotto cassa, magazzino, resi… Tutto raccolto in un unico
-              posto chiaro e aggiornato.
-            </p>
-          </div>
-
-          <div class="proc-layout">
-            <!-- Colonna di sinistra: categorie -->
-            <div class="proc-categories" id="proc-categories">
-              <!-- Categorie generate dallo script (Cassa, POS, Magazzino...) -->
-            </div>
-
-            <!-- Colonna di destra: elenco procedure nella categoria selezionata -->
-            <div class="proc-content">
-              <div id="proc-list" class="list">
-                <!-- Procedure generate dallo script -->
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- =========================================
-             SEZIONE: COMUNICAZIONI
-        ========================================== -->
-        <section id="comunicazioni" class="section">
-          <div class="section-header">
-            <h2>Comunicazioni interne</h2>
-            <p class="subtitle">
-              Note del giorno, errori da evitare, comunicazioni veloci
-              sui turni, promozioni, consegne speciali e formazione.
-            </p>
-          </div>
-
-          <div id="message-list-section" class="list">
-            <div id="message-list" class="list">
-              <!-- Messaggi caricati dallo script -->
-            </div>
-          </div>
-        </section>
-
-        <!-- =========================================
-             SEZIONE: FERIE & PERMESSI
-        ========================================== -->
-        <section id="leave" class="section">
-          <div class="section-header">
-            <h2>Ferie &amp; permessi</h2>
-            <p class="subtitle">
-              Invia una nuova richiesta e tieni tutto ordinato: ferie,
-              permessi retribuiti o non retribuiti, note per il titolare.
-            </p>
-          </div>
-
-          <div class="two-cols">
-            <!-- Colonna sinistra: nuova richiesta -->
-            <div class="card">
-              <h3>Nuova richiesta</h3>
-
-              <label for="leave-type">Tipo</label>
-              <select id="leave-type">
-                <option value="Ferie">Ferie</option>
-                <option value="Permesso retribuito">Permesso retribuito</option>
-                <option value="Permesso non retribuito">
-                  Permesso non retribuito
-                </option>
-                <option value="Malattia (segnalazione)">
-                  Malattia (segnalazione)
-                </option>
-              </select>
-
-              <div class="field-row">
-                <div class="field-flex">
-                  <label for="leave-start">Data inizio</label>
-                  <input type="date" id="leave-start" />
-                </div>
-                <div class="field-flex">
-                  <label for="leave-end">Data fine (opzionale)</label>
-                  <input type="date" id="leave-end" />
-                </div>
-              </div>
-
-              <label for="leave-note">Note per il titolare (facoltative)</label>
-              <textarea id="leave-note" rows="3"></textarea>
-
-              <button
-                class="btn-primary"
-                style="margin-top: 10px;"
-                onclick="sendLeaveRequest()">
-                Invia richiesta
-              </button>
-            </div>
-
-            <!-- Colonna destra: elenco delle richieste dell'utente -->
-            <div class="card">
-              <h3>Le tue richieste</h3>
-              <table id="leave-table" class="table-simple">
-                <thead>
-                  <tr>
-                    <th>Richiesta il</th>
-                    <th>Tipo</th>
-                    <th>Periodo</th>
-                    <th>Stato</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Popolato da loadLeaveForUser -->
-                </tbody>
+                <tbody></tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <!-- =========================================
-             SEZIONE: FORMAZIONE
-        ========================================== -->
+        <!-- FORMAZIONE -->
         <section id="training" class="section">
-          <div class="section-header">
-            <h2>Formazione &amp; aggiornamenti</h2>
-            <p class="subtitle">
-              Corsi ECM, nuovi prodotti, aggiornamenti su normative:
-              qui puoi segnare cosa hai fatto e cosa devi ancora fare.
-            </p>
-          </div>
+          <h2>Formazione interna</h2>
+          <p class="subtitle">
+            Appunti su corsi, moduli da leggere, argomenti da ripassare.
+          </p>
 
           <div class="two-cols">
-            <!-- Moduli / argomenti suggeriti -->
             <div class="card">
               <h3>Moduli consigliati</h3>
-              <ul id="training-list" class="bullet-list">
-                <!-- Voci aggiunte dallo script -->
-              </ul>
+              <ul id="training-list" class="bullet-list"></ul>
             </div>
-
-            <!-- Appunti personali di formazione -->
             <div class="card">
-              <h3>I tuoi appunti</h3>
-              <textarea id="training-notes" rows="8"></textarea>
-              <button
-                class="btn-primary"
-                style="margin-top: 8px;"
-                onclick="saveTrainingNotes()">
-                Salva appunti
-              </button>
-              <span
-                id="training-saved"
-                class="saved-label hidden">
-                Salvato ✓
-              </span>
+              <h3>I tuoi appunti di formazione</h3>
+              <textarea id="training-notes" rows="7"
+                placeholder="Scrivi qui appunti su corsi, ECM, prodotti da studiare..."></textarea>
+              <div class="card-actions-row">
+                <button class="btn-primary small" onclick="saveTrainingNotes()">Salva appunti</button>
+                <span id="training-saved" class="saved-label hidden">Salvato ✔</span>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- =========================================
-             SEZIONE: AREA PERSONALE
-        ========================================== -->
-        <section id="personal" class="section">
-          <div class="section-header">
-            <h2>Area personale</h2>
-            <p class="subtitle">
-              Uno spazio privato per ogni dipendente: appunti personali,
-              promemoria documenti, note sui turni, idee per migliorare
-              il lavoro quotidiano.
-            </p>
-          </div>
+        <!-- LOGISTICA -->
+        <section id="logistics" class="section">
+          <h2>Logistica &amp; scadenze</h2>
+          <p class="subtitle">
+            Riepilogo essenziale per corrieri, ritiri, scadenze e prodotti delicati.
+          </p>
 
           <div class="two-cols">
-            <!-- Appunti personali -->
             <div class="card">
-              <h3>Appunti personali (solo tuoi)</h3>
-              <textarea id="personal-notes" rows="8"></textarea>
-              <button
-                class="btn-primary"
-                style="margin-top: 8px;"
-                onclick="savePersonalNotes()">
-                Salva appunti
-              </button>
-              <span
-                id="personal-notes-saved"
-                class="saved-label hidden">
-                Salvato ✓
-              </span>
+              <h3>Ritiri e consegne</h3>
+              <ul id="logistics-couriers" class="bullet-list"></ul>
             </div>
-
-            <!-- Promemoria documenti -->
             <div class="card">
-              <h3>Promemoria documenti</h3>
-              <p class="subtitle">
-                Qui puoi segnare dove conservi buste paga, contratti,
-                attestati, certificazioni, ecc. (solo come promemoria,
-                non carichiamo file).
-              </p>
-
-              <label for="personal-doc-title">Titolo documento</label>
-              <input
-                id="personal-doc-title"
-                type="text"
-                placeholder="Es. Busta paga marzo 2025" />
-
-              <label for="personal-doc-desc">
-                Descrizione / dove lo conservi
-              </label>
-              <input
-                id="personal-doc-desc"
-                type="text"
-                placeholder="Es. Cartellina verde nel cassetto in ufficio" />
-
-              <button
-                class="btn-primary"
-                style="margin-top: 8px;"
-                onclick="addPersonalDoc()">
-                Aggiungi promemoria
-              </button>
-
-              <div
-                id="personal-doc-list"
-                class="list"
-                style="margin-top: 10px;">
-                <!-- Promemoria documenti caricati dallo script -->
-              </div>
+              <h3>Scadenze sensibili</h3>
+              <ul id="logistics-expiry" class="bullet-list"></ul>
             </div>
           </div>
         </section>
 
-        <!-- =========================================
-             SEZIONE: AREA ADMIN (TITOLARE)
-        ========================================== -->
-        <section id="admin" class="section">
-          <div class="section-header">
-            <h2>Area Admin (Titolare)</h2>
-            <p class="subtitle">
-              Gestione utenti, reset password, approvazione ferie,
-              invio comunicazioni, modifica procedure.
-            </p>
+        <!-- AREA PERSONALE -->
+        <section id="personal" class="section">
+          <h2>Area personale privata</h2>
+          <p class="subtitle">
+            Spazio riservato a te. <strong>Il contenuto non è visibile all'Admin.</strong>
+          </p>
+
+          <div class="card">
+            <h3>Note personali</h3>
+            <textarea id="personal-notes" rows="6"
+              placeholder="Note personali, promemoria, obiettivi... visibili solo a te."></textarea>
+            <div class="card-actions-row">
+              <button class="btn-primary small" onclick="savePersonalNotes()">Salva note personali</button>
+              <span id="personal-notes-saved" class="saved-label hidden">Salvato ✔</span>
+            </div>
           </div>
 
-          <div class="admin-grid">
-            <!-- Colonna sinistra: utenti -->
-            <div class="card">
-              <h3>Gestione utenti</h3>
-              <p class="subtitle">
-                Elenco di tutti i dipendenti registrati. Da qui puoi
-                attivarli, disattivarli, reimpostare la password,
-                controllare ruolo e stato.
-              </p>
-              <div id="admin-users" class="list">
-                <!-- Popolato dallo script -->
+          <div class="card">
+            <h3>Documenti personali (solo promemoria)</h3>
+            <p class="small-text">
+              Non carichiamo file nel sistema, ma puoi elencare qui buste paga, attestati, ecc.
+            </p>
+
+            <div class="field-row wrap">
+              <div class="field-flex">
+                <label>Titolo documento</label>
+                <input type="text" id="personal-doc-title" placeholder="Es. Busta paga marzo 2025" />
+              </div>
+              <div class="field-flex">
+                <label>Descrizione / posizione</label>
+                <input type="text" id="personal-doc-desc"
+                  placeholder="Es. PDF in iCloud / cartellina verde in ufficio..." />
               </div>
             </div>
+            <button class="btn-primary small" style="margin-top:8px;" onclick="addPersonalDoc()">
+              Aggiungi ai tuoi documenti
+            </button>
 
-            <!-- Colonna destra: comunicazioni, procedure e ferie -->
+            <div id="personal-doc-list" style="margin-top:10px;"></div>
+          </div>
+        </section>
+
+        <!-- AREA ADMIN -->
+        <section id="admin" class="section">
+          <h2>Area Admin (titolare)</h2>
+          <p class="subtitle">
+            Gestione professionale di utenti, procedure, comunicazioni e ferie.
+          </p>
+
+          <div class="admin-grid">
             <div class="card">
-              <h3>Comunicazioni veloci</h3>
+              <h3>Gestione utenti</h3>
+              <p class="small-text">
+                Approva nuove richieste, reimposta password, abilita/disabilita account.
+              </p>
+              <div id="admin-users"></div>
+            </div>
 
-              <label for="admin-msg-target">Destinatario</label>
+            <div class="card">
+              <h3>Nuova comunicazione</h3>
+              <label>Titolo</label>
+              <input id="admin-msg-title" type="text" />
+
+              <label>Testo</label>
+              <textarea id="admin-msg-body" rows="3"></textarea>
+
+              <label>Destinatario</label>
               <select id="admin-msg-target">
-                <option value="all">Tutti</option>
-                <!-- Ogni utente viene aggiunto dallo script -->
+                <option value="all">Tutti i dipendenti</option>
               </select>
 
-              <label for="admin-msg-priority">Priorità</label>
+              <label>Priorità</label>
               <select id="admin-msg-priority">
                 <option value="normale">Normale</option>
                 <option value="alta">Alta</option>
                 <option value="urgente">Urgente</option>
               </select>
 
-              <label for="admin-msg-title">Titolo</label>
-              <input id="admin-msg-title" type="text" />
-
-              <label for="admin-msg-body">Testo</label>
-              <textarea id="admin-msg-body" rows="4"></textarea>
-
-              <button
-                class="btn-primary"
-                style="margin-top: 8px;"
-                onclick="adminSendMessage()">
+              <button class="btn-primary small" style="margin-top:10px;" onclick="adminSendMessage()">
                 Invia comunicazione
               </button>
+            </div>
+          </div>
 
-              <hr
-                style="margin: 18px 0; border: none; border-top: 1px solid #e0e4ef;" />
+          <div class="card">
+            <h3>Procedure ufficiali</h3>
+            <p class="small-text">
+              Crea o aggiorna procedure. Verranno mostrate nella sezione "Procedure".
+            </p>
 
-              <h3>Gestione procedure</h3>
-              <p class="subtitle">
-                Crea o aggiorna procedure per le varie categorie
-                (cassa, POS, magazzino, resi, ecc.).
-              </p>
-
-              <label for="admin-proc-cat">Categoria</label>
-              <input
-                id="admin-proc-cat"
-                type="text"
-                placeholder="Es. Cassa, POS, Magazzino" />
-
-              <label for="admin-proc-title">Titolo procedura</label>
-              <input
-                id="admin-proc-title"
-                type="text"
-                placeholder="Es. Anticipi ASL – nuova procedura" />
-
-              <label for="admin-proc-body">Testo procedura</label>
-              <textarea
-                id="admin-proc-body"
-                rows="4"
-                placeholder="Descrivi qui passo passo la procedura..."></textarea>
-
-              <button
-                class="btn-primary"
-                style="margin-top: 8px;"
-                onclick="adminSaveProcedure()">
-                Salva procedura
-              </button>
-
-              <div
-                id="admin-proc-list"
-                class="list"
-                style="margin-top: 12px;">
-                <!-- Elenco procedure modificabili -->
+            <div class="field-row wrap">
+              <div class="field-flex">
+                <label>Categoria</label>
+                <input type="text" id="admin-proc-cat" placeholder="Es. Cassa, Magazzino, Servizi..." />
               </div>
-
-              <hr
-                style="margin: 18px 0; border: none; border-top: 1px solid #e0e4ef;" />
-
-              <h3>Richieste ferie / permessi</h3>
-              <p class="subtitle">
-                Qui il titolare può vedere tutte le richieste dei
-                dipendenti e decidere se approvarle o rifiutarle.
-              </p>
-              <div id="admin-leave-list" class="list">
-                <!-- Popolato dallo script con pulsanti Approva/Rifiuta -->
+              <div class="field-flex">
+                <label>Titolo procedura</label>
+                <input type="text" id="admin-proc-title" placeholder="Es. Anticipi – i clienti pagano subito" />
               </div>
             </div>
+
+            <label>Testo procedura</label>
+            <textarea id="admin-proc-body" rows="4"
+              placeholder="Descrivi in modo chiaro tutti i passaggi."></textarea>
+
+            <button class="btn-primary small" style="margin-top:8px;" onclick="adminSaveProcedure()">
+              Salva / aggiorna procedura
+            </button>
+
+            <div id="admin-proc-list" class="list" style="margin-top:10px;"></div>
+          </div>
+
+          <div class="card">
+            <h3>Gestione ferie &amp; permessi</h3>
+            <p class="small-text">
+              Approva o rifiuta le richieste. Lo storico rimane visibile anche ai dipendenti.
+            </p>
+            <div id="admin-leave-list" class="list"></div>
           </div>
         </section>
       </main>
     </div>
   </div>
 
-  <!-- =========================================================
-       SCRIPT
-  ========================================================== -->
   <script src="script.js"></script>
 </body>
 </html>
