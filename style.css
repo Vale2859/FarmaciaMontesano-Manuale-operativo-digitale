@@ -870,3 +870,29 @@ button {
   color: #666;
   font-size: 11px;
 }
+/* Pulsante Home globale (tutte le pagine) */
+.floating-home {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 9px 26px;
+  background: #0d8a5c;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  z-index: 999;
+}
+
+.floating-home:hover {
+  background: #0b7550;
+}
+
+/* nascosto di default */
+.hidden {
+  display: none !important;
+}
