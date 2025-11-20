@@ -235,9 +235,60 @@ function login() {
   }
 
   saveJson(LS_ACTIVE, user);
-  openPortal(user);
-}
+ function openPortal(user) {
+  Logger.info("Accesso come:", user.email);
 
+  const auth = document.getElementById("auth");
+  const portal = document.getElementById("portal");
+  const loginBox = document.getElementById("login-box");
+  const registerBox = document.getElementById("register-box");
+
+  // Nasconde TUTTA la schermata di login/registrazione
+  if (auth) auth.classList.add("hidden");
+  if (loginBox) loginBox.classList.add("hidden");
+  if (registerBox) registerBox.classList.add("hidden");
+
+  // Mostra il portale
+  if (portal) portal.classList.remove("hidden");
+
+  // Dati utente in alto a destra
+  const nameDisplay = document.getElementById("user-name-display");
+  const roleDisplay = document.getElementById("user-role-display");
+  if (nameDisplay) nameDisplay.textContent = user.name || "";
+  if (roleDisplay) {
+    roleDisplay.textContent =
+      user.role === "admin" ? "Titolare / Admin" : "Dipendente";
+  }
+
+  // Titolo home personalizzato
+  const homeTitle = document.getElementById("home-title");
+  if (homeTitle) {
+    homeTitle.textContent = "Ciao " + user.name + ", benvenuto nel portale";
+  }
+
+  // Piccolo riepilogo profilo
+  const info = document.getElementById("user-info");
+  if (info) {
+    info.innerHTML =
+      "<strong>Nome:</strong> " +
+      user.name +
+      "<br><strong>Email:</strong> " +
+      user.email +
+      "<br><strong>Ruolo:</strong> " +
+      (user.role === "admin" ? "Titolare / Admin" : "Dipendente");
+  }
+
+  // Mostra voce Admin solo se admin
+  const navAdmin = document.getElementById("nav-admin");
+  if (navAdmin) {
+    if (user.role === "admin") navAdmin.classList.remove("hidden");
+    else navAdmin.classList.add("hidden");
+  }
+
+  // Mostra sezione Home di default
+  const navHome = document.getElementById("nav-home");
+  showSection("home", navHome);
+}
 /** Logout */
 function logout() {
   localStorage.removeItem(LS_ACTIVE);
