@@ -5,7 +5,7 @@
 
 const LS_USERS = "fm_users";
 const LS_ACTIVE = "fm_activeUser";
-const LS_ABSENCES = "fm_absences"; // assenze dipendenti
+const LS_ABSENCES = "fm_absences";
 const LS_PROCEDURES = "fm_procedures";
 const LS_MESSAGES = "fm_messages";
 const LS_LEAVE = "fm_leave";
@@ -73,21 +73,16 @@ function saveUsers(users) {
   saveJson(LS_USERS, users);
 }
 
-/* Admin di default se non esistono utenti */
-/* Crea o aggiorna SEMPRE l'admin principale */
+/* Admin principale */
 function seedAdminIfNeeded() {
   let users = loadUsers();
 
   const adminEmail = "admin@farmaciamontesano.it";
-  const adminPassword = "admin123"; // <-- QUI PUOI CAMBIARE LA PASSWORD
+  const adminPassword = "admin123";
 
-  // Cerca admin
-  let admin = users.find(
-    (u) => u.email.toLowerCase() === adminEmail.toLowerCase()
-  );
+  let admin = users.find(u => u.email.toLowerCase() === adminEmail.toLowerCase());
 
   if (!admin) {
-    // Se non esiste → crealo da zero
     admin = {
       id: uid(),
       name: "Valerio Montesano",
@@ -100,7 +95,6 @@ function seedAdminIfNeeded() {
     };
     users.push(admin);
   } else {
-    // Se esiste già → aggiornalo e RIPRISTINA la password
     admin.password = adminPassword;
     admin.role = "admin";
     admin.active = true;
@@ -110,26 +104,26 @@ function seedAdminIfNeeded() {
   saveUsers(users);
 
   alert(
-    "Admin pronto.\nEmail: " +
-      adminEmail +
-      "\nPassword: " +
-      adminPassword +
-      "\n(Puoi cambiarla nel codice)."
+    "Admin pronto.\nEmail: " + adminEmail +
+    "\nPassword: " + adminPassword +
+    "\n(Puoi cambiarla nel codice)"
   );
-}/* Registrazione: account in attesa di approvazione */
+}
+
+/* Registrazione */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
   const pass = document.getElementById("reg-password").value;
 
   if (!name || !email || !pass) {
-    showError("Compila tutti i campi per registrarti.");
+    showError("Compila tutti i campi.");
     return;
   }
 
   let users = loadUsers();
-  if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
-    showError("Esiste già un utente con questa email.");
+  if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+    showError("Email già registrata.");
     return;
   }
 
@@ -145,9 +139,7 @@ function registerUser() {
   });
 
   saveUsers(users);
-  alert(
-    "Richiesta inviata! L'account dovrà essere approvato dall'Admin prima di poter accedere."
-  );
+  alert("Richiesta inviata! Il titolare deve approvarla.");
   showLogin();
 }
 
@@ -163,20 +155,21 @@ function login() {
 
   const users = loadUsers();
   const user = users.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
+    u => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
   );
 
   if (!user) {
-    showError("Credenziali non valide.");
+    showError("Credenziali errate.");
     return;
   }
 
   if (!user.approved || !user.active) {
-    showError("Account non abilitato. Contatta il titolare.");
+    showError("Account non abilitato.");
     return;
   }
 
   saveJson(LS_ACTIVE, user);
+
   openPortal(user);
 }
 
@@ -186,12 +179,10 @@ function logout() {
   document.getElementById("portal").classList.add("hidden");
   document.getElementById("auth").classList.remove("hidden");
   showLogin();
-
-  const globalHome = document.getElementById("global-home-btn");
-  if (globalHome) globalHome.classList.add("hidden");
 }
+
 /* ============================================
-   PORTALE & NAVIGAZIONE
+   PORTALE & NAVIGAZIONE  (CORRETTO!)
    ============================================ */
 
 function openPortal(user) {
@@ -202,38 +193,41 @@ function openPortal(user) {
   document.getElementById("user-role-display").textContent =
     user.role === "admin" ? "Titolare" : "Dipendente";
 
-  // Mostra sezione HOME e schermata app principale
-  showSection("home");
-   function goHome() {
-  // Torna alla sezione principale
-  showSection("home");
-  if (typeof showAppScreen === "function") {
-    showAppScreen("home");
-  }
-}
-}  if (typeof showAppScreen === "function") {
-    showAppScreen("home");
-  }
-  if (typeof renderApprovedAbsences === "function") {
-    renderApprovedAbsences();
+  initHome(user);
+  renderProcedures();
+  renderMessages(user);
+  loadPersonalData(user);
+  renderLeaveTable(user);
+  renderApprovedAbsences();
+
+  if (user.role === "admin") {
+    renderAdminUsers();
+    renderAdminLeaveList();
+    renderAdminProceduresList();
+    populateMessageTargets();
   }
 
-  const globalHome = document.getElementById("global-home-btn");
-  if (globalHome) globalHome.classList.remove("hidden");
+  showSection("home");
+  showAppScreen("home");
 }
+
+function goHome() {
+  showSection("home");
+  showAppScreen("home");
+}
+
 /* Cambio sezione */
 function showSection(id, btn) {
-  const sections = document.querySelectorAll(".section");
-  sections.forEach((s) => s.classList.remove("visible"));
+  const pages = document.querySelectorAll(".section");
+  pages.forEach(p => p.classList.remove("visible"));
 
-  const target = document.getElementById(id);
-  if (target) target.classList.add("visible");
+  const sel = document.getElementById(id);
+  if (sel) sel.classList.add("visible");
 
-  const buttons = document.querySelectorAll(".nav-btn");
-  buttons.forEach((b) => b.classList.remove("active"));
+  const navs = document.querySelectorAll(".nav-btn");
+  navs.forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
 }
-
 /* ============================================
    DASHBOARD / HOME
    ============================================ */
