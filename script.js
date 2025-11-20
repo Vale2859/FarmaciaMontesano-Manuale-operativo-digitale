@@ -73,27 +73,49 @@ function saveUsers(users) {
 }
 
 /* Admin di default se non esistono utenti */
+/* Crea o aggiorna SEMPRE l'admin principale */
 function seedAdminIfNeeded() {
   let users = loadUsers();
-  if (users.length === 0) {
-    users.push({
+
+  const adminEmail = "admin@farmaciamontesano.it";
+  const adminPassword = "admin123"; // <-- QUI PUOI CAMBIARE LA PASSWORD
+
+  // Cerca admin
+  let admin = users.find(
+    (u) => u.email.toLowerCase() === adminEmail.toLowerCase()
+  );
+
+  if (!admin) {
+    // Se non esiste → crealo da zero
+    admin = {
       id: uid(),
       name: "Valerio Montesano",
-      email: "admin@farmaciamontesano.it",
-      password: "admin123",
+      email: adminEmail,
+      password: adminPassword,
       role: "admin",
       active: true,
       approved: true,
       createdAt: new Date().toISOString(),
-    });
-    saveUsers(users);
-    alert(
-      "Creato Admin iniziale:\nEmail: admin@farmaciamontesano.it\nPassword: admin123"
-    );
+    };
+    users.push(admin);
+  } else {
+    // Se esiste già → aggiornalo e RIPRISTINA la password
+    admin.password = adminPassword;
+    admin.role = "admin";
+    admin.active = true;
+    admin.approved = true;
   }
-}
 
-/* Registrazione: account in attesa di approvazione */
+  saveUsers(users);
+
+  alert(
+    "Admin pronto.\nEmail: " +
+      adminEmail +
+      "\nPassword: " +
+      adminPassword +
+      "\n(Puoi cambiarla nel codice)."
+  );
+}/* Registrazione: account in attesa di approvazione */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
