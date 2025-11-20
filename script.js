@@ -5,7 +5,7 @@
 
 const LS_USERS = "fm_users";
 const LS_ACTIVE = "fm_activeUser";
-const LS_ABSENCES = "fm_absences";
+const LS_ABSENCES = "fm_absences"; // assenze dipendenti
 const LS_PROCEDURES = "fm_procedures";
 const LS_MESSAGES = "fm_messages";
 const LS_LEAVE = "fm_leave";
@@ -73,14 +73,16 @@ function saveUsers(users) {
   saveJson(LS_USERS, users);
 }
 
-/* Admin principale */
+/* Admin di default se non esistono utenti – o ripristino */
 function seedAdminIfNeeded() {
   let users = loadUsers();
 
   const adminEmail = "admin@farmaciamontesano.it";
-  const adminPassword = "admin123";
+  const adminPassword = "admin123"; // puoi cambiarla qui
 
-  let admin = users.find(u => u.email.toLowerCase() === adminEmail.toLowerCase());
+  let admin = users.find(
+    (u) => u.email.toLowerCase() === adminEmail.toLowerCase()
+  );
 
   if (!admin) {
     admin = {
@@ -104,26 +106,28 @@ function seedAdminIfNeeded() {
   saveUsers(users);
 
   alert(
-    "Admin pronto.\nEmail: " + adminEmail +
-    "\nPassword: " + adminPassword +
-    "\n(Puoi cambiarla nel codice)"
+    "Admin pronto.\nEmail: " +
+      adminEmail +
+      "\nPassword: " +
+      adminPassword +
+      "\n(Puoi cambiarla nel codice)."
   );
 }
 
-/* Registrazione */
+/* Registrazione: account in attesa di approvazione */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
   const pass = document.getElementById("reg-password").value;
 
   if (!name || !email || !pass) {
-    showError("Compila tutti i campi.");
+    showError("Compila tutti i campi per registrarti.");
     return;
   }
 
   let users = loadUsers();
-  if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
-    showError("Email già registrata.");
+  if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
+    showError("Esiste già un utente con questa email.");
     return;
   }
 
@@ -139,7 +143,9 @@ function registerUser() {
   });
 
   saveUsers(users);
-  alert("Richiesta inviata! Il titolare deve approvarla.");
+  alert(
+    "Richiesta inviata! L'account dovrà essere approvato dall'Admin prima di poter accedere."
+  );
   showLogin();
 }
 
@@ -155,21 +161,20 @@ function login() {
 
   const users = loadUsers();
   const user = users.find(
-    u => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
+    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
   );
 
   if (!user) {
-    showError("Credenziali errate.");
+    showError("Credenziali non valide.");
     return;
   }
 
   if (!user.approved || !user.active) {
-    showError("Account non abilitato.");
+    showError("Account non abilitato. Contatta il titolare.");
     return;
   }
 
   saveJson(LS_ACTIVE, user);
-
   openPortal(user);
 }
 
@@ -182,7 +187,7 @@ function logout() {
 }
 
 /* ============================================
-   PORTALE & NAVIGAZIONE  (CORRETTO!)
+   PORTALE & NAVIGAZIONE  (CORRETTO)
    ============================================ */
 
 function openPortal(user) {
@@ -193,24 +198,27 @@ function openPortal(user) {
   document.getElementById("user-role-display").textContent =
     user.role === "admin" ? "Titolare" : "Dipendente";
 
+  // inizializza varie sezioni
   initHome(user);
   renderProcedures();
   renderMessages(user);
+  renderLogistics();
   loadPersonalData(user);
   renderLeaveTable(user);
-  renderApprovedAbsences();
-
   if (user.role === "admin") {
     renderAdminUsers();
-    renderAdminLeaveList();
     renderAdminProceduresList();
+    renderAdminLeaveList();
     populateMessageTargets();
   }
 
+  // schermata iniziale
   showSection("home");
   showAppScreen("home");
+  renderApprovedAbsences();
 }
 
+// Pulsante Home (in alto / dovunque)
 function goHome() {
   showSection("home");
   showAppScreen("home");
@@ -218,16 +226,17 @@ function goHome() {
 
 /* Cambio sezione */
 function showSection(id, btn) {
-  const pages = document.querySelectorAll(".section");
-  pages.forEach(p => p.classList.remove("visible"));
+  const sections = document.querySelectorAll(".section");
+  sections.forEach((s) => s.classList.remove("visible"));
 
-  const sel = document.getElementById(id);
-  if (sel) sel.classList.add("visible");
+  const target = document.getElementById(id);
+  if (target) target.classList.add("visible");
 
-  const navs = document.querySelectorAll(".nav-btn");
-  navs.forEach(b => b.classList.remove("active"));
+  const buttons = document.querySelectorAll(".nav-btn");
+  buttons.forEach((b) => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
 }
+
 /* ============================================
    DASHBOARD / HOME
    ============================================ */
@@ -1032,18 +1041,18 @@ function renderAdminProceduresList() {
 }
 
 /* ============================================
-   AVVIO
+   LOGIN – mostra/nascondi password
    ============================================ */
+
 function togglePassword() {
   const input = document.getElementById("login-password");
   if (!input) return;
-  if (input.type === "password") {
-    input.type = "text";
-  } else {
-    input.type = "password";
-  }
+  input.type = input.type === "password" ? "text" : "password";
 }
-// ================= APP INTERNA (HOME / ASSENZE) ================= //
+
+/* ============================================
+   APP INTERNA (HOME / ASSENZE)
+   ============================================ */
 
 function showAppScreen(which) {
   const home = document.getElementById("screen-home");
@@ -1079,7 +1088,7 @@ function saveAbsences(list) {
 function submitAbsence() {
   const user = loadJson(LS_ACTIVE, null);
   if (!user) {
-    alert("Devi essere loggato per segnalare un'assenza.");
+    alert("Devi essere loggato per richiedere un'assenza.");
     return;
   }
 
@@ -1101,7 +1110,7 @@ function submitAbsence() {
     userName: user.name,
     date,
     reason,
-    status: "approved" // in questa versione tutte approvate
+    status: "approved"
   });
   saveAbsences(absences);
 
@@ -1109,14 +1118,13 @@ function submitAbsence() {
   reasonEl.value = "";
 
   renderApprovedAbsences();
-  alert("Assenza registrata (approvata e visibile a tutti).");
+  alert("Richiesta assenza registrata (approvata e visibile a tutti).");
 }
 
 // Mostra SOLO assenze future approvate
-// Mostra SOLO assenze future approvate
 // - Tutti vedono: Nome in grassetto + data
-// - Eccezione: se il motivo contiene "ferie", si vede "· ferie"
-// - Solo Admin/Titolare vede SEMPRE il motivo completo
+// - Se NON admin ma motivo contiene "ferie" → mostra "· ferie"
+// - Solo Admin vede SEMPRE il motivo completo
 function renderApprovedAbsences() {
   const container = document.getElementById("absence-list");
   if (!container) return;
@@ -1129,14 +1137,12 @@ function renderApprovedAbsences() {
 
   let absences = loadAbsences().filter(a => a.status === "approved");
 
-  // solo oggi o date future
   absences = absences.filter(a => {
     const d = new Date(a.date);
     d.setHours(0, 0, 0, 0);
     return d >= today;
   });
 
-  // Ordina per data crescente
   absences.sort((a, b) => new Date(a.date) - new Date(b.date));
 
   if (absences.length === 0) {
@@ -1157,18 +1163,11 @@ function renderApprovedAbsences() {
 
     const reason = a.reason || "";
     const isFerie =
-      reason.toLowerCase().includes("ferie") ||
-      reason.toLowerCase().includes("ferie ");
+      reason.toLowerCase().includes("ferie");
 
-    // Riga sotto al nome:
-    // - per tutti: data
-    // - se NON admin ma è ferie -> "data · ferie"
-    // - se admin -> "data · motivo completo" (se presente)
     let meta = formattedDate;
     if (isAdmin) {
-      if (reason) {
-        meta += " · " + reason;
-      }
+      if (reason) meta += " · " + reason;
     } else if (isFerie) {
       meta += " · ferie";
     }
@@ -1180,7 +1179,13 @@ function renderApprovedAbsences() {
       "<span class='absence-meta'>" + meta + "</span>";
     container.appendChild(div);
   });
-}document.addEventListener("DOMContentLoaded", () => {
+}
+
+/* ============================================
+   AVVIO PAGINA
+   ============================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
   seedAdminIfNeeded();
   ensureDemoProcedures();
   ensureDemoMessages();
