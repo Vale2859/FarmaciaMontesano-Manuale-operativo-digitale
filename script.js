@@ -183,14 +183,13 @@ function login() {
 /* Logout */
 function logout() {
   localStorage.removeItem(LS_ACTIVE);
-  const portal = document.getElementById("portal");
-  const auth = document.getElementById("auth");
-  if (portal) portal.classList.add("hidden");
-  if (auth) auth.classList.remove("hidden");
-  auth.style.display = "flex";
+  document.getElementById("portal").classList.add("hidden");
+  document.getElementById("auth").classList.remove("hidden");
   showLogin();
-}
 
+  const globalHome = document.getElementById("global-home-btn");
+  if (globalHome) globalHome.classList.add("hidden");
+}
 /* ============================================
    PORTALE & NAVIGAZIONE
    ============================================ */
