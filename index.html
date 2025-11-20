@@ -192,24 +192,47 @@
 
         <!-- SCHERMATA 2: ASSENZE -->
         <div id="screen-assenze" class="app-screen">
-          <h3 class="app-section-title">Assenze dipendenti</h3>
+  <div class="section-header">
+    <h2 class="app-section-title">Assenze del personale</h2>
+    <p class="subtitle">
+      Qui vedi subito chi sarà assente nei prossimi giorni. Le richieste nuove sono a destra (su PC) o qui sotto (su telefono).
+    </p>
+  </div>
 
-          <div class="absence-form">
-            <label>Data assenza</label>
-            <input type="date" id="abs-date" />
+  <div class="assenze-layout">
+    <!-- LISTA ASSENZE GRANDI -->
+    <div class="assenze-list-panel">
+      <h4>Prossime assenze approvate</h4>
+      <div id="absence-list" class="absence-list">
+        <!-- riempito da renderApprovedAbsences() -->
+      </div>
+    </div>
 
-            <label>Motivo (es. ferie, visita medica…)</label>
-            <input type="text" id="abs-reason" placeholder="Es. Ferie, permesso, visita medica…" />
+    <!-- FORM RICHIESTA ASSENZA -->
+    <div class="assenze-form-panel">
+      <h4>Richiedi un'assenza</h4>
+      <p class="small-text">
+        La richiesta viene registrata con il tuo nome e resa visibile al titolare.
+      </p>
 
-            <button class="btn-primary small" onclick="submitAbsence()">
-              Richiedi assenza
-            </button>
-            <p class="small-text" style="margin-top:6px;">
-              In questa versione tutte le assenze inserite sono considerate
-              <strong>approvate</strong> e visibili a tutti.
-            </p>
-          </div>
+      <div class="absence-form">
+        <label for="abs-date">Data</label>
+        <input type="date" id="abs-date" />
 
+        <label for="abs-reason">Motivo (facoltativo)</label>
+        <input
+          type="text"
+          id="abs-reason"
+          placeholder="Es: ferie, visita medica, permesso..."
+        />
+
+        <button type="button" class="btn-primary" onclick="submitAbsence()">
+          Invia richiesta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
           <div class="absence-list">
             <h4>Assenze future approvate</h4>
             <div id="absence-list"></div>
