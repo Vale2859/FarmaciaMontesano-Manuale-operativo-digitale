@@ -105,15 +105,6 @@ function seedAdminIfNeeded() {
 
   saveUsers(users);
 
-  alert(
-    "Admin pronto.\nEmail: " +
-      adminEmail +
-      "\nPassword: " +
-      adminPassword +
-      "\n(Puoi cambiarla nel codice)."
-  );
-}
-
 /* Registrazione: account in attesa di approvazione */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
