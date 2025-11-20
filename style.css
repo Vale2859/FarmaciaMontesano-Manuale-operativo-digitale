@@ -1165,3 +1165,40 @@ body {
     padding: 6px 4px;
   }
 }
+/* ================================
+   PC – Ingrandimento login +50%
+   ================================ */
+@media (min-width: 1024px) {
+    /* Contenitore login */
+    #login-box, #register-box {
+        transform: scale(1.5);
+        transform-origin: top center;
+    }
+
+    /* Campo email & password */
+    #login-box input,
+    #register-box input {
+        font-size: 1.3rem;
+        padding: 14px 18px;
+    }
+
+    /* Titolo "Accesso Dipendenti" */
+    #login-box h2,
+    #register-box h2 {
+        font-size: 2rem;
+    }
+
+    /* Bottone Entra / Registrati */
+    #login-box button,
+    #register-box button {
+        font-size: 1.4rem;
+        padding: 14px 28px;
+    }
+
+    /* Logo più grande */
+    #login-logo {
+        width: 180px !important;
+        height: auto;
+        margin-bottom: 25px;
+    }
+}
