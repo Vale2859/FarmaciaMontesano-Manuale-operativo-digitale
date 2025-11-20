@@ -1107,42 +1107,74 @@ function submitAbsence() {
 }
 
 // Mostra SOLO assenze future approvate
+// Mostra SOLO assenze future approvate
+// - Tutti vedono: Nome in grassetto + data
+// - Eccezione: se il motivo contiene "ferie", si vede "· ferie"
+// - Solo Admin/Titolare vede SEMPRE il motivo completo
 function renderApprovedAbsences() {
   const container = document.getElementById("absence-list");
   if (!container) return;
+
+  const activeUser = loadJson(LS_ACTIVE, null);
+  const isAdmin = activeUser && activeUser.role === "admin";
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   let absences = loadAbsences().filter(a => a.status === "approved");
+
+  // solo oggi o date future
   absences = absences.filter(a => {
     const d = new Date(a.date);
     d.setHours(0, 0, 0, 0);
-    return d >= today; // solo oggi o dopo
+    return d >= today;
   });
 
-  // Ordina per data
+  // Ordina per data crescente
   absences.sort((a, b) => new Date(a.date) - new Date(b.date));
 
   if (absences.length === 0) {
-    container.innerHTML = "<p class='small-text'>Nessuna assenza futura registrata.</p>";
+    container.innerHTML =
+      "<p class='small-text'>Nessuna assenza futura registrata.</p>";
     return;
   }
 
   container.innerHTML = "";
   absences.forEach(a => {
+    const d = new Date(a.date);
+    const formattedDate = d.toLocaleDateString("it-IT", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+
+    const reason = a.reason || "";
+    const isFerie =
+      reason.toLowerCase().includes("ferie") ||
+      reason.toLowerCase().includes("ferie ");
+
+    // Riga sotto al nome:
+    // - per tutti: data
+    // - se NON admin ma è ferie -> "data · ferie"
+    // - se admin -> "data · motivo completo" (se presente)
+    let meta = formattedDate;
+    if (isAdmin) {
+      if (reason) {
+        meta += " · " + reason;
+      }
+    } else if (isFerie) {
+      meta += " · ferie";
+    }
+
     const div = document.createElement("div");
     div.className = "absence-pill";
     div.innerHTML =
       "<span><strong>" + a.userName + "</strong></span>" +
-      "<span class='absence-meta'>" +
-      new Date(a.date).toLocaleDateString("it-IT") +
-      (a.reason ? " · " + a.reason : "") +
-      "</span>";
+      "<span class='absence-meta'>" + meta + "</span>";
     container.appendChild(div);
   });
-}
-document.addEventListener("DOMContentLoaded", () => {
+}document.addEventListener("DOMContentLoaded", () => {
   seedAdminIfNeeded();
   ensureDemoProcedures();
   ensureDemoMessages();
