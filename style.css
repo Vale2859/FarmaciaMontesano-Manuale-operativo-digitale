@@ -959,3 +959,116 @@ body {
     font-size: 16px;
   }
 }
+
+/* =======================================================
+   DESKTOP MODE – TUTTO +50% SOLO SU PC
+   ======================================================= */
+
+@media (min-width: 900px) {
+
+  body {
+    font-size: 20px;
+  }
+
+  /* --- TOP BAR IN ALTO (logo, nome, ruolo, Home, Logout) --- */
+  .topbar {
+    padding: 20px 48px;
+  }
+
+  .topbar-title {
+    font-size: 30px;
+  }
+
+  .topbar-subtitle {
+    font-size: 18px;
+  }
+
+  .user-pill {
+    font-size: 20px;
+    padding: 10px 22px;
+  }
+
+  .role-badge {
+    font-size: 18px;
+    padding: 6px 14px;
+  }
+
+  .btn-outline {
+    font-size: 20px;
+    padding: 10px 22px;
+  }
+
+  /* --- CARD CENTRALE TIPO APP --- */
+  .home-app-wrapper {
+    padding-top: 20px;
+  }
+
+  .app-phone {
+    max-width: 1500px !important;     /* più largo sul monitor */
+    padding: 34px 30px 26px;
+  }
+
+  /* intestazione verde “Farmacia Aperta / Montesano” */
+  .app-header-name {
+    font-size: 30px;
+  }
+
+  .app-header-sub {
+    font-size: 18px;
+  }
+
+  .app-status-pill {
+    font-size: 17px;
+    padding: 6px 14px;
+  }
+
+  /* --- PIASTRE (Assenze, Procedure, …) --- */
+  .app-grid {
+    gap: 24px;
+  }
+
+  .app-tile {
+    min-height: 170px;          /* box più alti */
+    padding: 24px 20px;
+  }
+
+  .app-tile-icon {
+    font-size: 46px;            /* icone proprio grandi */
+  }
+
+  .app-tile-text {
+    font-size: 24px;            /* testo molto leggibile */
+  }
+
+  /* --- NAVIGAZIONE INFERIORE (Home / Assenze) --- */
+  .app-bottom-nav {
+    padding: 10px 12px;
+  }
+
+  .app-nav-btn {
+    font-size: 20px;
+    padding: 10px 12px;
+  }
+
+  /* --- LISTE INTERNE (comunicazioni, assenze, ecc.) --- */
+  .app-section-title {
+    font-size: 22px;
+  }
+
+  .list-item {
+    font-size: 20px;
+  }
+
+  .list-item-meta {
+    font-size: 18px;
+  }
+
+  .absence-pill {
+    font-size: 20px;
+    padding: 10px 16px;
+  }
+
+  .absence-pill span.absence-meta {
+    font-size: 18px;
+  }
+}
