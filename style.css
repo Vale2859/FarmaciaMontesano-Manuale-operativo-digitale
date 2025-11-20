@@ -903,3 +903,14 @@ button {
 .hidden {
   display: none !important;
 }
+/* Logo solo immagine nel login */
+.auth-logo-only {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.auth-logo-img {
+  width: 170px;      /* puoi aumentare o diminuire questa misura */
+  max-width: 75%;
+  height: auto;
+}
