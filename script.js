@@ -5,7 +5,6 @@
 
 const LS_USERS = "fm_users";
 const LS_ACTIVE = "fm_activeUser";
-const LS_ABSENCES = "fm_absences";        // assenze dipendenti
 const LS_PROCEDURES = "fm_procedures";
 const LS_MESSAGES = "fm_messages";
 const LS_LEAVE = "fm_leave";
@@ -103,7 +102,7 @@ function seedAdminIfNeeded() {
     admin.approved = true;
   }
 
-  saveJson(LS_USERS, users);
+  saveUsers(users);
 }
 
 /* Registrazione: account in attesa di approvazione */
@@ -197,6 +196,8 @@ function openPortal(user) {
   renderLogistics();
   loadPersonalData(user);
   renderLeaveTable(user);
+  renderTraining(user);
+
   if (user.role === "admin") {
     renderAdminUsers();
     renderAdminProceduresList();
@@ -207,12 +208,10 @@ function openPortal(user) {
   // schermata iniziale
   showSection("home");
   showAppScreen("home");
-  renderApprovedAbsences();
 }
 
-// Pulsante Home globale
 function goHome() {
-  showSection("home");
+  showSection("home", document.getElementById("nav-home"));
   showAppScreen("home");
 }
 
@@ -227,122 +226,74 @@ function showSection(id, btn) {
   const buttons = document.querySelectorAll(".nav-btn");
   buttons.forEach((b) => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
+
+  // quando torno su home ricarico il banner assenze
+  if (id === "home") {
+    const active = loadJson(LS_ACTIVE, null);
+    if (active) renderHomeAbsencesBanner(active);
+  }
 }
 
 /* ============================================
-   DASHBOARD / HOME
+   HOME – BANNER ASSENZE + TILE
    ============================================ */
 
-function todayLabel() {
-  const d = new Date();
-  return d.toLocaleDateString("it-IT", {
-    weekday: "long",
-    day: "2-digit",
-    month: "2-digit",
-  });
-}
-
-function randomPhrase() {
-  const list = [
-    "Aggiornare listini se necessario",
-    "Ricordarsi di controllare il cassetto 2",
-    "Controllare scorte in scadenza",
-    "Gentilezza sempre con tutti i clienti",
-    "Verificare eventuali resi da corrieri",
-  ];
-  return list[Math.floor(Math.random() * list.length)];
-}
-
 function initHome(user) {
-  const tag = document.getElementById("home-daytag");
-  if (tag) tag.textContent = todayLabel();
-
-  const ul = document.getElementById("home-highlights");
-  if (ul) {
-    ul.innerHTML = "";
-    for (let i = 0; i < 4; i++) {
-      const li = document.createElement("li");
-      li.textContent = randomPhrase();
-      ul.appendChild(li);
-    }
-  }
-
-  const qp = document.getElementById("home-quick-proc");
-  if (qp) {
-    qp.innerHTML = `
-      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Anticipi – i clienti pagano subito')">Anticipi</button>
-      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','POS collegato')">POS</button>
-      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Ticket SSN')">Ticket</button>
-      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Sotto cassa')">Sotto cassa</button>
-    `;
-  }
-
-  renderHomeLeaveSummary(user);
-  renderHomeLogisticsSummary();
-  renderHomeLastMessages(user);
+  renderHomeAbsencesBanner(user);
 }
 
-function openProcedureFromHome(cat, title) {
-  showSection("procedures", document.getElementById("nav-proc"));
-  selectProcedureCategory(cat);
-  scrollToProcedure(title);
-}
-
-/* Home – riepilogo ferie */
-function renderHomeLeaveSummary(user) {
-  const box = document.getElementById("home-leave-summary");
-  if (!box) return;
-  const all = loadJson(LS_LEAVE, []);
-  const mine = all.filter((r) => r.userId === user.id);
-  if (mine.length === 0) {
-    box.innerHTML = `<div class="list-item">Nessuna richiesta inserita.</div>`;
-    return;
-  }
-  const next = mine[mine.length - 1];
-  box.innerHTML = `
-    <div class="list-item">
-      <div class="list-item-title">Ultima richiesta</div>
-      <div class="list-item-meta">
-        Tipo: ${formatLeaveType(next.type)} – Stato: ${formatLeaveStatus(
-    next.status
-  )}
-      </div>
-      <div>
-        Dal ${next.start || "-"} ${next.end ? "al " + next.end : ""}
-      </div>
-    </div>
-  `;
-}
-
-/* Home – logistica breve */
-function renderHomeLogisticsSummary() {
-  const ul = document.getElementById("home-logistics-summary");
+/* Usa LS_LEAVE: mostra solo assenze approvate future in alto */
+function renderHomeAbsencesBanner(user) {
+  const ul = document.getElementById("home-absences-banner");
   if (!ul) return;
-  ul.innerHTML = `
-    <li>Ritiro corriere: 16:00</li>
-    <li>Controllo frigoriferi dopo le 20</li>
-    <li>Arrivo merce sabato ore 11</li>
-  `;
-}
 
-/* Home – ultime comunicazioni */
-function renderHomeLastMessages(user) {
-  const cont = document.getElementById("home-last-messages");
-  if (!cont) return;
-  const all = getMessages();
-  const visible = all
-    .filter((m) => m.target === "all" || m.target === user.id)
-    .slice(-3)
-    .reverse();
-
-  if (visible.length === 0) {
-    cont.innerHTML = `<div class="list-item">Nessuna comunicazione recente.</div>`;
+  const all = loadJson(LS_LEAVE, []);
+  if (!all || all.length === 0) {
+    ul.innerHTML =
+      "<li><span>Nessuna assenza</span><span>–</span></li>";
     return;
   }
 
-  cont.innerHTML = visible
-    .map((m) => templateMessage(m.title, m.body, m.priority, m.createdAt))
-    .join("");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // solo approvate, dal giorno di oggi in poi
+  const futureApproved = all
+    .filter((r) => r.status === "approvato")
+    .filter((r) => {
+      if (!r.start) return false;
+      const d = new Date(r.start);
+      d.setHours(0, 0, 0, 0);
+      return d >= today;
+    })
+    .sort((a, b) => new Date(a.start) - new Date(b.start))
+    .slice(0, 4); // massimo 4 righe nel banner
+
+  if (futureApproved.length === 0) {
+    ul.innerHTML =
+      "<li><span>Nessuna assenza</span><span>–</span></li>";
+    return;
+  }
+
+  ul.innerHTML = "";
+  futureApproved.forEach((r) => {
+    const dStart = new Date(r.start).toLocaleDateString("it-IT", {
+      day: "2-digit",
+      month: "2-digit",
+    });
+    const dEnd =
+      r.end && r.end !== r.start
+        ? new Date(r.end).toLocaleDateString("it-IT", {
+            day: "2-digit",
+            month: "2-digit",
+          })
+        : "";
+    const periodo = dEnd ? `${dStart} → ${dEnd}` : dStart;
+
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${r.userName}</span><span>${periodo}</span>`;
+    ul.appendChild(li);
+  });
 }
 
 /* ============================================
@@ -478,20 +429,6 @@ function renderProcedureListForCategory(cat) {
   listBox.innerHTML = procs.map((p) => templateProcedureItem(p)).join("");
 }
 
-function scrollToProcedure(title) {
-  const listBox = document.getElementById("proc-list");
-  if (!listBox) return;
-  const items = listBox.querySelectorAll(".list-item");
-  items.forEach((item) => {
-    const t = item.querySelector(".list-item-title")?.textContent.trim();
-    if (t && t.toLowerCase() === title.toLowerCase()) {
-      item.scrollIntoView({ behavior: "smooth", block: "start" });
-      item.style.boxShadow = "0 0 0 2px #22c55e";
-      setTimeout(() => (item.style.boxShadow = ""), 1200);
-    }
-  });
-}
-
 /* ============================================
    COMUNICAZIONI
    ============================================ */
@@ -566,7 +503,6 @@ function adminSendMessage() {
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
     renderMessages(active);
-    renderHomeLastMessages(active);
   }
 
   alert("Comunicazione inviata.");
@@ -586,7 +522,7 @@ function populateMessageTargets() {
 }
 
 /* ============================================
-   FERIE & PERMESSI
+   FERIE & PERMESSI (LS_LEAVE)
    ============================================ */
 
 function formatLeaveType(t) {
@@ -639,8 +575,12 @@ function sendLeaveRequest() {
   saveJson(LS_LEAVE, all);
 
   document.getElementById("leave-note").value = "";
+
   renderLeaveTable(user);
-  if (user.role === "admin") renderAdminLeaveList();
+  const active = loadJson(LS_ACTIVE, null);
+  if (active && active.role === "admin") {
+    renderAdminLeaveList();
+  }
 
   alert("Richiesta inviata.");
 }
@@ -673,7 +613,7 @@ function renderLeaveTable(user) {
       tr.innerHTML = `
         <td>${created}</td>
         <td>${formatLeaveType(r.type)}</td>
-        <td>${r.start}${r.end ? " → " + r.end : ""}</td>
+        <td>${r.start || ""}${r.end ? " → " + r.end : ""}</td>
         <td>${formatLeaveStatus(r.status)}</td>
       `;
       tbody.appendChild(tr);
@@ -702,7 +642,7 @@ function renderAdminLeaveList() {
           ${r.userName} – ${formatLeaveType(r.type)}
         </div>
         <div class="list-item-meta">
-          Dal ${r.start}${r.end ? " al " + r.end : ""} – Stato: ${formatLeaveStatus(
+          Dal ${r.start || ""}${r.end ? " al " + r.end : ""} – Stato: ${formatLeaveStatus(
         r.status
       )}
         </div>
@@ -730,7 +670,7 @@ function adminSetLeaveStatus(id, status) {
   if (active) {
     renderLeaveTable(active);
     if (active.role === "admin") renderAdminLeaveList();
-    renderHomeLeaveSummary(active);
+    renderHomeAbsencesBanner(active);
   }
 }
 
@@ -1043,7 +983,7 @@ function togglePassword() {
 }
 
 /* ============================================
-   APP INTERNA (HOME / ASSENZE)
+   HOME – SCHERMATE INTERNE APP
    ============================================ */
 
 function showAppScreen(which) {
@@ -1065,112 +1005,6 @@ function showAppScreen(which) {
     if (btnAss) btnAss.classList.remove("app-nav-btn-active");
     if (btnHome) btnHome.classList.add("app-nav-btn-active");
   }
-}
-
-// Salvataggio e lettura assenze
-function loadAbsences() {
-  return loadJson(LS_ABSENCES, []);
-}
-
-function saveAbsences(list) {
-  saveJson(LS_ABSENCES, list);
-}
-
-// In questa versione tutte le assenze sono considerate "approvate"
-function submitAbsence() {
-  const user = loadJson(LS_ACTIVE, null);
-  if (!user) {
-    alert("Devi essere loggato per richiedere un'assenza.");
-    return;
-  }
-
-  const dateEl = document.getElementById("abs-date");
-  const reasonEl = document.getElementById("abs-reason");
-  if (!dateEl || !reasonEl) return;
-
-  const date = dateEl.value;
-  const reason = reasonEl.value.trim();
-
-  if (!date) {
-    alert("Seleziona la data.");
-    return;
-  }
-
-  let absences = loadAbsences();
-  absences.push({
-    id: "a-" + Date.now(),
-    userName: user.name,
-    date,
-    reason,
-    status: "approved",
-  });
-  saveAbsences(absences);
-
-  dateEl.value = "";
-  reasonEl.value = "";
-
-  renderApprovedAbsences();
-  alert("Richiesta assenza registrata (approvata e visibile a tutti).");
-}
-
-// Mostra SOLO assenze future approvate
-function renderApprovedAbsences() {
-  const container = document.getElementById("absence-list");
-  if (!container) return;
-
-  const activeUser = loadJson(LS_ACTIVE, null);
-  const isAdmin = activeUser && activeUser.role === "admin";
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  let absences = loadAbsences().filter((a) => a.status === "approved");
-
-  absences = absences.filter((a) => {
-    const d = new Date(a.date);
-    d.setHours(0, 0, 0, 0);
-    return d >= today;
-  });
-
-  absences.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-  if (absences.length === 0) {
-    container.innerHTML =
-      "<p class='small-text'>Nessuna assenza futura registrata.</p>";
-    return;
-  }
-
-  container.innerHTML = "";
-  absences.forEach((a) => {
-    const d = new Date(a.date);
-    const formattedDate = d.toLocaleDateString("it-IT", {
-      weekday: "short",
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-
-    const reason = a.reason || "";
-    const isFerie = reason.toLowerCase().includes("ferie");
-
-    let meta = formattedDate;
-    if (isAdmin) {
-      if (reason) meta += " · " + reason;
-    } else if (isFerie) {
-      meta += " · ferie";
-    }
-
-    const div = document.createElement("div");
-    div.className = "absence-pill";
-    div.innerHTML =
-      "<span><strong>" +
-      a.userName +
-      "</strong></span>" +
-      "<span class='absence-meta'>" +
-      meta +
-      "</span>";
-    container.appendChild(div);
-  });
 }
 
 /* ============================================
