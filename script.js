@@ -205,10 +205,16 @@ function openPortal(user) {
 
   // Mostra sezione HOME e schermata app principale
   showSection("home");
-  showAppScreen("home");
-  renderApprovedAbsences(); // aggiorna subito la lista assenze
-}
+  if (typeof showAppScreen === "function") {
+    showAppScreen("home");
+  }
+  if (typeof renderApprovedAbsences === "function") {
+    renderApprovedAbsences();
+  }
 
+  const globalHome = document.getElementById("global-home-btn");
+  if (globalHome) globalHome.classList.remove("hidden");
+}
 /* Cambio sezione */
 function showSection(id, btn) {
   const sections = document.querySelectorAll(".section");
