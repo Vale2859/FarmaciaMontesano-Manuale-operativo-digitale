@@ -1,25 +1,25 @@
-/* ============================================================
+/* ============================================
    Portale Professionale – Farmacia Montesano
-   script.js – gestione completa lato front-end (localStorage)
-   ============================================================ */
+   Gestione front-end con localStorage
+   ============================================ */
 
 const LS_USERS = "fm_users";
 const LS_ACTIVE = "fm_activeUser";
 const LS_PROCEDURES = "fm_procedures";
 const LS_MESSAGES = "fm_messages";
 const LS_LEAVE = "fm_leave";
-const LS_PERSONAL = "fm_personal"; // note e documenti personali
+const LS_PERSONAL = "fm_personal";
 const LS_QUICK = "fm_quickNotes";
 const LS_TRAINING = "fm_trainingNotes";
 
-/* ---------- Utility JSON ---------- */
+/* ---------- Utility ---------- */
 
 function loadJson(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return fallback;
     return JSON.parse(raw);
-  } catch (e) {
+  } catch {
     return fallback;
   }
 }
@@ -28,15 +28,13 @@ function saveJson(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-/* ---------- Utility ID ---------- */
-
 function uid() {
   return "id-" + Math.random().toString(36).substring(2) + "-" + Date.now();
 }
 
-/* ============================================================
+/* ============================================
    AUTENTICAZIONE
-   ============================================================ */
+   ============================================ */
 
 function showError(msg) {
   const e = document.getElementById("auth-error");
@@ -74,7 +72,7 @@ function saveUsers(users) {
   saveJson(LS_USERS, users);
 }
 
-/* Admin iniziale se non esistono utenti */
+/* Admin di default se non esistono utenti */
 function seedAdminIfNeeded() {
   let users = loadUsers();
   if (users.length === 0) {
@@ -95,7 +93,7 @@ function seedAdminIfNeeded() {
   }
 }
 
-/* Registrazione: l'utente rimane in attesa finché l'admin non lo approva */
+/* Registrazione: account in attesa di approvazione */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
@@ -118,19 +116,19 @@ function registerUser() {
     email,
     password: pass,
     role: "dipendente",
-    active: false, // finché l'admin non lo abilita
+    active: false,
     approved: false,
     createdAt: new Date().toISOString(),
   });
 
   saveUsers(users);
-
   alert(
     "Richiesta inviata! L'account dovrà essere approvato dall'Admin prima di poter accedere."
   );
   showLogin();
 }
 
+/* Login */
 function login() {
   const email = document.getElementById("login-email").value.trim();
   const pass = document.getElementById("login-password").value;
@@ -142,9 +140,7 @@ function login() {
 
   const users = loadUsers();
   const user = users.find(
-    (u) =>
-      u.email.toLowerCase() === email.toLowerCase() &&
-      u.password === pass
+    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
   );
 
   if (!user) {
@@ -153,9 +149,7 @@ function login() {
   }
 
   if (!user.approved || !user.active) {
-    showError(
-      "Account non abilitato. Contatta il titolare per l'approvazione."
-    );
+    showError("Account non abilitato. Contatta il titolare.");
     return;
   }
 
@@ -170,88 +164,24 @@ function logout() {
   const auth = document.getElementById("auth");
   if (portal) portal.classList.add("hidden");
   if (auth) auth.classList.remove("hidden");
+  auth.style.display = "flex";
   showLogin();
 }
 
-/* ============================================================
-   APERTURA PORTALE & NAVIGAZIONE
-   ============================================================ */
+/* ============================================
+   PORTALE & NAVIGAZIONE
+   ============================================ */
 
 function openPortal(user) {
   const auth = document.getElementById("auth");
   const portal = document.getElementById("portal");
   const loginBox = document.getElementById("login-box");
   const registerBox = document.getElementById("register-box");
-  const authCard = document.querySelector(".auth-card");
-  const authScreen = document.querySelector(".auth-screen");
 
-  // 🔴 Nascondi TUTTO quello che riguarda il login
-  if (auth) auth.classList.add("hidden");
-  if (loginBox) loginBox.classList.add("hidden");
-  if (registerBox) registerBox.classList.add("hidden");
-  if (authCard) authCard.style.display = "none";
-  if (authScreen) authScreen.style.display = "none";
-
-  // ✅ Mostra il portale
-  if (portal) portal.classList.remove("hidden");
-
-  // Dati utente in alto
-  const nameDisplay = document.getElementById("user-name-display");
-  const roleDisplay = document.getElementById("user-role-display");
-  if (nameDisplay) nameDisplay.textContent = user.name || "";
-  if (roleDisplay) {
-    roleDisplay.textContent =
-      user.role === "admin" ? "Titolare / Admin" : "Dipendente";
+  if (auth) {
+    auth.classList.add("hidden");
+    auth.style.display = "none";
   }
-
-  // Titolo dashboard
-  const homeTitle = document.getElementById("home-title");
-  if (homeTitle) {
-    homeTitle.textContent = "Ciao " + user.name + ", benvenuto nel portale";
-  }
-
-  // Riepilogo profilo
-  const info = document.getElementById("user-info");
-  if (info) {
-    info.innerHTML =
-      "<strong>Nome:</strong> " +
-      user.name +
-      "<br><strong>Email:</strong> " +
-      user.email +
-      "<br><strong>Ruolo:</strong> " +
-      (user.role === "admin" ? "Titolare / Admin" : "Dipendente");
-  }
-
-  // Mostra voce Admin solo a te
-  const navAdmin = document.getElementById("nav-admin");
-  if (navAdmin) {
-    if (user.role === "admin") navAdmin.classList.remove("hidden");
-    else navAdmin.classList.add("hidden");
-  }
-
-  // Inizializza contenuti
-  initHome(user);
-  renderProcedures(user);
-  renderMessages(user);
-  renderLeaveTable(user);
-  renderTraining(user);
-  renderLogistics();
-  loadPersonalData(user);
-  if (user.role === "admin") {
-    renderAdminUsers();
-    renderAdminProceduresList();
-    renderAdminLeaveList();
-    populateMessageTargets();
-  }
-
-  // Vai su Dashboard
-  showSection("home", document.getElementById("nav-home"));
-}  const auth = document.getElementById("auth");
-  const portal = document.getElementById("portal");
-  const loginBox = document.getElementById("login-box");
-  const registerBox = document.getElementById("register-box");
-
-  if (auth) auth.classList.add("hidden");
   if (loginBox) loginBox.classList.add("hidden");
   if (registerBox) registerBox.classList.add("hidden");
   if (portal) portal.classList.remove("hidden");
@@ -303,6 +233,7 @@ function openPortal(user) {
   showSection("home", document.getElementById("nav-home"));
 }
 
+/* Cambio sezione */
 function showSection(id, btn) {
   const sections = document.querySelectorAll(".section");
   sections.forEach((s) => s.classList.remove("visible"));
@@ -315,9 +246,9 @@ function showSection(id, btn) {
   if (btn) btn.classList.add("active");
 }
 
-/* ============================================================
-   HOME / DASHBOARD
-   ============================================================ */
+/* ============================================
+   DASHBOARD / HOME
+   ============================================ */
 
 function todayLabel() {
   const d = new Date();
@@ -356,7 +287,7 @@ function initHome(user) {
   const qp = document.getElementById("home-quick-proc");
   if (qp) {
     qp.innerHTML = `
-      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Anticipi')">Anticipi</button>
+      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Anticipi – i clienti pagano subito')">Anticipi</button>
       <button class="quick-btn" onclick="openProcedureFromHome('Cassa','POS collegato')">POS</button>
       <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Ticket SSN')">Ticket</button>
       <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Sotto cassa')">Sotto cassa</button>
@@ -374,8 +305,7 @@ function openProcedureFromHome(cat, title) {
   scrollToProcedure(title);
 }
 
-/* ---------- HOME – Riepilogo ferie ---------- */
-
+/* Home – riepilogo ferie */
 function renderHomeLeaveSummary(user) {
   const box = document.getElementById("home-leave-summary");
   if (!box) return;
@@ -401,8 +331,7 @@ function renderHomeLeaveSummary(user) {
   `;
 }
 
-/* ---------- HOME – Logistica ---------- */
-
+/* Home – logistica breve */
 function renderHomeLogisticsSummary() {
   const ul = document.getElementById("home-logistics-summary");
   if (!ul) return;
@@ -413,12 +342,11 @@ function renderHomeLogisticsSummary() {
   `;
 }
 
-/* ---------- HOME – Ultime comunicazioni ---------- */
-
+/* Home – ultime comunicazioni */
 function renderHomeLastMessages(user) {
   const cont = document.getElementById("home-last-messages");
   if (!cont) return;
-  const all = loadJson(LS_MESSAGES, []);
+  const all = getMessages();
   const visible = all
     .filter((m) => m.target === "all" || m.target === user.id)
     .slice(-3)
@@ -434,9 +362,9 @@ function renderHomeLastMessages(user) {
     .join("");
 }
 
-/* ============================================================
-   TEMPLATE UI PER MESSAGGI / PROCEDURE
-   ============================================================ */
+/* ============================================
+   TEMPLATE MESSAGGI / PROCEDURE
+   ============================================ */
 
 function templateMessage(title, body, priority, date) {
   const color =
@@ -473,9 +401,9 @@ function templateProcedureItem(p) {
   `;
 }
 
-/* ============================================================
+/* ============================================
    PROCEDURE
-   ============================================================ */
+   ============================================ */
 
 function ensureDemoProcedures() {
   let procs = loadJson(LS_PROCEDURES, null);
@@ -501,15 +429,15 @@ function ensureDemoProcedures() {
       },
       {
         id: uid(),
-        category: "Magazzino",
-        title: "Controllo scadenze",
-        body: "Cadenza mensile, scaffali da controllare, come gestire il reso, dove segnare le anomalie.",
+        category: "Cassa",
+        title: "Sotto cassa",
+        body: "Regole per la gestione del sotto cassa, conteggio, reintegro.",
       },
       {
         id: uid(),
-        category: "Servizi",
-        title: "Autoanalisi",
-        body: "Accoglienza cliente, consenso, svolgimento, registrazione esito.",
+        category: "Magazzino",
+        title: "Controllo scadenze",
+        body: "Cadenza mensile, scaffali da controllare, come gestire il reso, dove segnare le anomalie.",
       },
     ];
     saveJson(LS_PROCEDURES, procs);
@@ -521,15 +449,15 @@ function getProcedures() {
   return loadJson(LS_PROCEDURES, []);
 }
 
-function renderProcedures(user) {
+function renderProcedures() {
   const procs = getProcedures();
   const catBox = document.getElementById("proc-categories");
   const listBox = document.getElementById("proc-list");
   if (!catBox || !listBox) return;
 
   const cats = Array.from(new Set(procs.map((p) => p.category)));
-
   catBox.innerHTML = "";
+
   cats.forEach((c, idx) => {
     const btn = document.createElement("button");
     btn.className = "proc-category-btn" + (idx === 0 ? " active" : "");
@@ -572,12 +500,8 @@ function scrollToProcedure(title) {
   if (!listBox) return;
   const items = listBox.querySelectorAll(".list-item");
   items.forEach((item) => {
-    if (
-      item
-        .querySelector(".list-item-title")
-        ?.textContent.trim()
-        .toLowerCase() === title.toLowerCase()
-    ) {
+    const t = item.querySelector(".list-item-title")?.textContent.trim();
+    if (t && t.toLowerCase() === title.toLowerCase()) {
       item.scrollIntoView({ behavior: "smooth", block: "start" });
       item.style.boxShadow = "0 0 0 2px #22c55e";
       setTimeout(() => (item.style.boxShadow = ""), 1200);
@@ -585,9 +509,9 @@ function scrollToProcedure(title) {
   });
 }
 
-/* ============================================================
+/* ============================================
    COMUNICAZIONI
-   ============================================================ */
+   ============================================ */
 
 function ensureDemoMessages() {
   let msgs = loadJson(LS_MESSAGES, null);
@@ -631,7 +555,6 @@ function renderMessages(user) {
     .join("");
 }
 
-/* Admin: invia comunicazione */
 function adminSendMessage() {
   const title = document.getElementById("admin-msg-title").value.trim();
   const body = document.getElementById("admin-msg-body").value.trim();
@@ -666,7 +589,6 @@ function adminSendMessage() {
   alert("Comunicazione inviata.");
 }
 
-/* Popola select destinatari (tutti + singoli utenti) */
 function populateMessageTargets() {
   const sel = document.getElementById("admin-msg-target");
   if (!sel) return;
@@ -680,9 +602,9 @@ function populateMessageTargets() {
   });
 }
 
-/* ============================================================
+/* ============================================
    FERIE & PERMESSI
-   ============================================================ */
+   ============================================ */
 
 function formatLeaveType(t) {
   switch (t) {
@@ -775,7 +697,6 @@ function renderLeaveTable(user) {
     });
 }
 
-/* Admin: lista richieste ferie & permessi */
 function renderAdminLeaveList() {
   const box = document.getElementById("admin-leave-list");
   if (!box) return;
@@ -830,17 +751,17 @@ function adminSetLeaveStatus(id, status) {
   }
 }
 
-/* ============================================================
+/* ============================================
    FORMAZIONE
-   ============================================================ */
+   ============================================ */
 
 function renderTraining(user) {
   const list = document.getElementById("training-list");
   if (list) {
     list.innerHTML = `
       <li>Ripasso procedure cassa e anticipi.</li>
-      <li>Nuovi prodotti stagione corrente.</li>
-      <li>Eventuali corsi ECM in programma.</li>
+      <li>Nuovi prodotti della stagione.</li>
+      <li>Corsi ECM programmati.</li>
     `;
   }
 
@@ -863,9 +784,9 @@ function saveTrainingNotes() {
   }
 }
 
-/* ============================================================
+/* ============================================
    LOGISTICA
-   ============================================================ */
+   ============================================ */
 
 function renderLogistics() {
   const cour = document.getElementById("logistics-couriers");
@@ -884,9 +805,9 @@ function renderLogistics() {
   }
 }
 
-/* ============================================================
-   AREA PERSONALE & APPUNTI RAPIDI
-   ============================================================ */
+/* ============================================
+   AREA PERSONALE / APPUNTI
+   ============================================ */
 
 function saveQuickNotes() {
   const user = loadJson(LS_ACTIVE, null);
@@ -990,9 +911,9 @@ function renderPersonalDocs(docs) {
     });
 }
 
-/* ============================================================
+/* ============================================
    AREA ADMIN – UTENTI & PROCEDURE
-   ============================================================ */
+   ============================================ */
 
 function renderAdminUsers() {
   const box = document.getElementById("admin-users");
@@ -1071,7 +992,7 @@ function adminResetPassword(id) {
   alert("Password aggiornata.");
 }
 
-/* ---------- Admin: Procedure ---------- */
+/* Admin – Procedure */
 
 function adminSaveProcedure() {
   const cat = document.getElementById("admin-proc-cat").value.trim();
@@ -1102,7 +1023,7 @@ function adminSaveProcedure() {
   saveJson(LS_PROCEDURES, procs);
 
   document.getElementById("admin-proc-body").value = "";
-  renderProcedures(loadJson(LS_ACTIVE, {}));
+  renderProcedures();
   renderAdminProceduresList();
   alert("Procedura salvata.");
 }
@@ -1128,9 +1049,9 @@ function renderAdminProceduresList() {
   });
 }
 
-/* ============================================================
+/* ============================================
    AVVIO
-   ============================================================ */
+   ============================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
   seedAdminIfNeeded();
