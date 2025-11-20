@@ -799,3 +799,74 @@ button {
     box-shadow: none;
   }
 }
+
+/* Schermate interne dell'app */
+.app-screens {
+  min-height: 260px;
+}
+
+.app-screen {
+  display: none;
+}
+
+.app-screen-visible {
+  display: block;
+}
+
+/* Titolo sezione interna */
+.app-section-title {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Form assenze */
+.absence-form {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 10px 10px 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 10px;
+}
+
+.absence-form label {
+  font-size: 12px;
+  margin-top: 6px;
+  margin-bottom: 3px;
+}
+
+.absence-form input[type="date"],
+.absence-form input[type="text"] {
+  font-size: 13px;
+  padding: 7px 8px;
+}
+
+/* Lista assenze */
+.absence-list {
+  background: #f5f7fb;
+  border-radius: 14px;
+  padding: 8px 10px 6px;
+}
+
+.absence-list h4 {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+}
+
+.absence-pill {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.absence-pill span {
+  display: block;
+}
+
+.absence-pill span.absence-meta {
+  color: #666;
+  font-size: 11px;
+}
