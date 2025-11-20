@@ -104,7 +104,7 @@ function seedAdminIfNeeded() {
   }
 
   saveUsers(users);
-
+}
 /* Registrazione: account in attesa di approvazione */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
