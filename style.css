@@ -1165,3 +1165,59 @@ body {
     padding: 6px 4px;
   }
 }
+/* ========== PAGINA ASSENZE (LAYOUT NUOVO) ========== */
+
+/* layout generale della schermata Assenze */
+.assenze-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* pannelli lista + form */
+.assenze-list-panel,
+.assenze-form-panel {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+/* titoletti nei due pannelli */
+.assenze-list-panel h4,
+.assenze-form-panel h4 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* le pillole delle assenze più grandi e leggibili */
+.absence-pill {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+}
+
+.absence-pill span.absence-meta {
+  font-size: 12px;
+}
+
+/* su schermi grandi: lista grande a sinistra, form a destra */
+@media (min-width: 900px) {
+  .assenze-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .assenze-list-panel {
+    flex: 2.2;
+  }
+
+  .assenze-form-panel {
+    flex: 1.3;
+  }
+}
