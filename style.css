@@ -583,3 +583,153 @@ button {
     padding-inline: 18px;
   }
 }
+
+/* RESET BASE */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #eef3f7;
+  font-family: "Inter", sans-serif;
+  color: #222;
+}
+
+/* HEADER */
+#portal-header {
+  width: 100%;
+  background: #0d774f;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-size: 20px;
+}
+
+#portal-header img {
+  height: 42px;
+  margin-right: 10px;
+}
+
+/* CONTAINER PRINCIPALE */
+#portal {
+  padding: 40px 60px;
+}
+
+.dashboard-wrapper {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* CARD PRINCIPALE */
+.dashboard-card {
+  background: white;
+  padding: 40px;
+  border-radius: 30px;
+  box-shadow: 0 8px 35px rgba(0,0,0,0.14);
+}
+
+/* BLOCCO FARMACIA APERTA */
+.dashboard-top {
+  background: #1fae63;
+  padding: 30px;
+  border-radius: 25px;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.dashboard-top h2 {
+  font-size: 34px;
+  font-weight: 800;
+  margin-top: 10px;
+}
+
+.dashboard-top p {
+  font-size: 22px;
+}
+
+/* GRID FUNZIONI */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  margin-top: 25px;
+}
+
+/* PULSANTI DELLA DASHBOARD */
+.dashboard-item {
+  background: #fff;
+  padding: 35px 20px;
+  border-radius: 22px;
+  text-align: center;
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dashboard-item:hover {
+  transform: scale(1.05);
+}
+
+/* ICONE GRANDI */
+.dashboard-item .icon {
+  font-size: 42px;
+}
+
+/* COLORI BOX */
+.orange { background: #ff9d12; }
+.green { background: #15a857; }
+.pink { background: #ff4d98; }
+.blue { background: #4a92ff; }
+.yellow { background: #f4c330; }
+.purple { background: #8d60ff; }
+.teal { background: #0db39e; }
+.grey { background: #6c7a89; }
+
+/* BOTTONE HOME */
+.home-btn {
+  margin-top: 35px;
+  font-size: 24px;
+  padding: 18px;
+  width: 100%;
+  border-radius: 18px;
+  background: #0d774f;
+  color: white;
+  text-align: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media(max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width: 600px) {
+  #portal {
+    padding: 20px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .dashboard-item {
+    padding: 25px 15px;
+    font-size: 20px;
+  }
+
+  .dashboard-item .icon {
+    font-size: 34px;
+  }
+}
