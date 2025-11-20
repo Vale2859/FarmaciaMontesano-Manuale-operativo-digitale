@@ -116,9 +116,10 @@
       <!-- CONTENUTO -->
       <main class="main">
         <!-- DASHBOARD -->
-        <section id="home" class="section visible">
+    <section id="home" class="section visible">
   <div class="home-app-wrapper">
     <div class="app-phone">
+      <!-- HEADER APP -->
       <div class="app-header">
         <div class="app-header-top">
           <span class="app-status-pill">FARMACIA APERTA</span>
@@ -131,68 +132,94 @@
         </div>
       </div>
 
-      <div class="app-grid">
-        <!-- PRIMA RIGA -->
-        <button class="app-tile app-tile-orange"
-          onclick="showSection('leave', document.getElementById('nav-leave'))">
-          <span class="app-tile-icon">🗓</span>
-          <span class="app-tile-text">Prenota ferie</span>
-        </button>
+      <!-- SCHERMATE INTERNE APP -->
+      <div class="app-screens">
+        <!-- SCHERMATA 1: HOME (TILES) -->
+        <div id="screen-home" class="app-screen app-screen-visible">
+          <div class="app-grid">
+            <!-- RIGA 1 -->
+            <button class="app-tile app-tile-orange" onclick="showAppScreen('assenze')">
+              <span class="app-tile-icon">🗓</span>
+              <span class="app-tile-text">Assenze</span>
+            </button>
 
-        <button class="app-tile app-tile-green"
-          onclick="showSection('procedures', document.getElementById('nav-proc'))">
-          <span class="app-tile-icon">📄</span>
-          <span class="app-tile-text">Procedure</span>
-        </button>
+            <button class="app-tile app-tile-green" onclick="showSection('procedures')">
+              <span class="app-tile-icon">📄</span>
+              <span class="app-tile-text">Procedure</span>
+            </button>
 
-        <!-- SECONDA RIGA -->
-        <button class="app-tile app-tile-pink"
-          onclick="showSection('messages', document.getElementById('nav-msg'))">
-          <span class="app-tile-icon">📣</span>
-          <span class="app-tile-text">Comunicazioni</span>
-        </button>
+            <!-- RIGA 2 -->
+            <button class="app-tile app-tile-pink" onclick="showSection('messages')">
+              <span class="app-tile-icon">📣</span>
+              <span class="app-tile-text">Comunicazioni</span>
+            </button>
 
-        <button class="app-tile app-tile-blue"
-          onclick="showSection('training', document.getElementById('nav-train'))">
-          <span class="app-tile-icon">🎓</span>
-          <span class="app-tile-text">Formazione</span>
-        </button>
+            <button class="app-tile app-tile-blue" onclick="showSection('training')">
+              <span class="app-tile-icon">🎓</span>
+              <span class="app-tile-text">Formazione</span>
+            </button>
 
-        <!-- TERZA RIGA -->
-        <button class="app-tile app-tile-yellow"
-          onclick="showSection('logistics', document.getElementById('nav-log'))">
-          <span class="app-tile-icon">📦</span>
-          <span class="app-tile-text">Logistica</span>
-        </button>
+            <!-- RIGA 3 -->
+            <button class="app-tile app-tile-yellow" onclick="showSection('logistics')">
+              <span class="app-tile-icon">📦</span>
+              <span class="app-tile-text">Logistica</span>
+            </button>
 
-        <button class="app-tile app-tile-purple"
-          onclick="showSection('personal', document.getElementById('nav-personal'))">
-          <span class="app-tile-icon">🔐</span>
-          <span class="app-tile-text">Area personale</span>
-        </button>
+            <button class="app-tile app-tile-purple" onclick="showSection('personal')">
+              <span class="app-tile-icon">🔐</span>
+              <span class="app-tile-text">Area personale</span>
+            </button>
 
-        <!-- QUARTA RIGA -->
-        <button class="app-tile app-tile-grey" onclick="showSection('home', document.getElementById('nav-home'))">
-          <span class="app-tile-icon">💊</span>
-          <span class="app-tile-text">Consigli banco</span>
-        </button>
+            <!-- RIGA 4 (solo per admin, ma il bottone c'è sempre) -->
+            <button class="app-tile app-tile-teal" onclick="showSection('admin')">
+              <span class="app-tile-icon">👑</span>
+              <span class="app-tile-text">Admin</span>
+            </button>
 
-        <button class="app-tile app-tile-teal"
-          onclick="showSection('admin', document.getElementById('nav-admin'))">
-          <span class="app-tile-icon">👑</span>
-          <span class="app-tile-text">Admin</span>
-        </button>
+            <button class="app-tile app-tile-grey" onclick="alert('Spazio per future funzioni')">
+              <span class="app-tile-icon">💊</span>
+              <span class="app-tile-text">Altre funzioni</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SCHERMATA 2: ASSENZE -->
+        <div id="screen-assenze" class="app-screen">
+          <h3 class="app-section-title">Assenze dipendenti</h3>
+
+          <div class="absence-form">
+            <label>Data assenza</label>
+            <input type="date" id="abs-date" />
+
+            <label>Motivo (es. ferie, visita medica…)</label>
+            <input type="text" id="abs-reason" placeholder="Es. Ferie, permesso, visita medica…" />
+
+            <button class="btn-primary small" onclick="submitAbsence()">
+              Segnala assenza
+            </button>
+            <p class="small-text" style="margin-top:6px;">
+              In questa versione tutte le assenze inserite sono considerate
+              <strong>approvate</strong> e visibili a tutti.
+            </p>
+          </div>
+
+          <div class="absence-list">
+            <h4>Assenze future approvate</h4>
+            <div id="absence-list"></div>
+          </div>
+        </div>
       </div>
 
+      <!-- NAVIGAZIONE IN BASSO -->
       <div class="app-bottom-nav">
-        <button class="app-nav-btn app-nav-btn-active"
-          onclick="showSection('home', document.getElementById('nav-home'))">Home</button>
-        <button class="app-nav-btn"
-          onclick="showSection('procedures', document.getElementById('nav-proc'))">Procedure</button>
-        <button class="app-nav-btn"
-          onclick="showSection('messages', document.getElementById('nav-msg'))">Messaggi</button>
-        <button class="app-nav-btn"
-          onclick="showSection('leave', document.getElementById('nav-leave'))">Ferie</button>
+        <button id="nav-app-home" class="app-nav-btn app-nav-btn-active"
+          onclick="showAppScreen('home')">
+          Home
+        </button>
+        <button id="nav-app-assenze" class="app-nav-btn"
+          onclick="showAppScreen('assenze')">
+          Assenze
+        </button>
       </div>
     </div>
   </div>
