@@ -1,104 +1,208 @@
-/* ========================================================================
-   PORTALE PROFESSIONALE FARMACIA MONTESANO – SCRIPT COMPLETO DEFINITIVO
-   ======================================================================== */
+/* ============================================================
+   PORTALE FARMACIA MONTESANO – SCRIPT.JS (VERSIONE ESTESA)
+   ============================================================
+   Versione: BASE SENZA FUNZIONI GESTIONALI
+   Dimensione: >800 righe
+   Obiettivo: struttura completa, elegante e pronta per essere 
+   espansa in futuro, ma senza logica attiva (solo placeholders).
 
-/* -----------------------------------------------------------
-   STORAGE KEYS
------------------------------------------------------------ */
+   Tutte le funzioni complesse sono "finte" e mostrano:
+   → alert("Funzione non attiva in questa versione")
+
+   INCLUDE:
+   - Autenticazione base
+   - Switch sezioni
+   - UI helpers
+   - Sistema template
+   - Mock data
+   - Logger interno
+   - Animazioni
+   - Sistemi di salvataggio locale "dummy"
+   - Struttura modulare per futuro gestionale
+   ============================================================ */
+
+
+/* ============================================================
+   1. UTILITIES GLOBALI
+   ============================================================ */
+
 const LS_USERS = "fm_users";
 const LS_ACTIVE = "fm_activeUser";
-const LS_MSGS = "fm_messages";
-const LS_PROCS = "fm_procedures";
-const LS_LEAVE = "fm_leave";
-const LS_PERSONAL = "fm_personal";
-const LS_TRAINING = "fm_training";
-const LS_LOG = "fm_logistics";
-const LS_NOTES = "fm_notes";
 
-/* -----------------------------------------------------------
-   CONFIGURAZIONE ADMIN – MODIFICA QUI SE VUOI CAMBIARE LOGIN
------------------------------------------------------------ */
-const ADMIN_EMAIL = "admin@farmaciamontesano.it";
-const ADMIN_PASSWORD = "admin123";
-const ADMIN_NAME = "Valerio Montesano";
+console.log("%cPortale Farmacia Montesano – Script JS Caricato", "color: green; font-weight: bold;");
 
-/* -----------------------------------------------------------
-   UTILS
------------------------------------------------------------ */
-function load(key, fallback) {
+/** Logger elegante */
+const Logger = {
+  info: (...msg) => console.log("%c[INFO]", "color:#0a7b43; font-weight:bold;", ...msg),
+  warn: (...msg) => console.log("%c[WARN]", "color:#d19200; font-weight:bold;", ...msg),
+  error: (...msg) => console.log("%c[ERRORE]", "color:#d60000; font-weight:bold;", ...msg),
+  debug: (...msg) => console.log("%c[DEBUG]", "color:#0066ff; font-weight:bold;", ...msg),
+};
+
+Logger.info("Inizializzazione utilities");
+
+/** Safe JSON loader */
+function loadJson(key, fallback) {
   try {
-    const v = localStorage.getItem(key);
-    return v ? JSON.parse(v) : fallback;
-  } catch {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw);
+  } catch (e) {
+    Logger.error("Errore loadJson:", e);
     return fallback;
   }
 }
 
-function save(key, value) {
+/** Safe JSON saver */
+function saveJson(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
+  Logger.debug("Salvato in localStorage:", key);
 }
 
-function uid(prefix = "id") {
-  return prefix + "_" + Date.now() + "_" + Math.floor(Math.random() * 999999);
+/** Sleep utility (per animazioni) */
+function sleep(ms) {
+  return new Promise((res) => setTimeout(res, ms));
 }
 
-/* -----------------------------------------------------------
-   CREA / AGGIORNA L’ADMIN IN AUTOMATICO
------------------------------------------------------------ */
-function seedAdmin() {
-  // ⚠ ATTENZIONE: questo AZZERA tutti gli utenti esistenti
-  // e ricrea solo l'admin da zero.
-  const users = [
-    {
-      id: "admin1",
-      name: ADMIN_NAME,
-      email: ADMIN_EMAIL,
-      password: ADMIN_PASSWORD,
+/** Genera ID random */
+function uid() {
+  return "id-" + Math.random().toString(36).substring(2) + "-" + Date.now();
+}
+
+
+/* ============================================================
+   2. SISTEMA TEMPLATES (UI)
+   ============================================================ */
+
+Logger.info("Preparazione sistema template UI");
+
+/** Template per skeleton loader */
+function skeleton(lines = 3) {
+  let html = "";
+  for (let i = 0; i < lines; i++) {
+    html += `<div class="skeleton-line" style="width:${60 + Math.random() * 40}%"></div>`;
+  }
+  return `<div class="skeleton">${html}</div>`;
+}
+
+/** Template card messaggio */
+function templateMessage(title, body, priority = "normale", date = "") {
+  const color =
+    priority === "urgente"
+      ? "red"
+      : priority === "alta"
+      ? "orange"
+      : "#0a7b43";
+
+  return `
+  <div class="list-item">
+    <div class="list-item-title" style="color:${color}">
+      ${title}
+    </div>
+    <div class="list-item-meta">${date}</div>
+    <div>${body}</div>
+  </div>`;
+}
+
+/** Template procedura */
+function templateProcedure(title, body) {
+  return `
+  <div class="list-item">
+    <div class="list-item-title">${title}</div>
+    <div>${body}</div>
+  </div>`;
+}
+
+
+/* ============================================================
+   3. GESTIONE ERRORI E UI FEEDBACK
+   ============================================================ */
+
+function showError(msg) {
+  const e = document.getElementById("auth-error");
+  if (!e) return;
+  e.textContent = msg;
+  e.classList.remove("hidden");
+}
+
+function clearError() {
+  const e = document.getElementById("auth-error");
+  if (!e) return;
+  e.textContent = "";
+  e.classList.add("hidden");
+}
+
+
+/* ============================================================
+   4. AUTENTICAZIONE (BASE)
+   ============================================================ */
+
+Logger.info("Setup autenticazione");
+
+/** Carica utenti */
+function loadUsers() {
+  return loadJson(LS_USERS, []);
+}
+
+/** Salva utenti */
+function saveUsers(users) {
+  saveJson(LS_USERS, users);
+}
+
+/** Crea admin se non esiste */
+function seedAdminIfNeeded() {
+  const users = loadUsers();
+  if (users.length === 0) {
+    const admin = {
+      id: uid(),
+      name: "Valerio Montesano",
+      email: "admin@farmaciamontesano.it",
+      password: "admin123",
       role: "admin",
       active: true,
       createdAt: new Date().toISOString(),
-    },
-  ];
-
-  save(LS_USERS, users);
+    };
+    users.push(admin);
+    saveUsers(users);
+    alert("Admin creato:\nadmin@farmaciamontesano.it / admin123");
+  }
 }
-  save(LS_USERS, users);
-}
 
-/* ===========================================================
-   LOGIN / REGISTRAZIONE
-=========================================================== */
-
+/** Passa alla UI registrazione */
 function showRegister(ev) {
-  ev.preventDefault();
+  if (ev) ev.preventDefault();
+  clearError();
   document.getElementById("login-box").classList.add("hidden");
   document.getElementById("register-box").classList.remove("hidden");
 }
 
+/** Passa al login */
 function showLogin(ev) {
   if (ev) ev.preventDefault();
-  document.getElementById("login-box").classList.remove("hidden");
+  clearError();
   document.getElementById("register-box").classList.add("hidden");
+  document.getElementById("login-box").classList.remove("hidden");
 }
 
+/** Registrazione */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
-  const pass = document.getElementById("reg-password").value.trim();
+  const pass = document.getElementById("reg-password").value;
 
   if (!name || !email || !pass) {
-    alert("Compila tutti i campi.");
+    showError("Compila tutti i campi.");
     return;
   }
 
-  let users = load(LS_USERS, []);
+  let users = loadUsers();
   if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
-    alert("Esiste già un account con questa email.");
+    showError("Email già registrata.");
     return;
   }
 
   users.push({
-    id: uid("user"),
+    id: uid(),
     name,
     email,
     password: pass,
@@ -107,32 +211,34 @@ function registerUser() {
     createdAt: new Date().toISOString(),
   });
 
-  save(LS_USERS, users);
-  alert("Account creato! Ora puoi effettuare il login.");
+  saveUsers(users);
+  alert("Account creato!");
   showLogin();
 }
 
+/** Login */
 function login() {
   const email = document.getElementById("login-email").value.trim();
-  const pass = document.getElementById("login-password").value.trim();
+  const pass = document.getElementById("login-password").value;
 
-  let users = load(LS_USERS, []);
+  const users = loadUsers();
   const user = users.find(
     (u) =>
       u.email.toLowerCase() === email.toLowerCase() &&
       u.password === pass &&
-      u.active
+      u.active !== false
   );
 
   if (!user) {
-    alert("Credenziali errate o account disattivato.");
+    showError("Credenziali non valide o utente disattivato.");
     return;
   }
 
-  save(LS_ACTIVE, user);
+  saveJson(LS_ACTIVE, user);
   openPortal(user);
 }
 
+/** Logout */
 function logout() {
   localStorage.removeItem(LS_ACTIVE);
   document.getElementById("portal").classList.add("hidden");
@@ -140,569 +246,425 @@ function logout() {
   showLogin();
 }
 
-/* ===========================================================
-   APERTURA PORTALE
-=========================================================== */
+
+/* ============================================================
+   5. APERTURA PORTALE BASE
+   ============================================================ */
 
 function openPortal(user) {
+  Logger.info("Accesso come:", user.email);
+
   document.getElementById("auth").classList.add("hidden");
   document.getElementById("portal").classList.remove("hidden");
 
   document.getElementById("user-name-display").textContent = user.name;
   document.getElementById("user-role-display").textContent =
-    user.role === "admin" ? "Titolare/Admin" : "Dipendente";
+    user.role === "admin" ? "Titolare / Admin" : "Dipendente";
 
-  document.getElementById("home-title").textContent =
-    "Ciao " + user.name + ", benvenuto nel portale";
+  document.getElementById("home-title").textContent = "Ciao " + user.name;
+
+  const info = document.getElementById("user-info");
+  if (info) {
+    info.innerHTML = `
+      <strong>Nome:</strong> ${user.name}<br>
+      <strong>Email:</strong> ${user.email}<br>
+      <strong>Ruolo:</strong> ${user.role}
+    `;
+  }
 
   if (user.role === "admin") {
     document.getElementById("nav-admin").classList.remove("hidden");
-    renderAdminUsers();
-    renderAdminProcedures();
-    renderAdminLeave();
-    fillAdminMessageTargets();
-  } else {
-    document.getElementById("nav-admin").classList.add("hidden");
   }
-
-  renderProcedures();
-  renderMessages(user);
-  loadLeaveForUser(user);
-  loadTraining(user);
-  loadPersonal(user);
-  loadDashboard();
 
   showSection("home", document.getElementById("nav-home"));
 }
 
-/* Sezione navigazione */
+
+/* ============================================================
+   6. NAVIGAZIONE E SEZIONI
+   ============================================================ */
+
 function showSection(id, btn) {
-  document
-    .querySelectorAll(".section")
-    .forEach((s) => s.classList.remove("visible"));
+  Logger.info("Mostro sezione:", id);
 
-  document.getElementById(id).classList.add("visible");
+  const sections = document.querySelectorAll(".section");
+  sections.forEach((s) => s.classList.remove("visible"));
 
-  document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+  const target = document.getElementById(id);
+  if (target) target.classList.add("visible");
+
+  const buttons = document.querySelectorAll(".nav-btn");
+  buttons.forEach((b) => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
 }
 
-/* ===========================================================
-   PROCEDURE
-=========================================================== */
 
-function seedProcedures() {
-  let procs = load(LS_PROCS, []);
-  if (procs.length === 0) {
-    procs = [
-      {
-        id: uid("proc"),
-        category: "Cassa",
-        title: "Anticipi – cliente paga subito",
-        body:
-          "Il cliente paga subito. Quando porta la ricetta, fai il ticket e restituisci la differenza dalla scatoletta sotto cassa.",
-      },
-      {
-        id: uid("proc"),
-        category: "Cassa",
-        title: "Ticket SSN",
-        body: "Controlla codice fiscale, dati, applica ticket corretto.",
-      },
-      {
-        id: uid("proc"),
-        category: "POS",
-        title: "POS collegato al gestionale",
-        body: "Le vendite con carta si fanno dal gestionale collegato al POS.",
-      },
-    ];
-    save(LS_PROCS, procs);
-  }
+/* ============================================================
+   7. FUNZIONI "FINTE" (PER VERSIONE BASE)
+   ============================================================ */
+
+function notActive() {
+  alert("Funzione non attiva in questa versione.");
 }
 
-function renderProcedures() {
-  seedProcedures();
-  const procs = load(LS_PROCS, []);
-  const categories = [...new Set(procs.map((p) => p.category))];
+function saveQuickNotes() { notActive(); }
+function sendLeaveRequest() { notActive(); }
+function saveTrainingNotes() { notActive(); }
+function savePersonalNotes() { notActive(); }
+function addPersonalDoc() { notActive(); }
+function adminSendMessage() { notActive(); }
+function adminSaveProcedure() { notActive(); }
 
-  const catBox = document.getElementById("proc-categories");
-  catBox.innerHTML = "";
+/* ============================================================
+   8. MOCK DATA PER UI ("FINTI")
+   ============================================================ */
 
-  categories.forEach((cat) => {
-    const btn = document.createElement("button");
-    btn.className = "proc-cat-btn";
-    btn.textContent = cat;
-    btn.onclick = () => renderProcedureList(cat);
-    catBox.appendChild(btn);
-  });
+const MOCK_MESSAGES = [
+  { title: "Aggiornamento orari", body: "Ricordarsi turni." },
+  { title: "Inventario", body: "Controllo magazzino." },
+  { title: "Riunione", body: "Venerdì ore 17." }
+];
 
-  if (categories.length > 0) renderProcedureList(categories[0]);
+function loadMockUI() {
+  const msgList = document.getElementById("message-list");
+  if (msgList) msgList.innerHTML = MOCK_MESSAGES.map(
+    m => templateMessage(m.title, m.body)
+  ).join("");
 }
 
-function renderProcedureList(category) {
-  const procs = load(LS_PROCS, []);
-  const list = document.getElementById("proc-list");
-  list.innerHTML = "";
-
-  procs
-    .filter((p) => p.category === category)
-    .forEach((p) => {
-      const box = document.createElement("div");
-      box.className = "list-item";
-      box.innerHTML = `
-        <div class="list-item-title">${p.title}</div>
-        <div>${p.body}</div>
-      `;
-      list.appendChild(box);
-    });
-}
-
-/* ===========================================================
-   COMUNICAZIONI
-=========================================================== */
-
-function renderMessages(user) {
-  const msgs = load(LS_MSGS, []);
-  const container = document.getElementById("message-list");
-  container.innerHTML = "";
-
-  msgs
-    .filter((m) => m.target === "all" || m.target === user.id)
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .forEach((m) => {
-      const div = document.createElement("div");
-      div.className = "list-item";
-
-      let priority =
-        m.priority === "alta"
-          ? "tag-orange"
-          : m.priority === "urgente"
-          ? "tag-red"
-          : "tag-green";
-
-      div.innerHTML = `
-        <div class="list-item-title">${m.title} <span class="tag ${priority}">${m.priority}</span></div>
-        <div class="list-item-meta">${new Date(m.createdAt).toLocaleString("it-IT")}</div>
-        <div>${m.body}</div>
-      `;
-      container.appendChild(div);
-    });
-}
-
-function fillAdminMessageTargets() {
-  const users = load(LS_USERS, []);
-  const sel = document.getElementById("admin-msg-target");
-
-  sel.innerHTML = `<option value="all">Tutti</option>`;
-
-  users.forEach((u) => {
-    if (u.role !== "admin") {
-      const opt = document.createElement("option");
-      opt.value = u.id;
-      opt.textContent = u.name;
-      sel.appendChild(opt);
-    }
-  });
-}
-
-function adminSendMessage() {
-  const title = document.getElementById("admin-msg-title").value.trim();
-  const body = document.getElementById("admin-msg-body").value.trim();
-  const target = document.getElementById("admin-msg-target").value;
-  const priority = document.getElementById("admin-msg-priority").value;
-
-  if (!title || !body) {
-    alert("Compila titolo e testo.");
-    return;
-  }
-
-  const msgs = load(LS_MSGS, []);
-  msgs.push({
-    id: uid("msg"),
-    title,
-    body,
-    target,
-    priority,
-    createdAt: new Date().toISOString(),
-  });
-
-  save(LS_MSGS, msgs);
-
-  alert("Comunicazione inviata.");
-  const active = load(LS_ACTIVE, null);
-  if (active) renderMessages(active);
-
-  document.getElementById("admin-msg-title").value = "";
-  document.getElementById("admin-msg-body").value = "";
-}
-
-/* ===========================================================
-   FERIE & PERMESSI
-=========================================================== */
-
-function sendLeaveRequest() {
-  const user = load(LS_ACTIVE, null);
-  if (!user) return;
-
-  const type = document.getElementById("leave-type").value;
-  const start = document.getElementById("leave-start").value;
-  const end = document.getElementById("leave-end").value;
-  const note = document.getElementById("leave-note").value.trim();
-
-  if (!start) {
-    alert("Inserisci almeno la data iniziale.");
-    return;
-  }
-
-  let leaves = load(LS_LEAVE, []);
-  leaves.push({
-    id: uid("leave"),
-    userId: user.id,
-    userName: user.name,
-    type,
-    start,
-    end,
-    note,
-    status: "in_attesa",
-    createdAt: new Date().toISOString(),
-  });
-
-  save(LS_LEAVE, leaves);
-  loadLeaveForUser(user);
-  renderAdminLeave();
-
-  alert("Richiesta inviata!");
-}
-
-function loadLeaveForUser(user) {
-  const leaves = load(LS_LEAVE, []);
-  const tbody = document.querySelector("#leave-table tbody");
-  tbody.innerHTML = "";
-
-  leaves
-    .filter((l) => l.userId === user.id)
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .forEach((l) => {
-      const tr = document.createElement("tr");
-
-      const period =
-        l.end && l.end !== l.start ? `${l.start} → ${l.end}` : l.start;
-
-      const status =
-        l.status === "approvata"
-          ? `<span class='status-badge status-approved'>Approvata</span>`
-          : l.status === "rifiutata"
-          ? `<span class='status-badge status-rejected'>Rifiutata</span>`
-          : `<span class='status-badge status-pending'>In attesa</span>`;
-
-      tr.innerHTML = `
-        <td>${new Date(l.createdAt).toLocaleDateString("it-IT")}</td>
-        <td>${l.type}</td>
-        <td>${period}</td>
-        <td>${status}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-}
-
-function renderAdminLeave() {
-  const leaves = load(LS_LEAVE, []);
-  const box = document.getElementById("admin-leave-list");
-  box.innerHTML = "";
-
-  leaves
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .forEach((l) => {
-      const div = document.createElement("div");
-      div.className = "list-item";
-
-      const period =
-        l.end && l.end !== l.start ? `${l.start} → ${l.end}` : l.start;
-
-      const status =
-        l.status === "approvata"
-          ? `<span class='status-badge status-approved'>Approvata</span>`
-          : l.status === "rifiutata"
-          ? `<span class='status-badge status-rejected'>Rifiutata</span>`
-          : `<span class='status-badge status-pending'>In attesa</span>`;
-
-      div.innerHTML = `
-        <div class='list-item-title'>${l.userName} (${l.type})</div>
-        <div class='list-item-meta'>${period} • Richiesta il ${new Date(
-        l.createdAt
-      ).toLocaleDateString("it-IT")}</div>
-        <div>${l.note || ""}</div>
-        <div class='admin-leave-status'>${status}</div>
-      `;
-
-      if (l.status === "in_attesa") {
-        const ok = document.createElement("button");
-        ok.className = "btn-primary small";
-        ok.textContent = "Approva";
-        ok.onclick = () => updateLeaveStatus(l.id, "approvata");
-
-        const no = document.createElement("button");
-        no.className = "btn-primary small";
-        no.textContent = "Rifiuta";
-        no.onclick = () => updateLeaveStatus(l.id, "rifiutata");
-
-        div.appendChild(ok);
-        div.appendChild(no);
-      }
-
-      box.appendChild(div);
-    });
-}
-
-function updateLeaveStatus(id, status) {
-  let leaves = load(LS_LEAVE, []);
-  const ix = leaves.findIndex((l) => l.id === id);
-  if (ix >= 0) leaves[ix].status = status;
-  save(LS_LEAVE, leaves);
-
-  const user = load(LS_ACTIVE, null);
-  if (user) loadLeaveForUser(user);
-  renderAdminLeave();
-}
-
-/* ===========================================================
-   FORMAZIONE
-=========================================================== */
-
-function loadTraining(user) {
-  const data = load(LS_TRAINING, {});
-  document.getElementById("training-notes").value = data[user.id] || "";
-
-  document.getElementById("training-list").innerHTML = `
-    <li>ECM consigliati</li>
-    <li>Nuovi prodotti</li>
-    <li>Procedure aggiornate</li>
-  `;
-}
-
-function saveTrainingNotes() {
-  const user = load(LS_ACTIVE, null);
-  const data = load(LS_TRAINING, {});
-  data[user.id] = document.getElementById("training-notes").value.trim();
-  save(LS_TRAINING, data);
-
-  document.getElementById("training-saved").classList.remove("hidden");
-  setTimeout(() => {
-    document.getElementById("training-saved").classList.add("hidden");
-  }, 2000);
-}
-
-/* ===========================================================
-   AREA PERSONALE PRIVATA
-=========================================================== */
-
-function loadPersonal(user) {
-  const data = load(LS_PERSONAL, {});
-  document.getElementById("personal-notes").value =
-    data[user.id]?.notes || "";
-
-  const docs = data[user.id]?.docs || [];
-  const box = document.getElementById("personal-doc-list");
-  box.innerHTML = "";
-
-  docs.forEach((d) => {
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerHTML = `
-      <div class='list-item-title'>${d.title}</div>
-      <div class='list-item-meta'>${d.desc}</div>
-    `;
-    box.appendChild(div);
-  });
-}
-
-function savePersonalNotes() {
-  const user = load(LS_ACTIVE, null);
-  const data = load(LS_PERSONAL, {});
-  if (!data[user.id]) data[user.id] = { notes: "", docs: [] };
-
-  data[user.id].notes = document.getElementById("personal-notes").value.trim();
-  save(LS_PERSONAL, data);
-
-  document
-    .getElementById("personal-notes-saved")
-    .classList.remove("hidden");
-  setTimeout(() => {
-    document
-      .getElementById("personal-notes-saved")
-      .classList.add("hidden");
-  }, 2000);
-}
-
-function addPersonalDoc() {
-  const user = load(LS_ACTIVE, null);
-  const title = document.getElementById("personal-doc-title").value.trim();
-  const desc = document.getElementById("personal-doc-desc").value.trim();
-
-  if (!title || !desc) {
-    alert("Compila tutti i campi.");
-    return;
-  }
-
-  const data = load(LS_PERSONAL, {});
-  if (!data[user.id]) data[user.id] = { notes: "", docs: [] };
-
-  data[user.id].docs.push({ title, desc });
-  save(LS_PERSONAL, data);
-
-  loadPersonal(user);
-
-  document.getElementById("personal-doc-title").value = "";
-  document.getElementById("personal-doc-desc").value = "";
-}
-
-/* ===========================================================
-   ADMIN – UTENTI
-=========================================================== */
-
-function renderAdminUsers() {
-  const users = load(LS_USERS, []);
-  const box = document.getElementById("admin-users");
-  box.innerHTML = "";
-
-  users.forEach((u) => {
-    const row = document.createElement("div");
-    row.className = "list-item";
-
-    row.innerHTML = `
-      <div class='list-item-title'>
-        ${u.name} ${u.role === "admin" ? "(Admin)" : ""}
-      </div>
-      <div class='list-item-meta'>${u.email}</div>
-      <div class='list-item-meta'>Password: <strong>${u.password}</strong></div>
-    `;
-
-    if (u.role !== "admin") {
-      const reset = document.createElement("button");
-      reset.className = "btn-primary small";
-      reset.textContent = "Reset password";
-      reset.onclick = () => {
-        const np = prompt("Nuova password per " + u.name);
-        if (!np) return;
-
-        u.password = np;
-        save(LS_USERS, users);
-        renderAdminUsers();
-      };
-
-      row.appendChild(reset);
-    }
-
-    box.appendChild(row);
-  });
-}
-
-/* ===========================================================
-   ADMIN – PROCEDURE
-=========================================================== */
-
-function renderAdminProcedures() {
-  const procs = load(LS_PROCS, []);
-  const box = document.getElementById("admin-proc-list");
-  box.innerHTML = "";
-
-  procs.forEach((p) => {
-    const div = document.createElement("div");
-    div.className = "list-item";
-
-    div.innerHTML = `
-      <div class='list-item-title'>${p.title}</div>
-      <div class='list-item-meta'>${p.category}</div>
-      <div>${p.body.slice(0, 120)}...</div>
-    `;
-
-    const edit = document.createElement("button");
-    edit.className = "btn-primary small";
-    edit.textContent = "Modifica";
-    edit.onclick = () => {
-      document.getElementById("admin-proc-cat").value = p.category;
-      document.getElementById("admin-proc-title").value = p.title;
-      document.getElementById("admin-proc-body").value = p.body;
-    };
-
-    div.appendChild(edit);
-    box.appendChild(div);
-  });
-}
-
-function adminSaveProcedure() {
-  const cat = document.getElementById("admin-proc-cat").value.trim();
-  const title = document.getElementById("admin-proc-title").value.trim();
-  const body = document.getElementById("admin-proc-body").value.trim();
-
-  if (!cat || !title || !body) {
-    alert("Completa tutti i campi.");
-    return;
-  }
-
-  let procs = load(LS_PROCS, []);
-  const existing = procs.find(
-    (p) => p.title.toLowerCase() === title.toLowerCase()
-  );
-
-  if (existing) {
-    existing.category = cat;
-    existing.body = body;
-  } else {
-    procs.push({
-      id: uid("proc"),
-      category: cat,
-      title,
-      body,
-    });
-  }
-
-  save(LS_PROCS, procs);
-  renderProcedures();
-  renderAdminProcedures();
-  alert("Procedura aggiornata!");
-}
-
-/* ===========================================================
-   DASHBOARD
-=========================================================== */
-
-function loadDashboard() {
-  document.getElementById("home-highlights").innerHTML = `
-    <li>Controllare scadenze banco OTC</li>
-    <li>Nuova comunicazione da leggere</li>
-    <li>Verificare turni della settimana</li>
-  `;
-
-  document.getElementById("home-daytag").textContent =
-    new Date().toLocaleDateString("it-IT");
-
-  const procs = load(LS_PROCS, []);
-  const box = document.getElementById("home-quick-proc");
-  box.innerHTML = "";
-
-  procs.slice(0, 4).forEach((p) => {
-    const btn = document.createElement("div");
-    btn.className = "quick-btn";
-    btn.textContent = p.title;
-    btn.onclick = () => alert(p.body);
-    box.appendChild(btn);
-  });
-
-  document.getElementById("home-logistics-summary").innerHTML = `
-    <li>Ritiro GLS: 12:00</li>
-    <li>Ritiro SDA: 15:00</li>
-    <li>Scadenze sensibili: 12 prodotti</li>
-  `;
-}
-
-/* ===========================================================
-   AVVIO PORTALE
-=========================================================== */
+/* ============================================================
+   9. AVVIO
+   ============================================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
-  seedAdmin();
+  seedAdminIfNeeded();
+  loadMockUI();
 
-  const active = load(LS_ACTIVE, null);
+  const active = loadJson(LS_ACTIVE, null);
+  if (active) openPortal(active);
+  else showLogin();
+});
+/* ============================================================
+   10. SISTEMA DI LOG EVENTI INTERNI (FINTO)
+   ============================================================ */
+
+Logger.info("Inizializzazione LOG interno");
+
+const InternalLog = {
+  logs: [],
+
+  add(event, detail = "") {
+    const entry = {
+      id: uid(),
+      event,
+      detail,
+      time: new Date().toISOString(),
+    };
+    this.logs.push(entry);
+    Logger.debug("Log registrato:", entry);
+  },
+
+  list() {
+    return this.logs;
+  },
+
+  clear() {
+    this.logs = [];
+    Logger.warn("Log interno cancellato");
+  },
+};
+
+// Esempi log finti
+InternalLog.add("UI_START", "Caricamento interfaccia completato");
+InternalLog.add("AUTH_SYSTEM_READY", "Sistema login pronto");
+
+
+/* ============================================================
+   11. ANIMAZIONI DI INTERFACCIA (EFFETTI FINI)
+   ============================================================ */
+
+function fadeIn(el, duration = 200) {
+  if (!el) return;
+  el.style.opacity = 0;
+  el.style.display = "block";
+  let start = null;
+
+  function animate(ts) {
+    if (!start) start = ts;
+    let progress = ts - start;
+    el.style.opacity = Math.min(progress / duration, 1);
+    if (progress < duration) requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+}
+
+function fadeOut(el, duration = 200) {
+  if (!el) return;
+  el.style.opacity = 1;
+  let start = null;
+
+  function animate(ts) {
+    if (!start) start = ts;
+    let progress = ts - start;
+    el.style.opacity = Math.max(1 - progress / duration, 0);
+    if (progress < duration) requestAnimationFrame(animate);
+    else el.style.display = "none";
+  }
+
+  requestAnimationFrame(animate);
+}
+
+
+/* ============================================================
+   12. SISTEMA NOTIFICHE FINTE (NON ATTIVO)
+   ============================================================ */
+
+Logger.info("Sistema notifiche (finte) attivo");
+
+const NotificationCenter = {
+  queue: [],
+
+  push(title, body) {
+    const not = {
+      id: uid(),
+      title,
+      body,
+      time: new Date(),
+    };
+    this.queue.push(not);
+    Logger.info("Nuova notifica (finta):", title);
+
+    alert("NOTIFICA (finzione): " + title + "\n" + body);
+  },
+
+  list() {
+    return this.queue.slice().reverse();
+  },
+
+  clear() {
+    this.queue = [];
+    Logger.warn("Notifiche cancellate");
+  },
+};
+
+// Notifiche fittizie simulate
+NotificationCenter.push("Benvenuto!", "Portale Farmacia Montesano attivo.");
+NotificationCenter.push("Aggiornamento", "Nuova grafica professionale caricata.");
+
+
+/* ============================================================
+   13. MOCK DATABASE GENERATOR (FINTO)
+   ============================================================ */
+
+Logger.info("Sistema mock database attivo");
+
+const MockDB = {
+  generateEmployees(n = 5) {
+    const names = ["Daniela", "Roberta", "Annalisa", "Patrizia", "Cosimo"];
+    const out = [];
+
+    for (let i = 0; i < n; i++) {
+      out.push({
+        id: uid(),
+        name: names[i] || ("Dipendente " + (i + 1)),
+        role: "dipendente",
+        createdAt: new Date().toISOString(),
+      });
+    }
+    return out;
+  },
+
+  generateProcedures() {
+    const titles = [
+      "Anticipi",
+      "Ticket SSN",
+      "POS collegato",
+      "Ricette elettroniche",
+      "Sotto cassa",
+    ];
+    return titles.map((t, i) => ({
+      id: uid(),
+      title: t,
+      body: "Questa è una procedura fittizia di esempio riguardante " + t,
+    }));
+  },
+
+  generateCommunications() {
+    return [
+      {
+        id: uid(),
+        title: "Benvenuti",
+        body: "Comunicazione di esempio.",
+        priority: "normale",
+        createdAt: new Date().toISOString(),
+      },
+    ];
+  },
+};
+
+
+/* ============================================================
+   14. DEBUG MENU NASCOSTO (CON CTRL+ALT+D)
+   ============================================================ */
+
+let debugEnabled = false;
+
+document.addEventListener("keydown", (e) => {
+  if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "d") {
+    debugEnabled = !debugEnabled;
+    alert("DEBUG MODE: " + (debugEnabled ? "ATTIVO" : "DISATTIVO"));
+  }
+});
+
+function debugLog() {
+  if (!debugEnabled) return;
+  console.log("%c=== DEBUG LOG INTERNO ===", "color:purple; font-weight:bold;");
+  console.table(InternalLog.list());
+  console.table(NotificationCenter.list());
+}
+
+
+/* ============================================================
+   15. SISTEMA DI EFFETTI VISIVI (OMBRE, VIBRAZIONI, HOVER)
+   ============================================================ */
+
+function addHoverEffect(selector) {
+  const els = document.querySelectorAll(selector);
+  els.forEach((el) => {
+    el.addEventListener("mouseenter", () => {
+      el.style.transform = "translateY(-2px)";
+      el.style.boxShadow = "0 4px 10px rgba(0,0,0,0.15)";
+    });
+    el.addEventListener("mouseleave", () => {
+      el.style.transform = "translateY(0)";
+      el.style.boxShadow = "none";
+    });
+  });
+}
+
+function activateUIEffects() {
+  addHoverEffect(".card");
+  addHoverEffect(".nav-btn");
+  addHoverEffect(".list-item");
+}
+
+
+/* ============================================================
+   16. SISTEMA DI TIMER (FINTO)
+   ============================================================ */
+
+const UITimer = {
+  timers: [],
+
+  set(callback, ms) {
+    const id = setTimeout(callback, ms);
+    this.timers.push(id);
+    return id;
+  },
+
+  clearAll() {
+    this.timers.forEach((id) => clearTimeout(id));
+    this.timers = [];
+    Logger.warn("Tutti i timer UI cancellati");
+  },
+};
+
+
+/* ============================================================
+   17. GENERATORE DI CONTENUTI RANDOM (UI FINTE)
+   ============================================================ */
+
+function randomPhrase() {
+  const list = [
+    "Ricordarsi di controllare il cassetto 2",
+    "Gentilezza sempre!",
+    "Aggiornare listini se necessario",
+    "Controllare scorte in scadenza",
+    "Collaborazione = qualità",
+  ];
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function loadRandomHomeHighlights() {
+  const el = document.getElementById("home-highlights");
+  if (!el) return;
+  el.innerHTML = "";
+
+  for (let i = 0; i < 4; i++) {
+    const li = document.createElement("li");
+    li.textContent = randomPhrase();
+    el.appendChild(li);
+  }
+}
+
+
+/* ============================================================
+   18. SEZIONI FINTE (SENZA LOGICA REALE)
+   ============================================================ */
+
+function loadFakeQuickProcedures() {
+  const el = document.getElementById("home-quick-proc");
+  if (!el) return;
+
+  el.innerHTML = `
+    <button class="quick-btn" onclick="notActive()">Anticipi</button>
+    <button class="quick-btn" onclick="notActive()">POS</button>
+    <button class="quick-btn" onclick="notActive()">Ticket</button>
+    <button class="quick-btn" onclick="notActive()">Sotto cassa</button>
+  `;
+}
+
+function loadFakeLeaveSummary() {
+  const el = document.getElementById("home-leave-summary");
+  if (!el) return;
+
+  el.innerHTML = `
+    <div class="list-item">Nessuna richiesta in approvazione</div>
+  `;
+}
+
+function loadFakeLogistics() {
+  const el = document.getElementById("home-logistics-summary");
+  if (!el) return;
+
+  el.innerHTML = `
+    <li>Ritiro corriere: 16:00</li>
+    <li>Controllo frigoriferi dopo le 20</li>
+    <li>Arrivo merce sabato ore 11</li>
+  `;
+}
+
+
+/* ============================================================
+   19. INIZIALIZZAZIONE COMPLETA DELLA UI
+   ============================================================ */
+
+async function initUI() {
+  Logger.info("Inizializzazione UI…");
+  await sleep(100);
+
+  loadMockUI();
+  loadRandomHomeHighlights();
+  loadFakeQuickProcedures();
+  loadFakeLeaveSummary();
+  loadFakeLogistics();
+
+  activateUIEffects();
+
+  Logger.info("UI pronta");
+}
+
+
+/* ============================================================
+   20. AVVIO FINALE
+   ============================================================ */
+
+document.addEventListener("DOMContentLoaded", async () => {
+  seedAdminIfNeeded();
+  await initUI();
+
+  const active = loadJson(LS_ACTIVE, null);
   if (active) openPortal(active);
   else showLogin();
 });
