@@ -185,11 +185,10 @@ function registerUser() {
   showLogin();
 }
 /* Login */
+/* Login SENZA scelta ruolo: decide dal profilo salvato */
 function login() {
   const email = document.getElementById("login-email").value.trim();
   const pass = document.getElementById("login-password").value;
-  const roleChoiceEl = document.getElementById("login-role");
-  const roleChoice = roleChoiceEl ? roleChoiceEl.value : "dipendente";
 
   if (!email || !pass) {
     showError("Inserisci email e password.");
@@ -198,18 +197,14 @@ function login() {
 
   const users = loadUsers();
 
-  const user = users.find((u) => {
-    if (u.email.toLowerCase() !== email.toLowerCase()) return false;
-    if (u.password !== pass) return false;
-
-    if (roleChoice === "admin") return u.role === "admin";
-    if (roleChoice === "cliente") return u.role === "cliente";
-    if (roleChoice === "dipendente") return u.role === "staff";
-    return false;
-  });
+  const user = users.find(
+    (u) =>
+      u.email.toLowerCase() === email.toLowerCase() &&
+      u.password === pass
+  );
 
   if (!user) {
-    showError("Credenziali o tipo di accesso non validi.");
+    showError("Credenziali non valide.");
     return;
   }
 
@@ -219,9 +214,8 @@ function login() {
   }
 
   saveJson(LS_ACTIVE, user);
-  openPortal(user);
+  openPortal(user); // qui decide se far vedere area clienti, staff o admin
 }
-
 /* Logout */
 function logout() {
   localStorage.removeItem(LS_ACTIVE);
