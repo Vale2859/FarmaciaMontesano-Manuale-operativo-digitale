@@ -1037,6 +1037,111 @@ function togglePassword() {
     input.type = "password";
   }
 }
+// ================= APP INTERNA (HOME / ASSENZE) ================= //
+
+function showAppScreen(which) {
+  const home = document.getElementById("screen-home");
+  const ass = document.getElementById("screen-assenze");
+  const btnHome = document.getElementById("nav-app-home");
+  const btnAss = document.getElementById("nav-app-assenze");
+
+  if (!home || !ass) return;
+
+  if (which === "assenze") {
+    home.classList.remove("app-screen-visible");
+    ass.classList.add("app-screen-visible");
+    if (btnHome) btnHome.classList.remove("app-nav-btn-active");
+    if (btnAss) btnAss.classList.add("app-nav-btn-active");
+  } else {
+    ass.classList.remove("app-screen-visible");
+    home.classList.add("app-screen-visible");
+    if (btnAss) btnAss.classList.remove("app-nav-btn-active");
+    if (btnHome) btnHome.classList.add("app-nav-btn-active");
+  }
+}
+
+// Salvataggio e lettura assenze
+function loadAbsences() {
+  return loadJson(LS_ABSENCES, []);
+}
+
+function saveAbsences(list) {
+  saveJson(LS_ABSENCES, list);
+}
+
+// In questa versione tutte le assenze sono considerate "approvate"
+function submitAbsence() {
+  const user = loadJson(LS_ACTIVE, null);
+  if (!user) {
+    alert("Devi essere loggato per segnalare un'assenza.");
+    return;
+  }
+
+  const dateEl = document.getElementById("abs-date");
+  const reasonEl = document.getElementById("abs-reason");
+  if (!dateEl || !reasonEl) return;
+
+  const date = dateEl.value;
+  const reason = reasonEl.value.trim();
+
+  if (!date) {
+    alert("Seleziona la data.");
+    return;
+  }
+
+  let absences = loadAbsences();
+  absences.push({
+    id: "a-" + Date.now(),
+    userName: user.name,
+    date,
+    reason,
+    status: "approved" // in questa versione tutte approvate
+  });
+  saveAbsences(absences);
+
+  dateEl.value = "";
+  reasonEl.value = "";
+
+  renderApprovedAbsences();
+  alert("Assenza registrata (approvata e visibile a tutti).");
+}
+
+// Mostra SOLO assenze future approvate
+function renderApprovedAbsences() {
+  const container = document.getElementById("absence-list");
+  if (!container) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let absences = loadAbsences().filter(a => a.status === "approved");
+  absences = absences.filter(a => {
+    const d = new Date(a.date);
+    d.setHours(0, 0, 0, 0);
+    return d >= today; // solo oggi o dopo
+  });
+
+  // Ordina per data
+  absences.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  if (absences.length === 0) {
+    container.innerHTML = "<p class='small-text'>Nessuna assenza futura registrata.</p>";
+    return;
+  }
+
+  container.innerHTML = "";
+  absences.forEach(a => {
+    const div = document.createElement("div");
+    div.className = "absence-pill";
+    div.innerHTML =
+      "<span><strong>" + a.userName + "</strong></span>" +
+      "<span class='absence-meta'>" +
+      new Date(a.date).toLocaleDateString("it-IT") +
+      (a.reason ? " · " + a.reason : "") +
+      "</span>";
+    container.appendChild(div);
+  });
+}
 document.addEventListener("DOMContentLoaded", () => {
   seedAdminIfNeeded();
   ensureDemoProcedures();
