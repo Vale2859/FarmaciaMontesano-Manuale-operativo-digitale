@@ -662,12 +662,13 @@ button {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 10px 0 20px;
+  padding: 0;              /* meno bordi bianchi intorno */
 }
 
+/* telefono più largo e aderente alla pagina */
 .app-phone {
-  width: 360px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 420px;        /* su mobile riempie quasi tutto */
   background: linear-gradient(180deg, #f0f9ff, #ffffff);
   border-radius: 30px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
@@ -676,6 +677,12 @@ button {
   position: relative;
 }
 
+/* su schermi molto grandi centra ma non resta minuscolo */
+@media (min-width: 900px) {
+  .home-app-wrapper {
+    padding-top: 10px;
+  }
+}
 /* barra in alto */
 .app-header {
   background: linear-gradient(135deg, #0d8a5c, #15b573);
