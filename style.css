@@ -960,3 +960,20 @@ button {
     margin-top: 8px;
     text-align: center;
 }
+
+/* --- Logo login centrato e più piccolo (override finale) --- */
+.auth-logo-only {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.auth-logo-img {
+  width: 120px;      /* se lo vuoi un po' più grande metti 140 o 150 */
+  max-width: 50%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+}
