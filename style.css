@@ -1,4 +1,4 @@
-/* ========== GENERALI ========== */
+/* ========== VARIABILI GENERALI ========== */
 
 *,
 *::before,
@@ -28,12 +28,11 @@ body {
   background: radial-gradient(circle at top left, #e8f5f0, #f7fafc);
 }
 
-/* Per nascondere elementi */
 .hidden {
   display: none !important;
 }
 
-/* ========== AUTH (LOGIN) ========== */
+/* ========== LOGIN ========== */
 
 .auth-screen {
   min-height: 100vh;
@@ -45,7 +44,7 @@ body {
 
 .auth-card {
   width: 100%;
-  max-width: 460px;
+  max-width: 440px;
   background: #ffffff;
   border-radius: 24px;
   box-shadow: var(--fm-shadow);
@@ -55,18 +54,18 @@ body {
 
 .auth-logo-only {
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .auth-logo-img {
   width: 150px;
-  max-width: 75%;
+  max-width: 80%;
   height: auto;
 }
 
 .login-title {
   text-align: center;
-  margin: 4px 0 16px;
+  margin: 4px 0 14px;
   font-size: 22px;
   font-weight: 650;
 }
@@ -83,10 +82,11 @@ input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="date"],
+input[type="time"],
 select,
 textarea {
   width: 100%;
-  padding: 9px 11px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid #cbd5e1;
   font-family: var(--fm-font);
@@ -108,8 +108,6 @@ textarea {
   resize: vertical;
 }
 
-/* Password + icona occhio */
-
 .password-row {
   display: flex;
   align-items: center;
@@ -120,24 +118,22 @@ textarea {
   flex: 1;
 }
 
+button {
+  font-family: var(--fm-font);
+  cursor: pointer;
+}
+
 .btn-eye {
   border: 1px solid #dde1ea;
   background: #f5f7fb;
   border-radius: 999px;
   padding: 6px 10px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .btn-eye:hover {
   background: #e4e9f5;
-}
-
-/* BUTTONS */
-
-button {
-  font-family: var(--fm-font);
-  cursor: pointer;
 }
 
 .btn-primary {
@@ -165,6 +161,12 @@ button {
   opacity: 0.9;
 }
 
+.btn-primary.small {
+  width: auto;
+  padding-inline: 14px;
+  font-size: 13px;
+}
+
 .btn-outline {
   padding: 7px 14px;
   border-radius: 999px;
@@ -179,14 +181,6 @@ button {
 .btn-outline:hover {
   background: rgba(255, 255, 255, 0.15);
 }
-
-.btn-primary.small {
-  width: auto;
-  padding-inline: 14px;
-  font-size: 13px;
-}
-
-/* TEXT INFO */
 
 .small-text {
   font-size: 12px;
@@ -204,30 +198,14 @@ button {
   text-decoration: underline;
 }
 
-.muted-center {
-  text-align: center;
-  margin-top: 10px;
-}
-
-/* ERROR */
-
-.error,
-.error-text {
+.error {
   margin-top: 8px;
   font-size: 13px;
   color: var(--fm-danger);
   text-align: center;
 }
 
-/* Ingrandimento login SOLO su schermi grandi */
-@media (min-width: 1024px) {
-  .auth-card {
-    transform: scale(1.15);
-    transform-origin: center center;
-  }
-}
-
-/* ========== PORTALE ========== */
+/* ========== PORTALE STAFF ========== */
 
 .portal {
   min-height: 100vh;
@@ -256,8 +234,8 @@ button {
 }
 
 .topbar-logo-img {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   object-fit: contain;
   background: rgba(255, 255, 255, 0.1);
@@ -297,77 +275,6 @@ button {
   font-size: 11px;
 }
 
-/* Su desktop ingrandiamo un po' la topbar */
-@media (min-width: 1024px) {
-  .topbar {
-    padding-inline: 32px;
-  }
-  .topbar-title {
-    font-size: 20px;
-  }
-  .topbar-subtitle {
-    font-size: 13px;
-  }
-  .user-pill {
-    font-size: 14px;
-  }
-}
-
-/* LAYOUT */
-
-.layout {
-  display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  min-height: calc(100vh - 56px);
-}
-
-/* SIDEBAR */
-
-.sidebar {
-  background: #0b3d2b;
-  color: #e5e7eb;
-  padding: 16px 10px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.nav-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  opacity: 0.65;
-  padding-inline: 8px;
-  margin-bottom: 4px;
-}
-
-.nav-btn {
-  width: 100%;
-  text-align: left;
-  padding: 7px 11px;
-  margin: 2px 0;
-  border-radius: 999px;
-  border: none;
-  background: transparent;
-  color: #e5e7eb;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.12s, transform 0.08s;
-}
-
-.nav-btn:hover {
-  background: rgba(148, 163, 184, 0.18);
-  transform: translateX(1px);
-}
-
-.nav-btn.active {
-  background: linear-gradient(90deg, #22c55e, #22d3ee);
-  color: #022c22;
-  font-weight: 600;
-}
-
 /* MAIN */
 
 .main {
@@ -384,8 +291,6 @@ button {
   display: block;
 }
 
-/* SECTION TITLES */
-
 .section-header h2 {
   margin: 0 0 4px;
   font-size: 22px;
@@ -397,7 +302,7 @@ button {
   font-size: 14px;
 }
 
-/* CARDS GRID / CARD BASE */
+/* Card generiche */
 
 .card {
   background: #ffffff;
@@ -405,6 +310,10 @@ button {
   padding: 14px 14px 12px;
   box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
   border: 1px solid rgba(148, 163, 184, 0.27);
+}
+
+.card-highlight {
+  background: radial-gradient(circle at top left, var(--fm-green-soft), #ffffff);
 }
 
 .card h3 {
@@ -420,12 +329,27 @@ button {
   margin-bottom: 4px;
 }
 
-/* LISTE / TABELLE */
+.table-simple {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
 
-.bullet-list {
-  margin: 4px 0 0;
-  padding-left: 18px;
-  font-size: 14px;
+.table-simple th,
+.table-simple td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 4px 6px;
+}
+
+.table-simple th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.table-wrapper {
+  max-height: 260px;
+  overflow: auto;
 }
 
 .list {
@@ -453,25 +377,17 @@ button {
   margin-bottom: 4px;
 }
 
-.table-simple {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
+.bullet-list {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
 }
 
-.table-simple th,
-.table-simple td {
-  border-bottom: 1px solid #e5e7eb;
-  padding: 4px 6px;
+.two-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+  gap: 14px;
 }
-
-.table-simple th {
-  text-align: left;
-  font-weight: 600;
-  font-size: 12px;
-}
-
-/* QUICK BUTTONS / FIELD ROW */
 
 .field-row {
   display: flex;
@@ -480,14 +396,6 @@ button {
 
 .field-row > div {
   flex: 1;
-}
-
-.field-row.wrap {
-  flex-wrap: wrap;
-}
-
-.field-flex {
-  flex: 1 1 180px;
 }
 
 .card-actions-row {
@@ -503,27 +411,192 @@ button {
   color: var(--fm-green-dark);
 }
 
-/* ADMIN GRID */
+/* ========== HOME STAFF ========== */
 
-.admin-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+.home-wrapper {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
 }
 
-/* PROCEDURE LAYOUT */
+.home-card-absences {
+  padding: 14px 16px 12px;
+  border-radius: 24px;
+  background: radial-gradient(circle at top left, #22c55e, #0f766e);
+  color: #ffffff;
+  box-shadow: 0 14px 32px rgba(16, 185, 129, 0.35);
+}
+
+.home-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.home-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.2);
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.home-card-title {
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.home-abs-list {
+  margin-top: 4px;
+}
+
+.home-abs-pill {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.home-abs-pill strong {
+  font-weight: 650;
+}
+
+/* Griglia stile app */
+
+.home-card-app {
+  padding: 14px 16px 16px;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.app-grid-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.app-grid-title {
+  font-weight: 650;
+  font-size: 15px;
+}
+
+.app-grid-subtitle {
+  font-size: 13px;
+  color: var(--fm-muted);
+}
+
+.home-app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.app-tile {
+  border: none;
+  border-radius: 16px;
+  padding: 10px 9px;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 80px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+.app-tile-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.app-tile-text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.app-tile-sub {
+  font-size: 11px;
+}
+
+.app-tile-orange {
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
+}
+
+.app-tile-green {
+  background: linear-gradient(135deg, #0d8a5c, #15b573);
+}
+
+.app-tile-pink {
+  background: linear-gradient(135deg, #ec407a, #f48fb1);
+}
+
+.app-tile-blue {
+  background: linear-gradient(135deg, #1e88e5, #64b5f6);
+}
+
+.app-tile-yellow {
+  background: linear-gradient(135deg, #fbc02d, #ffd54f);
+  color: #333;
+}
+
+.app-tile-purple {
+  background: linear-gradient(135deg, #7e57c2, #b39ddb);
+}
+
+.app-tile-teal {
+  background: linear-gradient(135deg, #00897b, #4db6ac);
+}
+
+.app-tile-grey {
+  background: linear-gradient(135deg, #546e7a, #90a4ae);
+}
+
+/* Assenze – lista grande */
+
+.assenze-future-list {
+  max-height: 320px;
+  overflow: auto;
+}
+
+.assenza-pill {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  font-size: 13px;
+}
+
+.assenza-pill span {
+  display: block;
+}
+
+.assenza-meta {
+  color: #4b5563;
+  font-size: 12px;
+}
+
+/* ========== PROCEDURE ========== */
 
 .proc-layout {
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
+  grid-template-columns: 210px minmax(0, 1fr);
   gap: 14px;
 }
 
 .proc-categories {
-  background: #ffffff;
-  border-radius: 14px;
   padding: 10px;
-  border: 1px solid var(--fm-border);
 }
 
 .proc-cat-title {
@@ -550,266 +623,175 @@ button {
   color: #ffffff;
 }
 
-/* ========== HOME – STILE APP ========== */
+/* ADMIN */
 
-.home-app-wrapper {
+.admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+  gap: 14px;
+}
+
+/* ========== AREA CLIENTI ========== */
+
+#customer-wrapper {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.customer-header {
+  background: linear-gradient(120deg, #0a7b43, #13c29a);
+  border-radius: 18px;
+  padding: 14px 18px;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  margin-bottom: 16px;
+}
+
+.customer-header-main {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.customer-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.customer-logo-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
-/* “Telefono” */
-
-.app-phone {
-  width: 100%;
-  max-width: 430px;
-  background: #ffffff;
-  border-radius: 28px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
-  padding: 16px 12px 10px;
-  border: 6px solid #111;
+.customer-header-title h1 {
+  margin: 0;
+  font-size: 20px;
 }
 
-/* Su desktop allarghiamo la card per sfruttare lo schermo */
-@media (min-width: 1024px) {
-  .app-phone {
-    max-width: 880px;
-    padding: 20px 18px 14px;
-  }
+.customer-header-title p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.9;
 }
 
-/* Header verde con “Dipendenti che mancheranno” */
-
-.app-header {
-  background: linear-gradient(135deg, #0d8a5c, #15b573);
-  border-radius: 22px;
-  padding: 10px 12px;
-  color: #fff;
-  margin-bottom: 12px;
+.customer-header-info {
+  text-align: right;
+  font-size: 13px;
 }
 
-.app-header-top {
+.customer-main {
+  margin-top: 8px;
+}
+
+.customer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.customer-tile {
+  border: none;
+  border-radius: 16px;
+  padding: 10px 9px;
+  text-align: left;
+  color: #ffffff;
+  min-height: 90px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  font-size: 11px;
-  opacity: 0.95;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  font-family: inherit;
 }
 
-.app-header-name {
-  font-size: 16px;
+.customer-tile-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.customer-tile-text {
+  font-size: 14px;
   font-weight: 700;
 }
 
-.app-header-sub {
+.customer-tile-sub {
   font-size: 11px;
   opacity: 0.9;
 }
 
-/* Lista compatta di assenze in header */
-
-.home-absences-banner {
-  list-style: none;
-  padding: 6px 0 0;
-  margin: 4px 0 0;
-  font-size: 12px;
+.customer-tile-green {
+  background: linear-gradient(135deg, #0d9488, #22c55e);
 }
 
-.home-absences-banner li {
-  display: flex;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 3px 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  margin-bottom: 4px;
+.customer-tile-blue {
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
 }
 
-.home-absences-banner span:first-child {
-  font-weight: 600;
+.customer-tile-pink {
+  background: linear-gradient(135deg, #ec4899, #f97316);
 }
 
-/* griglia pulsanti */
-
-.app-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin-bottom: 12px;
+.customer-tile-orange {
+  background: linear-gradient(135deg, #f97316, #facc15);
 }
 
-.app-tile {
-  border: none;
-  border-radius: 16px;
-  padding: 10px 8px;
-  color: #fff;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 70px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+.customer-tile-teal {
+  background: linear-gradient(135deg, #0f766e, #22c55e);
 }
 
-.app-tile-icon {
-  font-size: 22px;
-  margin-bottom: 4px;
+.customer-tile-purple {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
 }
 
-.app-tile-text {
-  font-size: 13px;
-  font-weight: 600;
+.customer-tile-grey {
+  background: linear-gradient(135deg, #4b5563, #9ca3af);
 }
 
-/* colori tile */
-.app-tile-orange { background: linear-gradient(135deg, #ff9800, #ffb74d); }
-.app-tile-green  { background: linear-gradient(135deg, #0d8a5c, #15b573); }
-.app-tile-pink   { background: linear-gradient(135deg, #ec407a, #f48fb1); }
-.app-tile-blue   { background: linear-gradient(135deg, #1e88e5, #64b5f6); }
-.app-tile-yellow { background: linear-gradient(135deg, #fbc02d, #ffd54f); color:#333; }
-.app-tile-purple { background: linear-gradient(135deg, #7e57c2, #b39ddb); }
-.app-tile-grey   { background: linear-gradient(135deg, #546e7a, #90a4ae); }
-.app-tile-teal   { background: linear-gradient(135deg, #00897b, #4db6ac); }
-
-/* su desktop le tile diventano 4 per riga */
-
-@media (min-width: 1024px) {
-  .app-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  .app-tile-text {
-    font-size: 14px;
-  }
+.customer-tile-dark {
+  background: linear-gradient(135deg, #111827, #4b5563);
 }
 
-/* Schermate interne dell'app */
-
-.app-screens {
-  min-height: 260px;
-}
-
-.app-screen {
-  display: none;
-}
-
-.app-screen-visible {
-  display: block;
-}
-
-.app-section-title {
-  margin: 0 0 8px 0;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-/* Layout richiesta assenze + storico */
-
-.absence-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
-  gap: 10px;
-}
-
-.absence-form {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 10px 10px 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.absence-form label {
-  font-size: 12px;
-  margin-top: 6px;
-  margin-bottom: 3px;
-}
-
-.absence-form input[type="date"],
-.absence-form input[type="text"],
-.absence-form select,
-.absence-form textarea {
-  font-size: 13px;
-  padding: 7px 8px;
-}
-
-.absence-history {
-  background: #f5f7fb;
-  border-radius: 14px;
-  padding: 8px 10px 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.absence-history h4 {
-  margin: 0 0 6px 0;
-  font-size: 13px;
-}
-
-/* bottom nav */
-
-.app-bottom-nav {
-  display: flex;
-  justify-content: space-between;
-  gap: 4px;
-  background: #f5f7fb;
-  border-radius: 999px;
-  padding: 5px 6px;
+.customer-note {
   margin-top: 10px;
+  font-size: 12px;
+  color: #4b5563;
 }
 
-.app-nav-btn {
-  flex: 1;
-  border: none;
-  border-radius: 999px;
-  font-size: 11px;
-  padding: 6px 4px;
-  cursor: pointer;
-  background: transparent;
-  color: #555;
-}
-
-.app-nav-btn-active,
-.app-nav-btn:hover {
-  background: #0d8a5c;
-  color: #fff;
-}
-
-/* RESPONSIVE */
+/* ========== RESPONSIVE ========== */
 
 @media (max-width: 980px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    flex-direction: row;
-    overflow-x: auto;
-    padding-block: 8px;
-  }
-
-  .nav-label {
-    display: none;
-  }
-
-  .nav-btn {
-    flex: 1 0 auto;
-    justify-content: center;
-  }
-
+  .two-cols,
   .admin-grid,
   .proc-layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .absence-layout {
-    grid-template-columns: minmax(0, 1fr);
+  .home-app-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .customer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .customer-header-main {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
 @media (max-width: 640px) {
   .auth-card {
     padding-inline: 18px;
-    max-width: 100%;
-    transform: none; /* su telefono niente zoom extra */
   }
 
   .topbar {
@@ -823,13 +805,36 @@ button {
     justify-content: space-between;
   }
 
-  .home-app-wrapper {
-    padding-inline: 0;
+  .home-app-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .app-phone {
-    border-radius: 0;
-    border-width: 0;
-    box-shadow: none;
+  .customer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* INGRANDIMENTO SU SCHERMI GRANDI (SOLO PC) */
+
+@media (min-width: 1024px) {
+  body {
+    font-size: 17px;
+  }
+
+  .auth-card {
+    transform: scale(1.05);
+  }
+
+  .home-app-grid .app-tile-text,
+  .home-app-grid .app-tile-sub {
+    font-size: 1rem;
+  }
+
+  .topbar-title {
+    font-size: 20px;
+  }
+
+  .user-pill {
+    font-size: 14px;
   }
 }
