@@ -5,7 +5,7 @@
 
 const LS_USERS = "fm_users";
 const LS_ACTIVE = "fm_activeUser";
-const LS_ABSENCES = "fm_absences"; // assenze dipendenti
+const LS_ABSENCES = "fm_absences";        // assenze dipendenti
 const LS_PROCEDURES = "fm_procedures";
 const LS_MESSAGES = "fm_messages";
 const LS_LEAVE = "fm_leave";
@@ -103,8 +103,9 @@ function seedAdminIfNeeded() {
     admin.approved = true;
   }
 
-  saveUsers(users);
+  saveJson(LS_USERS, users);
 }
+
 /* Registrazione: account in attesa di approvazione */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
@@ -178,7 +179,7 @@ function logout() {
 }
 
 /* ============================================
-   PORTALE & NAVIGAZIONE  (CORRETTO)
+   PORTALE & NAVIGAZIONE
    ============================================ */
 
 function openPortal(user) {
@@ -209,7 +210,7 @@ function openPortal(user) {
   renderApprovedAbsences();
 }
 
-// Pulsante Home (in alto / dovunque)
+// Pulsante Home globale
 function goHome() {
   showSection("home");
   showAppScreen("home");
@@ -1101,7 +1102,7 @@ function submitAbsence() {
     userName: user.name,
     date,
     reason,
-    status: "approved"
+    status: "approved",
   });
   saveAbsences(absences);
 
@@ -1113,9 +1114,6 @@ function submitAbsence() {
 }
 
 // Mostra SOLO assenze future approvate
-// - Tutti vedono: Nome in grassetto + data
-// - Se NON admin ma motivo contiene "ferie" → mostra "· ferie"
-// - Solo Admin vede SEMPRE il motivo completo
 function renderApprovedAbsences() {
   const container = document.getElementById("absence-list");
   if (!container) return;
@@ -1126,9 +1124,9 @@ function renderApprovedAbsences() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  let absences = loadAbsences().filter(a => a.status === "approved");
+  let absences = loadAbsences().filter((a) => a.status === "approved");
 
-  absences = absences.filter(a => {
+  absences = absences.filter((a) => {
     const d = new Date(a.date);
     d.setHours(0, 0, 0, 0);
     return d >= today;
@@ -1143,18 +1141,17 @@ function renderApprovedAbsences() {
   }
 
   container.innerHTML = "";
-  absences.forEach(a => {
+  absences.forEach((a) => {
     const d = new Date(a.date);
     const formattedDate = d.toLocaleDateString("it-IT", {
       weekday: "short",
       day: "2-digit",
       month: "2-digit",
-      year: "numeric"
+      year: "numeric",
     });
 
     const reason = a.reason || "";
-    const isFerie =
-      reason.toLowerCase().includes("ferie");
+    const isFerie = reason.toLowerCase().includes("ferie");
 
     let meta = formattedDate;
     if (isAdmin) {
@@ -1166,8 +1163,12 @@ function renderApprovedAbsences() {
     const div = document.createElement("div");
     div.className = "absence-pill";
     div.innerHTML =
-      "<span><strong>" + a.userName + "</strong></span>" +
-      "<span class='absence-meta'>" + meta + "</span>";
+      "<span><strong>" +
+      a.userName +
+      "</strong></span>" +
+      "<span class='absence-meta'>" +
+      meta +
+      "</span>";
     container.appendChild(div);
   });
 }
