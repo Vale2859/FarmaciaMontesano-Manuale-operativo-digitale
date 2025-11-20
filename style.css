@@ -860,3 +860,102 @@ body {
     max-width: 1250px;
   }
 }
+/* =======================================================
+   DESKTOP MODE – INGRANDIMENTO SOLO SU PC
+   ======================================================= */
+
+@media (min-width: 900px) {
+
+  body {
+    font-size: 18px;
+  }
+
+  /* --- TOP BAR DESKTOP --- */
+  .topbar {
+    padding: 16px 40px;
+  }
+
+  .topbar-title {
+    font-size: 26px;
+  }
+
+  .topbar-subtitle {
+    font-size: 16px;
+  }
+
+  .user-pill {
+    font-size: 18px;
+    padding: 8px 18px;
+  }
+
+  .role-badge {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+
+  .btn-outline {
+    font-size: 18px;
+    padding: 10px 20px;
+  }
+
+  /* --- CARD CENTRALE TIPO APP SOLO SU PC --- */
+  .app-phone {
+    max-width: 1400px !important;
+    padding: 30px 26px 22px;
+  }
+
+  .app-header-name {
+    font-size: 26px;
+  }
+
+  .app-header-sub {
+    font-size: 17px;
+  }
+
+  .app-status-pill {
+    font-size: 15px;
+    padding: 6px 12px;
+  }
+
+  /* --- PULSANTI PIU' GRANDI SOLO SU PC --- */
+  .app-grid {
+    gap: 20px;
+  }
+
+  .app-tile {
+    min-height: 150px;
+    padding: 22px 18px;
+  }
+
+  .app-tile-icon {
+    font-size: 40px;
+  }
+
+  .app-tile-text {
+    font-size: 22px;
+  }
+
+  /* --- NAVIGAZIONE INFERIORE --- */
+  .app-nav-btn {
+    font-size: 18px;
+    padding: 10px 10px;
+  }
+
+  /* --- LISTE INTERNE --- */
+  .list-item {
+    font-size: 18px;
+  }
+
+  .list-item-meta {
+    font-size: 16px;
+  }
+
+  .absence-pill {
+    font-size: 18px;
+    padding: 10px 14px;
+  }
+
+  .absence-meta {
+    font-size: 16px;
+  }
+}
