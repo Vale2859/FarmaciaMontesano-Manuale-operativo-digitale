@@ -61,46 +61,59 @@
 
   <p id="auth-error" class="error hidden"></p>
 </div>
-        <!-- REGISTRAZIONE DIPENDENTI -->
-        <div id="register-box" class="hidden">
-          <h2 class="login-title">Richiesta registrazione</h2>
+        <!-- REGISTRAZIONE (CLIENTI / DIPENDENTI / TITOLARE) -->
+<div id="register-box" class="hidden">
+  <h2 class="login-title">Registrazione</h2>
 
-          <label for="reg-name">Nome e Cognome</label>
-          <input
-            type="text"
-            id="reg-name"
-            placeholder="Es. Daniela Andrisani"
-          />
+  <label for="reg-role">Sei un…</label>
+  <select id="reg-role">
+    <option value="staff">Dipendente</option>
+    <option value="cliente">Cliente</option>
+    <option value="admin">Titolare</option>
+  </select>
 
-          <label for="reg-email">Email aziendale</label>
-          <input
-            type="email"
-            id="reg-email"
-            placeholder="nome@farmaciamontesano.it"
-          />
+  <label for="reg-name">Nome e cognome</label>
+  <input
+    type="text"
+    id="reg-name"
+    placeholder="Es. Mario Rossi"
+  />
 
-          <label for="reg-password">Password</label>
-          <input type="password" id="reg-password" placeholder="Password" />
+  <label for="reg-phone">Numero di cellulare</label>
+  <input
+    type="text"
+    id="reg-phone"
+    placeholder="Es. 333 1234567"
+  />
 
-          <button class="btn-primary" onclick="registerUser()">
-            Invia richiesta
-          </button>
+  <label for="reg-email">Email</label>
+  <input
+    type="email"
+    id="reg-email"
+    placeholder="esempio@email.it"
+  />
 
-          <p class="small-text">
-            L’account dovrà essere approvato dal Titolare prima di poter
-            accedere.
-          </p>
+  <label for="reg-password">Password</label>
+  <input type="password" id="reg-password" placeholder="Password" />
 
-          <p class="small-text">
-            Hai già un account?
-            <a href="#" onclick="showLogin(event)">Torna al login</a>
-          </p>
+  <button class="btn-primary" onclick="registerUser()">
+    Completa registrazione
+  </button>
 
-          <p id="auth-error-register" class="error hidden"></p>
-        </div>
-      </div>
-    </div>
+  <p class="small-text">
+    • Se sei <strong>cliente</strong>, accedi subito all’area dedicata ai clienti.<br />
+    • Se sei <strong>dipendente</strong>, l’account dovrà essere approvato dal
+    Titolare prima di poter accedere.<br />
+    • Se sei <strong>titolare</strong>, avrai accesso completo all’area Admin.
+  </p>
 
+  <p class="small-text">
+    Hai già un account?
+    <a href="#" onclick="showLogin(event)">Torna al login</a>
+  </p>
+
+  <p id="auth-error-register" class="error hidden"></p>
+</div>
     <!-- PORTALE PRINCIPALE -->
     <div id="portal" class="portal hidden">
       <!-- TOPBAR -->
