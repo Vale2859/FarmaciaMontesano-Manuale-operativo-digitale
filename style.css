@@ -1253,3 +1253,55 @@ body {
         align-items: center;
     }
 }
+
+/* ============================================
+   SISTEMA INPUT LOGIN SOLO SU PC
+   ============================================ */
+
+@media screen and (min-width: 1024px) {
+
+    /* Contenitore login più grande e centrato */
+    #login-box, #register-box {
+        width: 550px !important;     /* più largo */
+        padding: 40px !important;    /* più spazio interno */
+        border-radius: 25px;
+        margin: 0 auto !important;
+        margin-top: 120px !important;
+    }
+
+    /* LOGO più grande */
+    #login-logo {
+        width: 180px !important;
+        margin-bottom: 30px !important;
+    }
+
+    /* Testo Accesso Dipendenti */
+    #login-box h2 {
+        font-size: 2.2rem !important;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    /* INPUT email e password sistemati */
+    #login-box input[type="email"],
+    #login-box input[type="password"] {
+        width: 100% !important;        /* entrano nel box */
+        height: 55px !important;       /* più alti */
+        font-size: 1.2rem !important;  /* testo più leggibile */
+        border-radius: 12px !important;
+    }
+
+    /* Bottone entra più grande */
+    #login-box button {
+        height: 60px !important;
+        font-size: 1.4rem !important;
+        border-radius: 12px;
+    }
+
+    /* Icona occhio sistemata */
+    .password-wrapper {
+        height: 55px !important;
+        display: flex;
+        align-items: center;
+    }
+}
