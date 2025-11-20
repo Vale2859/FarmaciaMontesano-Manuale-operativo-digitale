@@ -196,64 +196,17 @@ function logout() {
    ============================================ */
 
 function openPortal(user) {
-  const auth = document.getElementById("auth");
-  const portal = document.getElementById("portal");
-  const loginBox = document.getElementById("login-box");
-  const registerBox = document.getElementById("register-box");
+  document.getElementById("auth").classList.add("hidden");
+  document.getElementById("portal").classList.remove("hidden");
 
-  if (auth) {
-    auth.classList.add("hidden");
-    auth.style.display = "none";
-  }
-  if (loginBox) loginBox.classList.add("hidden");
-  if (registerBox) registerBox.classList.add("hidden");
-  if (portal) portal.classList.remove("hidden");
+  document.getElementById("user-name-display").textContent = user.name;
+  document.getElementById("user-role-display").textContent =
+    user.role === "admin" ? "Titolare" : "Dipendente";
 
-  const nameDisplay = document.getElementById("user-name-display");
-  const roleDisplay = document.getElementById("user-role-display");
-  if (nameDisplay) nameDisplay.textContent = user.name || "";
-  if (roleDisplay) {
-    roleDisplay.textContent =
-      user.role === "admin" ? "Titolare / Admin" : "Dipendente";
-  }
-
-  const homeTitle = document.getElementById("home-title");
-  if (homeTitle) {
-    homeTitle.textContent = "Ciao " + user.name + ", benvenuto nel portale";
-  }
-
-  const info = document.getElementById("user-info");
-  if (info) {
-    info.innerHTML =
-      "<strong>Nome:</strong> " +
-      user.name +
-      "<br><strong>Email:</strong> " +
-      user.email +
-      "<br><strong>Ruolo:</strong> " +
-      (user.role === "admin" ? "Titolare / Admin" : "Dipendente");
-  }
-
-  const navAdmin = document.getElementById("nav-admin");
-  if (navAdmin) {
-    if (user.role === "admin") navAdmin.classList.remove("hidden");
-    else navAdmin.classList.add("hidden");
-  }
-
-  initHome(user);
-  renderProcedures(user);
-  renderMessages(user);
-  renderLeaveTable(user);
-  renderTraining(user);
-  renderLogistics();
-  loadPersonalData(user);
-  if (user.role === "admin") {
-    renderAdminUsers();
-    renderAdminProceduresList();
-    renderAdminLeaveList();
-    populateMessageTargets();
-  }
-
-  showSection("home", document.getElementById("nav-home"));
+  // Mostra sezione HOME e schermata app principale
+  showSection("home");
+  showAppScreen("home");
+  renderApprovedAbsences(); // aggiorna subito la lista assenze
 }
 
 /* Cambio sezione */
