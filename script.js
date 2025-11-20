@@ -105,11 +105,14 @@ function seedAdminIfNeeded() {
   saveUsers(users);
 }
 
-/* Registrazione: account in attesa di approvazione (dipendente) */
+/* Registrazione: CLIENTI / DIPENDENTI / TITOLARE */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
+  const phone = document.getElementById("reg-phone").value.trim();
   const email = document.getElementById("reg-email").value.trim();
   const pass = document.getElementById("reg-password").value;
+  const roleSelect = document.getElementById("reg-role");
+  const chosenRole = roleSelect ? roleSelect.value : "staff"; // staff = dipendente
 
   const errReg = document.getElementById("auth-error-register");
   if (errReg) {
@@ -117,7 +120,8 @@ function registerUser() {
     errReg.classList.add("hidden");
   }
 
-  if (!name || !email || !pass) {
+  // Controlli base
+  if (!name || !email || !pass || !phone) {
     if (errReg) {
       errReg.textContent = "Compila tutti i campi per registrarti.";
       errReg.classList.remove("hidden");
@@ -134,24 +138,52 @@ function registerUser() {
     return;
   }
 
+  // Definizione ruolo + attivazione
+  let role = "staff";
+  let active = false;
+  let approved = false;
+
+  if (chosenRole === "cliente") {
+    role = "cliente";
+    active = true;
+    approved = true; // cliente entra subito
+  } else if (chosenRole === "admin") {
+    role = "admin";
+    active = true;
+    approved = true; // titolare attivo
+  } else {
+    // dipendente
+    role = "staff";
+    active = false;
+    approved = false; // in attesa approvazione titolare
+  }
+
   users.push({
     id: uid(),
     name,
     email,
+    phone,
     password: pass,
-    role: "staff", // dipendente
-    active: false,
-    approved: false,
+    role,
+    active,
+    approved,
     createdAt: new Date().toISOString()
   });
 
   saveUsers(users);
-  alert(
-    "Richiesta inviata! L'account dovrà essere approvato dal Titolare prima di poter accedere."
-  );
+
+  if (role === "cliente") {
+    alert("Registrazione completata! Ora puoi accedere come Cliente.");
+  } else if (role === "admin") {
+    alert("Registrazione Titolare completata. Puoi accedere come Admin.");
+  } else {
+    alert(
+      "Richiesta inviata! L'account dovrà essere approvato dal Titolare prima di poter accedere."
+    );
+  }
+
   showLogin();
 }
-
 /* Login */
 function login() {
   const email = document.getElementById("login-email").value.trim();
