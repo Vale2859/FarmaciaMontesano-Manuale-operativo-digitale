@@ -1072,3 +1072,96 @@ body {
     font-size: 18px;
   }
 }
+/* =======================================================
+   MOBILE FIX – RIPORTA IL LAYOUT COME PRIMA SUL TELEFONO
+   ======================================================= */
+
+@media (max-width: 600px) {
+  /* font base più piccolo sul telefono */
+  body {
+    font-size: 15px;
+  }
+
+  /* TOP BAR in alto */
+  .topbar {
+    padding: 10px 14px;
+  }
+
+  .topbar-title {
+    font-size: 18px;
+  }
+
+  .topbar-subtitle {
+    font-size: 12px;
+  }
+
+  .user-pill {
+    font-size: 13px;
+    padding: 4px 10px;
+  }
+
+  .role-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .btn-outline {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  /* TELEFONO CENTRALE */
+  .home-app-wrapper {
+    padding-inline: 0;
+    padding-top: 8px;
+    justify-content: center;
+  }
+
+  .app-phone {
+    max-width: 420px;
+    padding: 16px 12px 10px;
+    border-radius: 24px;
+    border-width: 4px;
+  }
+
+  .app-header-name {
+    font-size: 18px;
+  }
+
+  .app-header-sub {
+    font-size: 12px;
+  }
+
+  .app-status-pill {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  /* TILE (Assenze, Procedure, …) */
+  .app-grid {
+    gap: 8px;
+  }
+
+  .app-tile {
+    min-height: 90px;
+    padding: 10px 8px;
+  }
+
+  .app-tile-icon {
+    font-size: 22px;
+  }
+
+  .app-tile-text {
+    font-size: 14px;
+  }
+
+  /* BARRA IN BASSO */
+  .app-bottom-nav {
+    padding: 6px 6px;
+  }
+
+  .app-nav-btn {
+    font-size: 13px;
+    padding: 6px 4px;
+  }
+}
