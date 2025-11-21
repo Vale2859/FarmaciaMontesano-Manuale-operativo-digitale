@@ -410,13 +410,14 @@ textarea {
 
 /* Griglia pulsanti – su PC 4 colonne */
 
+/* --- GRID DELLE ICONE (più spazio tra le righe) --- */
 .app-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  column-gap: 20px;     /* distanza orizzontale tra le colonne */
+  row-gap: 40px;        /* distanza verticale tra le righe aumentata */
   margin-bottom: 18px;
 }
-
 .app-tile {
   border-radius: 16px;
   padding: 14px 12px;
