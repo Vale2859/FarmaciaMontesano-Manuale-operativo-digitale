@@ -1037,3 +1037,32 @@ body {
     flex-direction: column;
   }
 }
+
+/* =======================================================
+   DESKTOP – DASHBOARD A TUTTO SCHERMO
+   (solo schermi grandi)
+   ======================================================= */
+
+@media (min-width: 1100px) {
+
+  /* meno margine grigio ai lati */
+  .main {
+    padding: 20px 16px 32px;
+  }
+
+  /* il contenitore centrale occupa tutta la larghezza utile */
+  .home-app-wrapper {
+    width: 100%;
+    max-width: 1800px;      /* limite solo per schermi enormi */
+    margin: 0 auto;
+    padding: 0 24px;        /* piccolo bordo laterale */
+    display: flex;
+    justify-content: center;
+  }
+
+  /* la “card” verde con le tile diventa larga quanto lo schermo */
+  .app-phone {
+    width: 100%;
+    max-width: none;        /* niente limite, prende tutta la riga */
+  }
+}
