@@ -1,8 +1,6 @@
 /* ============================================
    Portale Professionale – Farmacia Montesano
    Gestione front-end con localStorage
-   Ruoli: admin, dipendente, cliente
-   Password hashate + "Ricordami" con token
    ============================================ */
 
 const LS_USERS = "fm_users";
@@ -14,8 +12,8 @@ const LS_LEAVE = "fm_leave";
 const LS_PERSONAL = "fm_personal";
 const LS_QUICK = "fm_quickNotes";
 const LS_TRAINING = "fm_trainingNotes";
-const LS_APPOINTMENTS = "fm_appointments";
-const LS_REMEMBER = "fm_rememberToken";
+const LS_BOOKINGS = "fm_bookings";
+const LS_REMEMBER = "fm_rememberLogin";
 
 /* ---------- Utility ---------- */
 
@@ -35,16 +33,6 @@ function saveJson(key, value) {
 
 function uid() {
   return "id-" + Math.random().toString(36).substring(2) + "-" + Date.now();
-}
-
-/* Hash password (SHA-256) */
-async function hashPassword(plain) {
-  const enc = new TextEncoder();
-  const data = enc.encode(plain);
-  const digest = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
 }
 
 /* ============================================
@@ -87,25 +75,24 @@ function saveUsers(users) {
   saveJson(LS_USERS, users);
 }
 
-/* Admin di default se non esistono utenti – o ripristino */
-async function seedAdminIfNeeded() {
+/* Admin di default */
+function seedAdminIfNeeded() {
   let users = loadUsers();
 
   const adminEmail = "admin@farmaciamontesano.it";
   const adminPassword = "admin123";
 
   let admin = users.find(
-    (u) => u.email && u.email.toLowerCase() === adminEmail.toLowerCase()
+    (u) => u.email.toLowerCase() === adminEmail.toLowerCase()
   );
-
-  const passwordHash = await hashPassword(adminPassword);
 
   if (!admin) {
     admin = {
       id: uid(),
       name: "Valerio Montesano",
       email: adminEmail,
-      passwordHash,
+      phone: "",
+      password: adminPassword,
       role: "admin",
       active: true,
       approved: true,
@@ -113,50 +100,41 @@ async function seedAdminIfNeeded() {
     };
     users.push(admin);
   } else {
+    admin.password = adminPassword;
     admin.role = "admin";
     admin.active = true;
     admin.approved = true;
-    if (!admin.passwordHash) {
-      admin.passwordHash = passwordHash;
-    }
   }
 
   saveUsers(users);
 }
 
-/* Registrazione: account cliente o dipendente */
-async function registerUser() {
+/* Registrazione */
+function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const phone = document.getElementById("reg-phone").value.trim();
   const email = document.getElementById("reg-email").value.trim();
   const pass = document.getElementById("reg-password").value;
-  let role = document.getElementById("reg-role").value || "cliente";
+  const role = document.getElementById("reg-role").value;
 
   if (!name || !email || !pass) {
-    showError("Compila tutti i campi obbligatori.");
+    showError("Compila almeno nome, email e password.");
     return;
   }
 
   let users = loadUsers();
-  if (users.find((u) => u.email && u.email.toLowerCase() === email.toLowerCase())) {
+  if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
     showError("Esiste già un utente con questa email.");
     return;
   }
 
-  // Non permetto di creare nuovi admin in autonomia:
-  // se scelgono "titolare", lo tratto come cliente.
-  if (role === "titolare") {
-    role = "cliente";
-  }
+  let approved = false;
+  let active = false;
 
-  const passwordHash = await hashPassword(pass);
-
-  let active = true;
-  let approved = true;
-
-  if (role === "dipendente") {
-    active = false;
-    approved = false;
+  if (role === "cliente") {
+    // i clienti possono accedere subito
+    approved = true;
+    active = true;
   }
 
   users.push({
@@ -164,7 +142,7 @@ async function registerUser() {
     name,
     phone,
     email,
-    passwordHash,
+    password: pass,
     role,
     active,
     approved,
@@ -173,22 +151,22 @@ async function registerUser() {
 
   saveUsers(users);
 
-  if (role === "dipendente") {
-    alert(
-      "Registrazione inviata! L'account dipendente dovrà essere approvato dall'Admin prima di poter accedere."
-    );
+  if (role === "cliente") {
+    alert("Registrazione completata! Puoi accedere subito all'area clienti.");
   } else {
-    alert("Registrazione completata! Puoi accedere con le tue credenziali.");
+    alert(
+      "Richiesta inviata! L'account dovrà essere approvato dal Titolare prima di poter accedere."
+    );
   }
 
   showLogin();
 }
 
 /* Login */
-async function login() {
+function login() {
   const email = document.getElementById("login-email").value.trim();
   const pass = document.getElementById("login-password").value;
-  const remember = document.getElementById("login-remember").checked;
+  const remember = document.getElementById("login-remember");
 
   if (!email || !pass) {
     showError("Inserisci email e password.");
@@ -196,16 +174,8 @@ async function login() {
   }
 
   const users = loadUsers();
-  const passHash = await hashPassword(pass);
-
-  let user = users.find(
-    (u) =>
-      u.email &&
-      u.email.toLowerCase() === email.toLowerCase() &&
-      (
-        (u.passwordHash && u.passwordHash === passHash) ||
-        (!u.passwordHash && u.password === pass) // compat vecchia versione
-      )
+  const user = users.find(
+    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
   );
 
   if (!user) {
@@ -218,64 +188,23 @@ async function login() {
     return;
   }
 
-  // upgrade: se aveva solo password, salvo anche hash
-  if (!user.passwordHash) {
-    user.passwordHash = passHash;
-    delete user.password;
-    saveUsers(users);
-  }
-
-  // gestisci token "Ricordami"
-  let token = null;
-  if (remember) {
-    token = uid();
-    const idx = users.findIndex((u) => u.id === user.id);
-    if (idx !== -1) {
-      users[idx].rememberToken = token;
-      saveUsers(users);
-      saveJson(LS_REMEMBER, { userId: user.id, token });
-    }
+  // Ricorda credenziali
+  if (remember && remember.checked) {
+    saveJson(LS_REMEMBER, { email, password: pass });
   } else {
     localStorage.removeItem(LS_REMEMBER);
   }
 
   saveJson(LS_ACTIVE, user);
-  clearError();
   openPortal(user);
 }
 
 /* Logout */
 function logout() {
-  const active = loadJson(LS_ACTIVE, null);
-  if (active) {
-    let users = loadUsers();
-    const idx = users.findIndex((u) => u.id === active.id);
-    if (idx !== -1) {
-      delete users[idx].rememberToken;
-      saveUsers(users);
-    }
-  }
-
   localStorage.removeItem(LS_ACTIVE);
-  localStorage.removeItem(LS_REMEMBER);
   document.getElementById("portal").classList.add("hidden");
   document.getElementById("auth").classList.remove("hidden");
   showLogin();
-}
-
-/* Auto-login da token "Ricordami" */
-function autoLoginFromRemember() {
-  const rem = loadJson(LS_REMEMBER, null);
-  if (!rem) return null;
-
-  const users = loadUsers();
-  const u = users.find(
-    (x) => x.id === rem.userId && x.rememberToken === rem.token
-  );
-  if (!u || !u.approved || !u.active) return null;
-
-  saveJson(LS_ACTIVE, u);
-  return u;
 }
 
 /* ============================================
@@ -288,72 +217,76 @@ function openPortal(user) {
 
   const nameEl = document.getElementById("user-name-display");
   const roleEl = document.getElementById("user-role-display");
-  const titleEl = document.getElementById("topbar-title");
-  const subEl = document.getElementById("topbar-subtitle");
+  const subtitleEl = document.getElementById("topbar-subtitle");
+  const adminTile = document.getElementById("tile-admin");
 
-  if (nameEl) nameEl.textContent = user.name || "";
+  if (nameEl) nameEl.textContent = user.name;
   if (roleEl) {
     if (user.role === "admin") roleEl.textContent = "Titolare";
     else if (user.role === "dipendente") roleEl.textContent = "Dipendente";
     else roleEl.textContent = "Cliente";
   }
 
-  const mainStaff = document.getElementById("main-staff");
-  const mainClient = document.getElementById("main-client");
+  if (subtitleEl) {
+    if (user.role === "cliente") {
+      subtitleEl.textContent = "Area Clienti";
+    } else {
+      subtitleEl.textContent = "Portale professionale interno";
+    }
+  }
+
+  if (adminTile) {
+    if (user.role === "admin") adminTile.classList.remove("hidden");
+    else adminTile.classList.add("hidden");
+  }
+
+  // Reset visibilità sezioni
+  const sections = document.querySelectorAll(".section");
+  sections.forEach((s) => s.classList.remove("visible"));
 
   if (user.role === "cliente") {
-    if (titleEl) titleEl.textContent = "Farmacia Montesano";
-    if (subEl) subEl.textContent = "Area clienti";
+    const ch = document.getElementById("client-home");
+    if (ch) ch.classList.add("visible");
 
-    if (mainStaff) mainStaff.classList.add("hidden");
-    if (mainClient) mainClient.classList.remove("hidden");
-
-    initClientPortal(user);
+    renderClientPromos();
+    renderClientBookings(user);
   } else {
-    if (titleEl) titleEl.textContent = "Farmacia Montesano";
-    if (subEl) subEl.textContent = "Portale professionale interno";
+    const sh = document.getElementById("home");
+    if (sh) sh.classList.add("visible");
 
-    if (mainClient) mainClient.classList.add("hidden");
-    if (mainStaff) mainStaff.classList.remove("hidden");
+    // dipendenti + admin
+    initHome(user);
+    renderProcedures();
+    renderMessages(user);
+    renderLogistics();
+    loadPersonalData(user);
+    renderLeaveTable(user);
+    renderTraining(user);
+    renderApprovedAbsences();
 
-    initStaffPortal(user);
-  }
-}
-
-/* Inizializza portale Staff (dipendenti/admin) */
-function initStaffPortal(user) {
-  initHome(user);
-  renderProcedures();
-  renderMessages(user);
-  renderLogistics();
-  loadPersonalData(user);
-  renderLeaveTable(user);
-  renderTraining(user);
-  if (user.role === "admin") {
-    renderAdminUsers();
-    renderAdminProceduresList();
-    renderAdminLeaveList();
-    populateMessageTargets();
+    if (user.role === "admin") {
+      renderAdminUsers();
+      renderAdminProceduresList();
+      renderAdminLeaveList();
+      populateMessageTargets();
+    }
   }
 
-  showSection("home");
   showAppScreen("home");
-  renderApprovedAbsences();
 }
 
-/* Pulsante Home globale */
+// Pulsante Home globale
 function goHome() {
   const active = loadJson(LS_ACTIVE, null);
-  if (!active) return;
-  if (active.role === "cliente") {
-    showClientSection("client-home");
-  } else {
-    showSection("home");
-    showAppScreen("home");
+  if (!active) {
+    showLogin();
+    return;
   }
+
+  openPortal(active);
 }
 
-/* Cambio sezione Staff */
+/* Cambio sezione "grande" */
 function showSection(id, btn) {
   const sections = document.querySelectorAll(".section");
   sections.forEach((s) => s.classList.remove("visible"));
@@ -367,7 +300,7 @@ function showSection(id, btn) {
 }
 
 /* ============================================
-   DASHBOARD / HOME STAFF
+   DASHBOARD / HOME DIPENDENTI
    ============================================ */
 
 function todayLabel() {
@@ -391,6 +324,8 @@ function randomPhrase() {
 }
 
 function initHome(user) {
+  // Al momento non usiamo ancora home-daytag/home-highlights,
+  // ma lasciamo la logica se in futuro li aggiungiamo in HTML.
   const tag = document.getElementById("home-daytag");
   if (tag) tag.textContent = todayLabel();
 
@@ -404,21 +339,12 @@ function initHome(user) {
     }
   }
 
-  const qp = document.getElementById("home-quick-proc");
-  if (qp) {
-    qp.innerHTML = `
-      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Anticipi – i clienti pagano subito')">Anticipi</button>
-      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','POS collegato')">POS</button>
-      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Ticket SSN')">Ticket</button>
-      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Sotto cassa')">Sotto cassa</button>
-    `;
-  }
-
   renderHomeLeaveSummary(user);
   renderHomeLogisticsSummary();
   renderHomeLastMessages(user);
 }
 
+/* Pulsante dalla home alle procedure specifiche */
 function openProcedureFromHome(cat, title) {
   showSection("procedures");
   selectProcedureCategory(cat);
@@ -712,7 +638,9 @@ function adminSendMessage() {
 function populateMessageTargets() {
   const sel = document.getElementById("admin-msg-target");
   if (!sel) return;
-  const users = loadUsers().filter((u) => u.approved && u.active);
+  const users = loadUsers().filter(
+    (u) => u.approved && u.active && u.role !== "cliente"
+  );
   sel.innerHTML = `<option value="all">Tutti i dipendenti</option>`;
   users.forEach((u) => {
     const opt = document.createElement("option");
@@ -736,8 +664,10 @@ function formatLeaveType(t) {
       return "Permesso giornata";
     case "recupero_ore":
       return "Recupero ore";
+    case "malattia":
+      return "Malattia";
     default:
-      return t;
+      return t || "-";
   }
 }
 
@@ -817,43 +747,231 @@ function renderLeaveTable(user) {
     });
 }
 
-function renderAdminLeaveList() {
-  const box = document.getElementById("admin-leave-list");
-  if (!box) return;
-  const all = loadJson(LS_LEAVE, []);
-  if (all.length === 0) {
-    box.innerHTML =
-      '<div class="list-item">Nessuna richiesta di ferie/permessi.</div>';
+/* ======= SUPER DASHBOARD ASSENZE – ADMIN ======= */
+
+let ADMIN_LEAVE_SELECTED_USER = null;
+
+function renderAdminLeaveList(selectedUserId) {
+  const monthInput = document.getElementById("admin-leave-month");
+  const typeSelect = document.getElementById("admin-leave-type-filter");
+  const searchInput = document.getElementById("admin-leave-search");
+  const monthListEl = document.getElementById("admin-leave-month-list");
+  const usersBox = document.getElementById("admin-leave-users");
+  const historyTitle = document.getElementById("admin-leave-history-title");
+  const historyList = document.getElementById("admin-leave-history-list");
+
+  if (
+    !monthInput ||
+    !typeSelect ||
+    !searchInput ||
+    !monthListEl ||
+    !usersBox ||
+    !historyTitle ||
+    !historyList
+  ) {
     return;
   }
 
-  box.innerHTML = "";
-  all
-    .slice()
-    .reverse()
-    .forEach((r) => {
-      const div = document.createElement("div");
-      div.className = "list-item";
-      div.innerHTML = `
-        <div class="list-item-title">
-          ${r.userName} – ${formatLeaveType(r.type)}
-        </div>
-        <div class="list-item-meta">
-          Dal ${r.start}${r.end ? " al " + r.end : ""} – Stato: ${formatLeaveStatus(
-        r.status
-      )}
-        </div>
-        <div>${r.note || ""}</div>
-        <div style="margin-top:6px;">
-          <button class="btn-primary small" onclick="adminSetLeaveStatus('${
-            r.id
-          }','approvato')">Approva</button>
-          <button class="btn-primary small" style="background:#fee2e2;color:#991b1b;box-shadow:none;"
-            onclick="adminSetLeaveStatus('${r.id}','rifiutato')">Rifiuta</button>
-        </div>
-      `;
-      box.appendChild(div);
-    });
+  let all = loadJson(LS_LEAVE, []);
+  if (!Array.isArray(all)) all = [];
+
+  if (!monthInput.value) {
+    const now = new Date();
+    monthInput.value = now.toISOString().slice(0, 7);
+  }
+
+  const [yStr, mStr] = (monthInput.value || "").split("-");
+  const year = parseInt(yStr, 10);
+  const month = parseInt(mStr, 10);
+
+  const typeFilter = typeSelect.value;
+  const query = searchInput.value.trim().toLowerCase();
+
+  let filtered = all.filter((r) => {
+    if (typeFilter !== "tutti" && r.type !== typeFilter) return false;
+
+    if (query) {
+      const hay =
+        (r.userName || "") + " " + (r.note || "") + " " + (r.type || "");
+      if (!hay.toLowerCase().includes(query)) return false;
+    }
+
+    return true;
+  });
+
+  // ---- assenze nel mese selezionato ----
+  function overlapsMonth(rec, year, month) {
+    if (!year || !month) return true;
+
+    if (!rec.start) return false;
+    const start = new Date(rec.start);
+    const end = rec.end ? new Date(rec.end) : new Date(rec.start);
+
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 0);
+
+    return end >= monthStart && start <= monthEnd;
+  }
+
+  const monthly = filtered.filter((r) => overlapsMonth(r, year, month));
+
+  if (monthly.length === 0) {
+    monthListEl.innerHTML =
+      "<div class='list-item'>Nessuna assenza per il mese selezionato.</div>";
+  } else {
+    monthly.sort((a, b) => new Date(a.start) - new Date(b.start));
+    monthListEl.innerHTML = monthly
+      .map((r) => {
+        const periodo = r.end
+          ? `${r.start} → ${r.end}`
+          : r.start || "-";
+
+        const statusClass =
+          r.status === "approvato"
+            ? "leave-status-approvato"
+            : r.status === "rifiutato"
+            ? "leave-status-rifiutato"
+            : "leave-status-attesa";
+
+        const statusLabel = formatLeaveStatus(r.status);
+
+        return `
+          <div class="list-item">
+            <div class="list-item-title">
+              <span>${r.userName || "-"} – ${formatLeaveType(r.type)}</span>
+              <span class="leave-status-pill ${statusClass}">${statusLabel}</span>
+            </div>
+            <div class="list-item-meta">
+              ${periodo}
+            </div>
+            <div>${r.note || ""}</div>
+            <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px;">
+              <button class="btn-primary small" onclick="adminSetLeaveStatus('${
+                r.id
+              }','approvato')">Approva</button>
+              <button class="btn-primary small" style="background:#fee2e2;color:#991b1b;box-shadow:none;"
+                onclick="adminSetLeaveStatus('${r.id}','rifiutato')">Rifiuta</button>
+              <button class="btn-primary small" style="background:#e5e7eb;color:#111827;box-shadow:none;"
+                onclick="adminDeleteLeave('${r.id}')">Cancella</button>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  // ---- colonna destra: dipendenti + storico ----
+  const usersMap = {};
+  filtered.forEach((r) => {
+    if (!r.userId) return;
+    if (!usersMap[r.userId]) {
+      usersMap[r.userId] = {
+        id: r.userId,
+        name: r.userName || r.userId,
+      };
+    }
+  });
+
+  const usersArr = Object.values(usersMap).sort((a, b) =>
+    a.name.localeCompare(b.name, "it")
+  );
+
+  if (!selectedUserId && usersArr.length > 0) {
+    selectedUserId = usersArr[0].id;
+  }
+  ADMIN_LEAVE_SELECTED_USER = selectedUserId || null;
+
+  if (usersArr.length === 0) {
+    usersBox.innerHTML =
+      "<p class='small-text'>Nessun dipendente con richieste di assenza.</p>";
+  } else {
+    usersBox.innerHTML = usersArr
+      .map((u) => {
+        const activeClass =
+          u.id === ADMIN_LEAVE_SELECTED_USER ? " active" : "";
+        return `<button class="admin-leave-user-btn${activeClass}" onclick="adminSelectLeaveUser('${u.id}')">
+            ${u.name}
+          </button>`;
+      })
+      .join("");
+  }
+
+  const selectedUser =
+    usersArr.find((u) => u.id === ADMIN_LEAVE_SELECTED_USER) || null;
+
+  if (selectedUser) {
+    historyTitle.textContent = "Storico assenze – " + selectedUser.name;
+  } else {
+    historyTitle.textContent = "Storico assenze";
+  }
+
+  const historyRecs = filtered
+    .filter((r) => r.userId === ADMIN_LEAVE_SELECTED_USER)
+    .sort((a, b) => new Date(b.start) - new Date(a.start));
+
+  if (!selectedUser || historyRecs.length === 0) {
+    historyList.innerHTML =
+      "<div class='list-item'>Nessuna assenza trovata per questo dipendente.</div>";
+  } else {
+    historyList.innerHTML = historyRecs
+      .map((r) => {
+        const periodo = r.end
+          ? `${r.start} → ${r.end}`
+          : r.start || "-";
+
+        const statusClass =
+          r.status === "approvato"
+            ? "leave-status-approvato"
+            : r.status === "rifiutato"
+            ? "leave-status-rifiutato"
+            : "leave-status-attesa";
+
+        const statusLabel = formatLeaveStatus(r.status);
+
+        return `
+          <div class="list-item">
+            <div class="list-item-title">
+              <span>${formatLeaveType(r.type)}</span>
+              <span class="leave-status-pill ${statusClass}">${statusLabel}</span>
+            </div>
+            <div class="list-item-meta">
+              ${periodo}
+            </div>
+            <div>${r.note || ""}</div>
+            <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px;">
+              <button class="btn-primary small" onclick="adminSetLeaveStatus('${
+                r.id
+              }','approvato')">Approva</button>
+              <button class="btn-primary small" style="background:#fee2e2;color:#991b1b;box-shadow:none;"
+                onclick="adminSetLeaveStatus('${r.id}','rifiutato')">Rifiuta</button>
+              <button class="btn-primary small" style="background:#e5e7eb;color:#111827;box-shadow:none;"
+                onclick="adminDeleteLeave('${r.id}')">Cancella</button>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+}
+
+function adminSelectLeaveUser(userId) {
+  ADMIN_LEAVE_SELECTED_USER = userId;
+  renderAdminLeaveList(userId);
+}
+
+function adminDeleteLeave(id) {
+  let all = loadJson(LS_LEAVE, []);
+  all = all.filter((r) => r.id !== id);
+  saveJson(LS_LEAVE, all);
+
+  const active = loadJson(LS_ACTIVE, null);
+  if (active) {
+    renderLeaveTable(active);
+    if (active.role === "admin") {
+      renderAdminLeaveList(ADMIN_LEAVE_SELECTED_USER);
+    }
+    renderHomeLeaveSummary(active);
+  }
 }
 
 function adminSetLeaveStatus(id, status) {
@@ -866,7 +984,9 @@ function adminSetLeaveStatus(id, status) {
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
     renderLeaveTable(active);
-    if (active.role === "admin") renderAdminLeaveList();
+    if (active.role === "admin") {
+      renderAdminLeaveList(ADMIN_LEAVE_SELECTED_USER);
+    }
     renderHomeLeaveSummary(active);
   }
 }
@@ -1038,7 +1158,7 @@ function renderPersonalDocs(docs) {
 function renderAdminUsers() {
   const box = document.getElementById("admin-users");
   if (!box) return;
-  const users = loadUsers();
+  const users = loadUsers().filter((u) => u.role !== "cliente"); // solo staff
   box.innerHTML = "";
 
   users.forEach((u) => {
@@ -1046,15 +1166,12 @@ function renderAdminUsers() {
     div.className = "list-item";
     div.innerHTML = `
       <div class="list-item-title">
-        ${u.name} ${
-      u.role === "admin"
-        ? "(Admin)"
-        : u.role === "dipendente"
-        ? "(Dipendente)"
-        : "(Cliente)"
-    }
+        ${u.name} ${u.role === "admin" ? "(Admin)" : ""}
       </div>
-      <div class="list-item-meta">${u.email || ""}</div>
+      <div class="list-item-meta">${u.email}</div>
+      <div>
+        Ruolo: ${u.role === "admin" ? "Titolare" : "Dipendente"}
+      </div>
       <div>
         Stato: ${
           u.approved && u.active
@@ -1105,16 +1222,15 @@ function adminToggleActive(id) {
   renderAdminUsers();
 }
 
-async function adminResetPassword(id) {
+function adminResetPassword(id) {
   let users = loadUsers();
   const u = users.find((x) => x.id === id);
   if (!u) return;
   const newPass = prompt(
-    "Nuova password per " + u.name + " (" + (u.email || "") + "):"
+    "Nuova password per " + u.name + " (" + u.email + "):"
   );
   if (!newPass) return;
-  u.passwordHash = await hashPassword(newPass);
-  delete u.password;
+  u.password = newPass;
   saveUsers(users);
   alert("Password aggiornata.");
 }
@@ -1187,31 +1303,31 @@ function togglePassword() {
 }
 
 /* ============================================
-   APP INTERNA (HOME / ASSENZE STAFF)
+   APP INTERNA (HOME / ASSENZE – DIPENDENTI)
    ============================================ */
 
 function showAppScreen(which) {
   const home = document.getElementById("screen-home");
   const ass = document.getElementById("screen-assenze");
   const btnHome = document.getElementById("nav-app-home");
-  const btnAss = document.getElementById("nav-app-assenze");
 
   if (!home || !ass) return;
 
   if (which === "assenze") {
     home.classList.remove("app-screen-visible");
     ass.classList.add("app-screen-visible");
-    if (btnHome) btnHome.classList.remove("app-nav-btn-active");
-    if (btnAss) btnAss.classList.add("app-nav-btn-active");
   } else {
     ass.classList.remove("app-screen-visible");
     home.classList.add("app-screen-visible");
-    if (btnAss) btnAss.classList.remove("app-nav-btn-active");
-    if (btnHome) btnHome.classList.add("app-nav-btn-active");
+  }
+
+  if (btnHome) {
+    if (which === "home") btnHome.classList.add("app-nav-btn-active");
+    else btnHome.classList.remove("app-nav-btn-active");
   }
 }
 
-// Salvataggio e lettura assenze
+// Assenze veloci
 function loadAbsences() {
   return loadJson(LS_ABSENCES, []);
 }
@@ -1220,7 +1336,6 @@ function saveAbsences(list) {
   saveJson(LS_ABSENCES, list);
 }
 
-// In questa versione tutte le assenze sono considerate "approvate"
 function submitAbsence() {
   const user = loadJson(LS_ACTIVE, null);
   if (!user) {
@@ -1257,7 +1372,6 @@ function submitAbsence() {
   alert("Richiesta assenza registrata (approvata e visibile a tutti).");
 }
 
-// Mostra SOLO assenze future approvate
 function renderApprovedAbsences() {
   const container = document.getElementById("absence-list");
   if (!container) return;
@@ -1321,240 +1435,238 @@ function renderApprovedAbsences() {
    AREA CLIENTI – PROMO + PRENOTAZIONI
    ============================================ */
 
-const AVAILABLE_TIMES = [
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-  "18:00",
-  "18:30",
+function renderClientPromos() {
+  const box = document.getElementById("client-promos");
+  if (!box) return;
+
+  // Finti dati – personalizzabili
+  const promos = [
+    {
+      title: "Yovis 10 flaconcini",
+      desc: "Fermenti lattici – Promo benessere intestinale",
+      price: "€ 14,90",
+      oldPrice: "€ 19,90",
+    },
+    {
+      title: "Misurazione pressione gratuita",
+      desc: "Su prenotazione in farmacia",
+      price: "Servizio gratuito",
+      oldPrice: "",
+    },
+    {
+      title: "Dermocosmesi Uriage",
+      desc: "Linea viso in promo -20%",
+      price: "-20%",
+      oldPrice: "",
+    },
+  ];
+
+  box.innerHTML = promos
+    .map(
+      (p) => `
+      <div class="list-item">
+        <div class="list-item-title">${p.title}</div>
+        <div class="list-item-meta">${p.desc}</div>
+        <div><strong>${p.price}</strong> ${
+        p.oldPrice ? `<span style="text-decoration:line-through; margin-left:4px;">${p.oldPrice}</span>` : ""
+      }</div>
+      </div>
+    `
+    )
+    .join("");
+}
+
+// slot orari (esempio ogni 30 minuti dalle 9 alle 19)
+const CLIENT_TIME_SLOTS = [
+  "09:00","09:30","10:00","10:30","11:00","11:30",
+  "12:00","12:30","15:30","16:00","16:30","17:00",
+  "17:30","18:00","18:30","19:00"
 ];
 
-function getAppointments() {
-  return loadJson(LS_APPOINTMENTS, []);
-}
-
-function saveAppointments(list) {
-  saveJson(LS_APPOINTMENTS, list);
-}
-
-function initClientPortal(user) {
-  // mostra home cliente
-  showClientSection("client-home");
-  renderClientNextAppointment(user);
-  renderClientMyAppointments(user);
-
-  // inizializza selettore orari
-  const dateInput = document.getElementById("book-date");
-  if (dateInput && !dateInput._listenerAttached) {
-    dateInput.addEventListener("change", () => refreshTimeSlots());
-    dateInput._listenerAttached = true;
-  }
-}
-
-/* Cambio sezione cliente */
-function showClientSection(id) {
-  const secs = document.querySelectorAll(".client-section");
-  secs.forEach((s) => s.classList.add("hidden"));
-  const target = document.getElementById(id);
-  if (target) target.classList.remove("hidden");
-}
-
-/* Orari disponibili in base alle prenotazioni esistenti */
-function refreshTimeSlots() {
-  const dateInput = document.getElementById("book-date");
-  const timeSelect = document.getElementById("book-time");
-  if (!dateInput || !timeSelect) return;
+function updateClientTimeOptions() {
+  const dateInput = document.getElementById("client-date");
+  const select = document.getElementById("client-time");
+  if (!dateInput || !select) return;
 
   const date = dateInput.value;
+  select.innerHTML = "";
+
   if (!date) {
-    timeSelect.innerHTML =
-      '<option value="">Seleziona prima una data</option>';
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "Seleziona prima un giorno";
+    select.appendChild(opt);
     return;
   }
 
-  const all = getAppointments();
-  const booked = all
-    .filter((a) => a.date === date)
-    .map((a) => a.time);
+  const bookings = loadJson(LS_BOOKINGS, []);
 
-  timeSelect.innerHTML = "";
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Seleziona orario";
+  select.appendChild(placeholder);
 
-  AVAILABLE_TIMES.forEach((t) => {
+  CLIENT_TIME_SLOTS.forEach((slot) => {
+    const taken = bookings.some(
+      (b) => b.date === date && b.time === slot
+    );
     const opt = document.createElement("option");
-    opt.value = t;
-    if (booked.includes(t)) {
-      opt.disabled = true;
-      opt.textContent = `${t} (occupato)`;
-    } else {
-      opt.textContent = t;
-    }
-    timeSelect.appendChild(opt);
+    opt.value = slot;
+    opt.textContent = taken ? `${slot} (occupato)` : slot;
+    opt.disabled = taken;
+    select.appendChild(opt);
   });
 }
 
-/* Prenotazione appuntamento cliente */
-function bookAppointment() {
+function clientBookSlot() {
   const user = loadJson(LS_ACTIVE, null);
   if (!user || user.role !== "cliente") {
-    alert("Devi essere loggato come cliente per prenotare.");
+    alert("Devi essere loggato come cliente.");
     return;
   }
 
-  const dateInput = document.getElementById("book-date");
-  const timeSelect = document.getElementById("book-time");
-  const serviceSelect = document.getElementById("book-service");
+  const date = document.getElementById("client-date").value;
+  const time = document.getElementById("client-time").value;
+  const note = document.getElementById("client-note").value.trim();
 
-  if (!dateInput || !timeSelect || !serviceSelect) return;
-
-  const date = dateInput.value;
-  const time = timeSelect.value;
-  const service = serviceSelect.value;
-
-  if (!date || !time || !service) {
-    alert("Seleziona data, orario e servizio.");
+  if (!date || !time) {
+    alert("Seleziona giorno e orario.");
     return;
   }
 
-  let all = getAppointments();
-  if (all.find((a) => a.date === date && a.time === time)) {
-    alert("Questo orario è appena stato prenotato. Scegli un altro orario.");
-    refreshTimeSlots();
+  let bookings = loadJson(LS_BOOKINGS, []);
+
+  // blocca doppi appuntamenti sulla stessa fascia per chiunque
+  const already = bookings.find(
+    (b) => b.date === date && b.time === time
+  );
+  if (already) {
+    alert("Questa fascia oraria è già occupata. Scegli un altro orario.");
+    updateClientTimeOptions();
     return;
   }
 
-  all.push({
+  bookings.push({
     id: uid(),
     userId: user.id,
     userName: user.name,
     date,
     time,
-    service,
+    note,
     createdAt: new Date().toISOString(),
   });
-  saveAppointments(all);
 
-  alert("Prenotazione confermata!");
-  refreshTimeSlots();
-  renderClientMyAppointments(user);
-  renderClientNextAppointment(user);
+  saveJson(LS_BOOKINGS, bookings);
+
+  document.getElementById("client-note").value = "";
+  updateClientTimeOptions();
+  renderClientBookings(user);
+  alert("Prenotazione registrata.");
 }
 
-/* Prossimo appuntamento cliente (home) */
-function renderClientNextAppointment(user) {
-  const box = document.getElementById("client-next-appointment");
+function renderClientBookings(user) {
+  const box = document.getElementById("client-bookings");
   if (!box) return;
 
-  const all = getAppointments().filter((a) => a.userId === user.id);
-  if (all.length === 0) {
-    box.innerHTML =
-      '<div class="list-item">Nessuna prenotazione attiva.</div>';
-    return;
-  }
+  let bookings = loadJson(LS_BOOKINGS, []);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  all.sort((a, b) => {
+  bookings = bookings.filter((b) => b.userId === user.id);
+
+  // solo future o odierne
+  bookings = bookings.filter((b) => {
+    const d = new Date(b.date);
+    d.setHours(0, 0, 0, 0);
+    return d >= today;
+  });
+
+  bookings.sort((a, b) => {
     const da = new Date(a.date + "T" + a.time);
     const db = new Date(b.date + "T" + b.time);
     return da - db;
   });
 
-  const next = all[0];
-  const when = new Date(next.date + "T" + next.time);
-  const label = when.toLocaleString("it-IT", {
-    weekday: "long",
-    day: "2-digit",
-    month: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  const serviceLabel = translateService(next.service);
-
-  box.innerHTML = `
-    <div class="list-item">
-      <div class="list-item-title">Prossimo appuntamento</div>
-      <div class="list-item-meta">${label}</div>
-      <div>Servizio: ${serviceLabel}</div>
-    </div>
-  `;
-}
-
-/* Elenco prenotazioni cliente */
-function renderClientMyAppointments(user) {
-  const box = document.getElementById("client-mybook-list");
-  if (!box) return;
-
-  const all = getAppointments().filter((a) => a.userId === user.id);
-  if (all.length === 0) {
+  if (bookings.length === 0) {
     box.innerHTML =
-      '<div class="list-item">Nessuna prenotazione inserita.</div>';
+      "<div class='list-item'>Nessuna prenotazione futura.</div>";
     return;
   }
 
-  all.sort((a, b) => {
-    const da = new Date(a.date + "T" + a.time);
-    const db = new Date(b.date + "T" + b.time);
-    return da - db;
-  });
-
-  box.innerHTML = "";
-  all.forEach((a) => {
-    const when = new Date(a.date + "T" + a.time);
-    const label = when.toLocaleString("it-IT", {
-      weekday: "short",
-      day: "2-digit",
-      month: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerHTML = `
-      <div class="list-item-title">${label}</div>
-      <div class="list-item-meta">${translateService(a.service)}</div>
-    `;
-    box.appendChild(div);
-  });
-}
-
-function translateService(code) {
-  switch (code) {
-    case "consulenza_farmaceutica":
-      return "Consulenza farmaceutica";
-    case "misurazione_pressione":
-      return "Misurazione pressione";
-    case "autoanalisi":
-      return "Autoanalisi";
-    case "consulenza_dermocosmesi":
-      return "Consulenza dermocosmesi";
-    default:
-      return code;
-  }
+  box.innerHTML = bookings
+    .map((b) => {
+      const d = new Date(b.date);
+      const dateLabel = d.toLocaleDateString("it-IT", {
+        weekday: "short",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+      return `
+        <div class="list-item">
+          <div class="list-item-title">
+            <span>${dateLabel}</span>
+            <span>${b.time}</span>
+          </div>
+          <div class="list-item-meta">
+            Prenotato il ${new Date(b.createdAt).toLocaleDateString("it-IT", {
+              day: "2-digit",
+              month: "2-digit",
+            })}
+          </div>
+          <div>${b.note || "Nessuna nota"}</div>
+        </div>
+      `;
+    })
+    .join("");
 }
 
 /* ============================================
    AVVIO PAGINA
    ============================================ */
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await seedAdminIfNeeded();
+document.addEventListener("DOMContentLoaded", () => {
+  seedAdminIfNeeded();
   ensureDemoProcedures();
   ensureDemoMessages();
 
-  // se c'è token "Ricordami"
-  const remembered = autoLoginFromRemember();
-  if (remembered) {
-    openPortal(remembered);
-    return;
+  // Ricorda credenziali (se salvate)
+  const savedCreds = loadJson(LS_REMEMBER, null);
+  if (savedCreds) {
+    const le = document.getElementById("login-email");
+    const lp = document.getElementById("login-password");
+    const chk = document.getElementById("login-remember");
+    if (le) le.value = savedCreds.email || "";
+    if (lp) lp.value = savedCreds.password || "";
+    if (chk) chk.checked = true;
   }
 
-  // se c'è utente attivo in memoria
+  // Inizializza filtri dashboard assenze Admin
+  const m = document.getElementById("admin-leave-month");
+  const t = document.getElementById("admin-leave-type-filter");
+  const s = document.getElementById("admin-leave-search");
+
+  if (m && t && s) {
+    const now = new Date();
+    m.value = now.toISOString().slice(0, 7);
+
+    m.addEventListener("change", () =>
+      renderAdminLeaveList(ADMIN_LEAVE_SELECTED_USER)
+    );
+    t.addEventListener("change", () =>
+      renderAdminLeaveList(ADMIN_LEAVE_SELECTED_USER)
+    );
+    s.addEventListener("input", () =>
+      renderAdminLeaveList(ADMIN_LEAVE_SELECTED_USER)
+    );
+  }
+
+  // Cambio orario: aggiorna lista slot disponibili
+  const clientDate = document.getElementById("client-date");
+  if (clientDate) {
+    clientDate.addEventListener("change", updateClientTimeOptions);
+  }
+
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
     openPortal(active);
