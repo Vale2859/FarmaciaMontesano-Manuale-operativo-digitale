@@ -1,140 +1,291 @@
-/* SFONDO FUTURISTICO */
-body {
-    margin: 0;
-    font-family: "SF Pro Display", sans-serif;
-    background: radial-gradient(circle at top, #004b55, #00343f);
-    color: white;
+/* RESET BASE */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-/* HAMBURGER */
+:root {
+  --radius-big: 20px;
+  --glass-bg: rgba(255, 255, 255, 0.10);
+  --glass-strong: rgba(255, 255, 255, 0.18);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --text-main: #f9fafb;
+}
+
+/* SFONDO GENERALE */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Helvetica Neue", Arial, sans-serif;
+  background: radial-gradient(circle at top, #006c7d 0, #003845 40%, #001f26 100%);
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+/* HAMBURGER – SEMPRE VISIBILE */
 #hamburger {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: rgba(255,255,255,0.15);
-    border: none;
-    padding: 12px 16px;
-    font-size: 24px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    backdrop-filter: blur(8px);
-    z-index: 999;
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  padding: 10px 14px;
+  font-size: 22px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  color: #f9fafb;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  z-index: 1001;
 }
 
 #hamburger:hover {
-    background: rgba(255,255,255,0.25);
+  background: rgba(0, 0, 0, 0.65);
 }
 
-/* SIDEBAR */
+/* SIDEBAR NASCOSTA DI DEFAULT */
 #sidebar {
-    position: fixed;
-    left: -260px;
-    top: 0;
-    width: 260px;
-    height: 100%;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(18px);
-    padding: 20px;
-    transition: 0.3s;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100%;
+  padding: 18px 18px 24px;
+  background: rgba(5, 22, 30, 0.96);
+  backdrop-filter: blur(16px);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 900;
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.6);
+  color: #e5e7eb;
 }
 
 #sidebar.open {
-    left: 0;
+  transform: translateX(0);
 }
 
 .sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
 }
 
-#sidebar h2 {
-    margin: 0;
-    font-size: 20px;
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 18px;
 }
 
 #closeSidebar {
-    font-size: 26px;
-    background: transparent;
-    border: none;
-    color: white;
-    cursor: pointer;
+  border: none;
+  background: transparent;
+  font-size: 26px;
+  color: #e5e7eb;
+  cursor: pointer;
 }
 
-/* HEADER */
-header {
-    padding: 30px;
-    font-size: 26px;
-    font-weight: bold;
+.sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-/* CONTENUTO PRINCIPALE */
-main {
-    padding: 20px 40px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
+.sidebar-list li {
+  padding: 10px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-/* CARD GRANDI (3 SUPERIORI) */
+.sidebar-list li:hover {
+  background: rgba(248, 250, 252, 0.1);
+}
+
+.sidebar-list .logout {
+  margin-top: 12px;
+  color: #fecaca;
+}
+
+/* HEADER IN ALTO */
+.topbar {
+  padding: 28px 40px 8px 80px; /* spazio per l'hamburger */
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+/* LAYOUT DESKTOP PRINCIPALE */
+.dashboard {
+  padding: 10px 40px 40px 80px; /* lascia spazio per l'hamburger */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  align-items: flex-start;
+}
+
+/* CARD GRANDI (ASSENZE / TURNI / COMUNICAZIONI) */
 .card {
-    padding: 22px;
-    border-radius: 18px;
-    backdrop-filter: blur(18px);
-    background: rgba(255,255,255,0.12);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-}
-
-.card h2 {
-    margin-top: 6px;
-    margin-bottom: 12px;
+  padding: 20px 20px 22px;
+  border-radius: var(--radius-big);
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .card-icon {
-    font-size: 38px;
-    margin-bottom: 8px;
+  font-size: 34px;
+  margin-bottom: 8px;
 }
 
-/* COLORI CARDS */
-.card-green  { background: linear-gradient(135deg, #0bbf7a, #049b5c); }
-.card-blue   { background: linear-gradient(135deg, #0091d6, #0273a3); }
-.card-pink   { background: linear-gradient(135deg, #e73e9d, #c72c7b); }
+.card h2 {
+  margin: 2px 0 10px;
+  font-size: 18px;
+}
 
-/* SEZIONE ICONE SOTTO */
+.card p {
+  margin: 2px 0;
+  font-size: 13px;
+}
+
+/* COLORI CARDS CON GRADIENTI */
+.card-green {
+  background: linear-gradient(135deg, #0acb7b, #019763);
+}
+.card-teal {
+  background: linear-gradient(135deg, #00a5cf, #0076a7);
+}
+.card-pink {
+  background: linear-gradient(135deg, #f04697, #c1276e);
+}
+
+/* GRIGLIA ICONE SOTTO */
 .tile-grid {
-    grid-column: span 3;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-    margin-top: 10px;
+  grid-column: span 3;
+  margin-top: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
 }
 
 .tile {
-    padding: 22px;
-    border-radius: 18px;
-    background: rgba(255,255,255,0.10);
-    backdrop-filter: blur(14px);
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s;
-    box-shadow: 0 6px 22px rgba(0,0,0,0.15);
+  padding: 20px 14px 22px;
+  border-radius: var(--radius-big);
+  background: var(--glass-strong);
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+  cursor: pointer;
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .tile:hover {
-    transform: translateY(-4px);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
 }
 
-/* TILE COLORATE */
-.tile-greenlight { background: linear-gradient(135deg,#01b87e,#019e6b); }
-.tile-yellow     { background: linear-gradient(135deg,#ffcc33,#e7a600); }
-.tile-blue       { background: linear-gradient(135deg,#1f8bfd,#0666cb); }
-.tile-purple     { background: linear-gradient(135deg,#6f42c1,#4d2b88); }
-.tile-cyan       { background: linear-gradient(135deg,#1ab3d5,#0f91b0); }
-.tile-green      { background: linear-gradient(135deg,#1abf52,#0d9a3d); }
-
 .tile-icon {
-    font-size: 40px;
-    margin-bottom: 10px;
+  font-size: 34px;
+  margin-bottom: 8px;
+}
+
+.tile h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* COLORI TILE */
+.tile-procedure {
+  background: linear-gradient(135deg, #00b894, #019873);
+}
+.tile-logistica {
+  background: linear-gradient(135deg, #ffd34d, #f1a400);
+}
+.tile-magazzino {
+  background: linear-gradient(135deg, #1f8bfd, #065fbe);
+}
+.tile-formazione {
+  background: linear-gradient(135deg, #845ef7, #5f3dc4);
+}
+.tile-area {
+  background: linear-gradient(135deg, #3bc9db, #1098ad);
+}
+.tile-admin {
+  background: linear-gradient(135deg, #38d996, #149b5f);
+}
+
+/* ====== RESPONSIVE: TABLET & MOBILE ====== */
+
+/* fino a 1024px: 2 colonne */
+@media (max-width: 1024px) {
+  .topbar {
+    padding: 24px 16px 8px 72px;
+    font-size: 22px;
+  }
+
+  .dashboard {
+    padding: 10px 16px 32px 72px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tile-grid {
+    grid-column: span 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* fino a 720px: layout compatto per cellulare */
+@media (max-width: 720px) {
+
+  #hamburger {
+    top: 12px;
+    left: 12px;
+    padding: 8px 12px;
+    font-size: 20px;
+  }
+
+  .topbar {
+    padding: 16px 16px 4px 60px;
+    font-size: 20px;
+  }
+
+  .dashboard {
+    padding: 8px 12px 24px 60px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  /* le 3 card diventano a colonna, full-width */
+  .card {
+    padding: 16px 14px 18px;
+  }
+
+  .card h2 {
+    font-size: 16px;
+  }
+
+  .card p {
+    font-size: 12px;
+  }
+
+  /* le icone sotto diventano 2 per riga, compatte */
+  .tile-grid {
+    grid-column: span 1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .tile {
+    padding: 14px 10px 16px;
+  }
+
+  .tile-icon {
+    font-size: 28px;
+  }
+
+  .tile h3 {
+    font-size: 13px;
+  }
 }
