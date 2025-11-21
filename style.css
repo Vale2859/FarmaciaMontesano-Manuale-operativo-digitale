@@ -1,1 +1,298 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Portale Professionale – Farmacia Montesano</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- Icone per avere il logo sulla home del telefono -->
+  <link rel="icon" type="image/png" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-512.png" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ========== LOGIN ========== -->
+  <div id="auth" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo-only">
+        <!-- Usa il tuo logo reale -->
+        <img src="logomedio.jpg" alt="Farmacia Montesano" class="auth-logo-img" />
+      </div>
+
+      <h2 class="login-title">Accesso al portale</h2>
+
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" placeholder="es. valerio@farmaciamontesano.it" />
+
+      <label for="login-password">Password</label>
+      <div class="password-row">
+        <input type="password" id="login-password" placeholder="Password" />
+        <button type="button" class="btn-eye" onclick="togglePassword()" aria-label="Mostra / nascondi password">👁</button>
+      </div>
+
+      <label class="remember-row">
+        <input type="checkbox" id="remember-me" />
+        Ricordami su questo dispositivo
+      </label>
+
+      <button class="btn-primary" onclick="login()">Entra</button>
+
+      <p id="auth-error" class="error-text hidden"></p>
+
+      <p class="small-text muted-center">
+        L'utilizzo del portale è riservato al personale autorizzato della Farmacia Montesano.
+      </p>
+    </div>
+  </div>
+
+  <!-- ========== PORTALE INTERNO ========== -->
+  <div id="portal" class="portal hidden">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <img src="logo-farmacia-montesano.jpg" alt="Farmacia Montesano" class="topbar-logo-img" />
+        <div>
+          <div class="topbar-title">Farmacia Montesano</div>
+          <div class="topbar-subtitle">Portale professionale interno</div>
+        </div>
+      </div>
+      <div class="topbar-user">
+        <div class="user-pill">
+          <span id="user-name-display">Utente</span>
+          <span id="user-role-display" class="role-badge"></span>
+        </div>
+        <button class="btn-outline" onclick="goHome()">Home</button>
+        <button class="btn-outline" onclick="showSection('farmacia')">Farmacia</button>
+        <button class="btn-outline" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <!-- CONTENUTO PRINCIPALE -->
+    <main class="main">
+      <div class="content-wrapper">
+
+        <!-- HOME TITOLARE -->
+        <section id="home-titolare" class="section">
+          <div class="card card-big">
+            <div class="home-header">
+              <div>
+                <div class="home-eyebrow">Benvenuto</div>
+                <h1 class="home-title">Pannello Titolare</h1>
+                <p class="home-subtitle">
+                  Da qui gestisci le <strong>assenze dei dipendenti</strong> con calendario mensile,
+                  storico per persona e controlli rapidi.
+                </p>
+              </div>
+            </div>
+
+            <div class="home-grid">
+              <button class="home-tile home-tile-green" onclick="showSection('assenze')">
+                <div class="home-tile-icon">🗓️</div>
+                <div class="home-tile-title">Assenze dipendenti</div>
+                <div class="home-tile-text">
+                  Calendario mensile, riepilogo mesi, storico per dipendente e gestione approvazioni.
+                </div>
+              </button>
+
+              <button class="home-tile home-tile-blue" onclick="showSection('farmacia')">
+                <div class="home-tile-icon">🏥</div>
+                <div class="home-tile-title">Pagina Farmacia</div>
+                <div class="home-tile-text">
+                  Spazio dedicato alla farmacia (in costruzione), visibile anche al profilo "Farmacia".
+                </div>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- HOME FARMACIA (per l'utente farmacia@...) -->
+        <section id="home-farmacia" class="section">
+          <div class="card card-big">
+            <h1 class="home-title">Area Farmacia</h1>
+            <p class="home-subtitle">
+              Account generico per l'utilizzo in farmacia. Questa sezione può ospitare
+              promozioni, link rapidi, procedure sintetiche, ecc.
+            </p>
+
+            <div class="home-grid">
+              <div class="home-tile home-tile-green disabled">
+                <div class="home-tile-icon">💊</div>
+                <div class="home-tile-title">Funzioni in arrivo</div>
+                <div class="home-tile-text">
+                  Qui potremo aggiungere in futuro: promozioni, prenotazione farmaci,
+                  servizi rapidi per il banco, ecc.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAGINA FARMACIA (sezione comune, ma semplice per ora) -->
+        <section id="farmacia" class="section">
+          <div class="card card-big">
+            <h1 class="home-title">Pagina "Farmacia"</h1>
+            <p class="home-subtitle">
+              Sezione condivisa. Per ora contiene solo un testo informativo,
+              in futuro potrà ospitare strumenti o promozioni visibili a tutti.
+            </p>
+            <p>
+              • Accessibile sia al <strong>Titolare</strong> sia all'utente <strong>Farmacia</strong>.<br />
+              • Contenuti da definire (promozioni, link gestionali, ecc.).<br />
+              • Grafica allineata al resto del portale.
+            </p>
+          </div>
+        </section>
+
+        <!-- PAGINA ASSENZE – SOLO TITOLARE -->
+        <section id="assenze" class="section">
+          <h1 class="section-title">Assenze dipendenti – vista Titolare</h1>
+          <p class="subtitle">
+            Riepilogo mese per mese e storico per singolo dipendente.
+            Clicca sul calendario per vedere il dettaglio del giorno, gestire
+            approvazioni e registrare nuove assenze.
+          </p>
+
+          <div class="assenze-layout">
+            <!-- COLONNA SINISTRA -->
+            <div class="assenze-left">
+
+              <!-- CALENDARIO -->
+              <div class="card">
+                <div class="card-header-between">
+                  <div>
+                    <div class="card-title">Calendario mensile</div>
+                    <div id="cal-month-label" class="card-subtitle"></div>
+                  </div>
+                  <div class="cal-nav">
+                    <button type="button" onclick="changeMonth(-1)">‹</button>
+                    <button type="button" onclick="goToToday()">Oggi</button>
+                    <button type="button" onclick="changeMonth(1)">›</button>
+                  </div>
+                </div>
+
+                <div class="cal-grid" id="cal-grid">
+                  <!-- intestazioni giorni -->
+                </div>
+              </div>
+
+              <!-- DETTAGLIO GIORNO -->
+              <div class="card">
+                <div class="card-title" id="day-detail-title">Dettaglio giorno selezionato</div>
+                <div id="day-detail-list" class="list small-list">
+                  <div class="list-item-muted">Seleziona un giorno dal calendario.</div>
+                </div>
+              </div>
+
+              <!-- MESE CORRENTE -->
+              <div class="card">
+                <div class="card-title" id="month-current-title">Mese corrente</div>
+                <div id="month-current-list" class="list small-list">
+                  <div class="list-item-muted">Nessuna assenza registrata per questo mese.</div>
+                </div>
+              </div>
+
+              <!-- MESE SUCCESSIVO -->
+              <div class="card">
+                <div class="card-title" id="month-next-title">Mese successivo</div>
+                <div id="month-next-list" class="list small-list">
+                  <div class="list-item-muted">Nessuna assenza registrata per il mese successivo.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLONNA DESTRA -->
+            <div class="assenze-right">
+
+              <!-- ELENCO DIPENDENTI -->
+              <div class="card">
+                <div class="card-title">Dipendenti</div>
+                <p class="small-text">
+                  Clicca su un nome per vedere lo storico delle sue assenze.
+                </p>
+                <ul id="employee-list" class="employee-list"></ul>
+              </div>
+
+              <!-- STORICO DIPENDENTE -->
+              <div class="card">
+                <div class="card-title">Storico assenze dipendente selezionato</div>
+                <div class="filters-row">
+                  <select id="filter-type" onchange="renderEmployeeHistory()">
+                    <option value="tutti">Tutti i tipi</option>
+                    <option value="ferie">Ferie</option>
+                    <option value="malattia">Malattia</option>
+                    <option value="permesso_orario">Permesso orario</option>
+                    <option value="permesso_giornata">Permesso giornata</option>
+                    <option value="altro">Altro</option>
+                  </select>
+                </div>
+                <div id="employee-history-list" class="list small-list">
+                  <div class="list-item-muted">Seleziona un dipendente nella lista sopra.</div>
+                </div>
+              </div>
+
+              <!-- FORM NUOVA / MODIFICA ASSENZA -->
+              <div class="card">
+                <div class="card-title">Nuova / modifica assenza</div>
+
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="abs-employee">Dipendente</label>
+                    <select id="abs-employee"></select>
+                  </div>
+
+                  <div class="field">
+                    <label for="abs-type">Tipo</label>
+                    <select id="abs-type">
+                      <option value="ferie">Ferie</option>
+                      <option value="malattia">Malattia</option>
+                      <option value="permesso_orario">Permesso orario</option>
+                      <option value="permesso_giornata">Permesso giornata</option>
+                      <option value="altro">Altro</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="abs-start">Data inizio</label>
+                    <input type="date" id="abs-start" />
+                  </div>
+
+                  <div class="field">
+                    <label for="abs-end">Data fine (opzionale)</label>
+                    <input type="date" id="abs-end" />
+                  </div>
+
+                  <div class="field">
+                    <label for="abs-status">Stato</label>
+                    <select id="abs-status">
+                      <option value="approvata">Approvata</option>
+                      <option value="in_attesa">In attesa</option>
+                      <option value="rifiutata">Rifiutata</option>
+                    </select>
+                  </div>
+
+                  <div class="field field-full">
+                    <label for="abs-note">Note (opzionali)</label>
+                    <textarea id="abs-note" rows="2" placeholder="Es. ferie estive, visita medica, ecc."></textarea>
+                  </div>
+                </div>
+
+                <input type="hidden" id="abs-edit-id" />
+
+                <div class="form-actions-row">
+                  <button class="btn-primary small" onclick="saveAbsenceFromForm()">Salva assenza</button>
+                  <button class="btn-outline small" type="button" onclick="resetAbsenceForm()">Pulisci form</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
