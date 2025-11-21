@@ -5,13 +5,17 @@
 
 const LS_USERS = "fm_users";
 const LS_ACTIVE = "fm_activeUser";
-const LS_ABSENCES = "fm_absences";        // assenze dipendenti
+const LS_ABSENCES = "fm_absences";        // assenze dipendenti (tile Assenze)
 const LS_PROCEDURES = "fm_procedures";
 const LS_MESSAGES = "fm_messages";
 const LS_LEAVE = "fm_leave";
 const LS_PERSONAL = "fm_personal";
 const LS_QUICK = "fm_quickNotes";
 const LS_TRAINING = "fm_trainingNotes";
+
+/* nuovo: prenotazioni clienti */
+const LS_BOOKINGS = "fm_bookings";
+const LS_CLIENT_NOTES = "fm_clientNotes";
 
 /* ---------- Utility ---------- */
 
@@ -89,9 +93,8 @@ function seedAdminIfNeeded() {
       id: uid(),
       name: "Valerio Montesano",
       email: adminEmail,
-      phone: "",
       password: adminPassword,
-      role: "titolare",        // <- ruolo titolare
+      role: "admin",
       active: true,
       approved: true,
       createdAt: new Date().toISOString(),
@@ -99,7 +102,7 @@ function seedAdminIfNeeded() {
     users.push(admin);
   } else {
     admin.password = adminPassword;
-    admin.role = "titolare";
+    admin.role = "admin";
     admin.active = true;
     admin.approved = true;
   }
@@ -107,15 +110,14 @@ function seedAdminIfNeeded() {
   saveUsers(users);
 }
 
-/* Registrazione: account con RUOLO */
+/* Registrazione: account in base al ruolo scelto */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
-  const phone = document.getElementById("reg-phone").value.trim();
   const pass = document.getElementById("reg-password").value;
-  const role = document.getElementById("reg-role").value;
+  const roleSel = document.getElementById("reg-role").value;
 
-  if (!name || !email || !phone || !pass || !role) {
+  if (!name || !email || !pass) {
     showError("Compila tutti i campi per registrarti.");
     return;
   }
@@ -126,20 +128,24 @@ function registerUser() {
     return;
   }
 
-  // Cliente: attivo subito
-  // Dipendente / Titolare: in attesa di approvazione
-  let active = true;
+  let role = "cliente";
   let approved = true;
-  if (role === "dipendente" || role === "titolare") {
-    active = false;
+  let active = true;
+
+  if (roleSel === "dipendente") {
+    role = "dipendente";
     approved = false;
+    active = false;
+  } else if (roleSel === "titolare") {
+    role = "admin";
+    approved = false;
+    active = false;
   }
 
   users.push({
     id: uid(),
     name,
     email,
-    phone,
     password: pass,
     role,
     active,
@@ -150,17 +156,17 @@ function registerUser() {
   saveUsers(users);
 
   if (role === "cliente") {
-    alert("Registrazione completata! Puoi accedere subito alla tua Area Clienti.");
+    alert("Registrazione completata! Puoi accedere subito come cliente.");
   } else {
     alert(
-      "Richiesta inviata! L'account dovrà essere approvato dal Titolare prima di poter accedere."
+      "Registrazione inviata! L'account dovrà essere approvato dal titolare prima di poter accedere."
     );
   }
 
   showLogin();
 }
 
-/* Login */
+/* Login – riconosce il ruolo in automatico */
 function login() {
   const email = document.getElementById("login-email").value.trim();
   const pass = document.getElementById("login-password").value;
@@ -186,47 +192,35 @@ function login() {
   }
 
   saveJson(LS_ACTIVE, user);
-  openPortal(user);
+
+  if (user.role === "cliente") {
+    openClientPortal(user);
+  } else {
+    openPortal(user);
+  }
 }
 
 /* Logout */
 function logout() {
   localStorage.removeItem(LS_ACTIVE);
   document.getElementById("portal").classList.add("hidden");
-  document.getElementById("portal-cliente").classList.add("hidden");
+  document.getElementById("portal-client").classList.add("hidden");
   document.getElementById("auth").classList.remove("hidden");
   showLogin();
 }
 
 /* ============================================
-   PORTALE & NAVIGAZIONE
+   PORTALE DIPENDENTI & NAVIGAZIONE
    ============================================ */
 
 function openPortal(user) {
   document.getElementById("auth").classList.add("hidden");
-
-  // Nascondo entrambi i portali, poi mostro quello giusto
-  document.getElementById("portal").classList.add("hidden");
-  document.getElementById("portal-cliente").classList.add("hidden");
-
-  if (user.role === "cliente") {
-    // AREA CLIENTI
-    const pc = document.getElementById("portal-cliente");
-    if (pc) pc.classList.remove("hidden");
-
-    const cName = document.getElementById("client-name-display");
-    if (cName) cName.textContent = user.name;
-
-    return;
-  }
-
-  // DIPENDENTE / TITOLARE -> PORTALE INTERNO
-  const p = document.getElementById("portal");
-  if (p) p.classList.remove("hidden");
+  document.getElementById("portal-client").classList.add("hidden");
+  document.getElementById("portal").classList.remove("hidden");
 
   document.getElementById("user-name-display").textContent = user.name;
   document.getElementById("user-role-display").textContent =
-    user.role === "titolare" ? "Titolare" : "Dipendente";
+    user.role === "admin" ? "Titolare" : "Dipendente";
 
   // inizializza varie sezioni
   initHome(user);
@@ -236,8 +230,7 @@ function openPortal(user) {
   loadPersonalData(user);
   renderLeaveTable(user);
   renderTraining(user);
-
-  if (user.role === "titolare") {
+  if (user.role === "admin") {
     renderAdminUsers();
     renderAdminProceduresList();
     renderAdminLeaveList();
@@ -256,7 +249,7 @@ function goHome() {
   showAppScreen("home");
 }
 
-/* Cambio sezione (solo portale dipendenti/titolare) */
+/* Cambio sezione */
 function showSection(id, btn) {
   const sections = document.querySelectorAll(".section");
   sections.forEach((s) => s.classList.remove("visible"));
@@ -270,7 +263,7 @@ function showSection(id, btn) {
 }
 
 /* ============================================
-   DASHBOARD / HOME
+   DASHBOARD / HOME DIPENDENTI
    ============================================ */
 
 function todayLabel() {
@@ -294,7 +287,6 @@ function randomPhrase() {
 }
 
 function initHome(user) {
-  // Se vuoi usare questi elementi, puoi aggiungerli nell'HTML
   const tag = document.getElementById("home-daytag");
   if (tag) tag.textContent = todayLabel();
 
@@ -308,13 +300,23 @@ function initHome(user) {
     }
   }
 
+  const qp = document.getElementById("home-quick-proc");
+  if (qp) {
+    qp.innerHTML = `
+      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Anticipi – i clienti pagano subito')">Anticipi</button>
+      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','POS collegato')">POS</button>
+      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Ticket SSN')">Ticket</button>
+      <button class="quick-btn" onclick="openProcedureFromHome('Cassa','Sotto cassa')">Sotto cassa</button>
+    `;
+  }
+
   renderHomeLeaveSummary(user);
   renderHomeLogisticsSummary();
   renderHomeLastMessages(user);
 }
 
 function openProcedureFromHome(cat, title) {
-  showSection("procedures");
+  showSection("procedures", document.getElementById("nav-proc"));
   selectProcedureCategory(cat);
   scrollToProcedure(title);
 }
@@ -335,8 +337,8 @@ function renderHomeLeaveSummary(user) {
       <div class="list-item-title">Ultima richiesta</div>
       <div class="list-item-meta">
         Tipo: ${formatLeaveType(next.type)} – Stato: ${formatLeaveStatus(
-          next.status
-        )}
+    next.status
+  )}
       </div>
       <div>
         Dal ${next.start || "-"} ${next.end ? "al " + next.end : ""}
@@ -673,7 +675,7 @@ function sendLeaveRequest() {
 
   document.getElementById("leave-note").value = "";
   renderLeaveTable(user);
-  if (user.role === "titolare") renderAdminLeaveList();
+  if (user.role === "admin") renderAdminLeaveList();
 
   alert("Richiesta inviata.");
 }
@@ -736,8 +738,8 @@ function renderAdminLeaveList() {
         </div>
         <div class="list-item-meta">
           Dal ${r.start}${r.end ? " al " + r.end : ""} – Stato: ${formatLeaveStatus(
-            r.status
-          )}
+        r.status
+      )}
         </div>
         <div>${r.note || ""}</div>
         <div style="margin-top:6px;">
@@ -762,7 +764,7 @@ function adminSetLeaveStatus(id, status) {
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
     renderLeaveTable(active);
-    if (active.role === "titolare") renderAdminLeaveList();
+    if (active.role === "admin") renderAdminLeaveList();
     renderHomeLeaveSummary(active);
   }
 }
@@ -822,28 +824,10 @@ function renderLogistics() {
 }
 
 /* ============================================
-   AREA PERSONALE / APPUNTI
+   AREA PERSONALE / APPUNTI DIPENDENTE
    ============================================ */
 
-function saveQuickNotes() {
-  const user = loadJson(LS_ACTIVE, null);
-  if (!user) return;
-  const ta = document.getElementById("quick-notes");
-  if (!ta) return;
-  localStorage.setItem(LS_QUICK + "_" + user.id, ta.value);
-  const lab = document.getElementById("quick-saved");
-  if (lab) {
-    lab.classList.remove("hidden");
-    setTimeout(() => lab.classList.add("hidden"), 1200);
-  }
-}
-
 function loadPersonalData(user) {
-  const quick = localStorage.getItem(LS_QUICK + "_" + user.id);
-  if (quick && document.getElementById("quick-notes")) {
-    document.getElementById("quick-notes").value = quick;
-  }
-
   const allPersonal = loadJson(LS_PERSONAL, {});
   const mine = allPersonal[user.id] || { notes: "", docs: [] };
 
@@ -934,7 +918,7 @@ function renderPersonalDocs(docs) {
 function renderAdminUsers() {
   const box = document.getElementById("admin-users");
   if (!box) return;
-  const users = loadUsers();
+  const users = loadUsers().filter((u) => u.role !== "cliente");
   box.innerHTML = "";
 
   users.forEach((u) => {
@@ -942,17 +926,12 @@ function renderAdminUsers() {
     div.className = "list-item";
     div.innerHTML = `
       <div class="list-item-title">
-        ${u.name} ${
-          u.role === "titolare"
-            ? "(Titolare)"
-            : u.role === "dipendente"
-            ? "(Dipendente)"
-            : "(Cliente)"
-        }
+        ${u.name} ${u.role === "admin" ? "(Admin)" : ""}
       </div>
-      <div class="list-item-meta">${u.email} ${
-      u.phone ? " · " + u.phone : ""
-    }</div>
+      <div class="list-item-meta">${u.email}</div>
+      <div>
+        Ruolo: ${u.role === "admin" ? "Titolare" : "Dipendente"}
+      </div>
       <div>
         Stato: ${
           u.approved && u.active
@@ -964,7 +943,7 @@ function renderAdminUsers() {
       </div>
       <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px;">
         ${
-          u.role !== "cliente" && !u.approved
+          !u.approved
             ? `<button class="btn-primary small" onclick="adminApproveUser('${u.id}')">Approva</button>`
             : ""
         }
@@ -1084,14 +1063,13 @@ function togglePassword() {
 }
 
 /* ============================================
-   APP INTERNA (HOME / ASSENZE)
+   APP INTERNA (HOME / ASSENZE DIPENDENTI)
    ============================================ */
 
 function showAppScreen(which) {
   const home = document.getElementById("screen-home");
   const ass = document.getElementById("screen-assenze");
   const btnHome = document.getElementById("nav-app-home");
-  const btnAss = document.getElementById("nav-app-assenze"); // non esiste, ma è ok
 
   if (!home || !ass) return;
 
@@ -1099,16 +1077,14 @@ function showAppScreen(which) {
     home.classList.remove("app-screen-visible");
     ass.classList.add("app-screen-visible");
     if (btnHome) btnHome.classList.remove("app-nav-btn-active");
-    if (btnAss) btnAss.classList.add("app-nav-btn-active");
   } else {
     ass.classList.remove("app-screen-visible");
     home.classList.add("app-screen-visible");
-    if (btnAss) btnAss.classList.remove("app-nav-btn-active");
     if (btnHome) btnHome.classList.add("app-nav-btn-active");
   }
 }
 
-// Salvataggio e lettura assenze "veloci"
+// Salvataggio e lettura assenze (tile Assenze)
 function loadAbsences() {
   return loadJson(LS_ABSENCES, []);
 }
@@ -1160,7 +1136,7 @@ function renderApprovedAbsences() {
   if (!container) return;
 
   const activeUser = loadJson(LS_ACTIVE, null);
-  const isTitolare = activeUser && activeUser.role === "titolare";
+  const isAdmin = activeUser && activeUser.role === "admin";
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -1195,7 +1171,7 @@ function renderApprovedAbsences() {
     const isFerie = reason.toLowerCase().includes("ferie");
 
     let meta = formattedDate;
-    if (isTitolare) {
+    if (isAdmin) {
       if (reason) meta += " · " + reason;
     } else if (isFerie) {
       meta += " · ferie";
@@ -1215,6 +1191,215 @@ function renderApprovedAbsences() {
 }
 
 /* ============================================
+   PORTALE CLIENTI – DASHBOARD & PRENOTAZIONI
+   ============================================ */
+
+function openClientPortal(user) {
+  document.getElementById("auth").classList.add("hidden");
+  document.getElementById("portal").classList.add("hidden");
+  document.getElementById("portal-client").classList.remove("hidden");
+
+  const name1 = document.getElementById("client-name-display");
+  const name2 = document.getElementById("client-hello-name");
+  if (name1) name1.textContent = user.name;
+  if (name2) name2.textContent = user.name;
+
+  renderClientDashboard(user);
+}
+
+function getBookings() {
+  return loadJson(LS_BOOKINGS, []);
+}
+
+function saveBookings(list) {
+  saveJson(LS_BOOKINGS, list);
+}
+
+function renderClientDashboard(user) {
+  // imposta la data di default a oggi
+  const dateInput = document.getElementById("book-date");
+  if (dateInput && !dateInput.value) {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, "0");
+    const d = String(today.getDate()).padStart(2, "0");
+    dateInput.value = `${y}-${m}-${d}`;
+  }
+
+  updateBookingSlots();
+  renderClientBookingsList(user);
+  loadClientNotes(user);
+}
+
+function onBookingDateChange() {
+  updateBookingSlots();
+}
+
+/* Genera elenco fasce orarie e blocca quelle già occupate */
+function updateBookingSlots() {
+  const dateInput = document.getElementById("book-date");
+  const select = document.getElementById("book-slot");
+  if (!dateInput || !select) return;
+
+  const date = dateInput.value;
+  select.innerHTML = "";
+
+  if (!date) {
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "Seleziona una data";
+    select.appendChild(opt);
+    return;
+  }
+
+  const allBookings = getBookings().filter((b) => b.date === date);
+  const busySlots = allBookings.map((b) => b.slot);
+
+  const slots = generateTimeSlots("09:00", "20:00", 30); // 30 minuti
+
+  slots.forEach((slot) => {
+    const opt = document.createElement("option");
+    opt.value = slot;
+    const isBusy = busySlots.includes(slot);
+    opt.disabled = isBusy;
+    opt.textContent = isBusy ? `${slot} – non disponibile` : slot;
+    select.appendChild(opt);
+  });
+
+  // se tutte occupate
+  if (busySlots.length >= slots.length) {
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.disabled = true;
+    opt.selected = true;
+    opt.textContent = "Nessuna fascia disponibile per questa data";
+    select.innerHTML = "";
+    select.appendChild(opt);
+  }
+}
+
+/* genera slot orari tra start e end ogni stepMin minuti */
+function generateTimeSlots(start, end, stepMin) {
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+
+  let slots = [];
+  let current = sh * 60 + sm;
+  const endMin = eh * 60 + em;
+
+  while (current < endMin) {
+    const h = String(Math.floor(current / 60)).padStart(2, "0");
+    const m = String(current % 60).padStart(2, "0");
+    slots.push(`${h}:${m}`);
+    current += stepMin;
+  }
+  return slots;
+}
+
+function clientSubmitBooking() {
+  const user = loadJson(LS_ACTIVE, null);
+  if (!user || user.role !== "cliente") {
+    alert("Devi essere loggato come cliente.");
+    return;
+  }
+
+  const date = document.getElementById("book-date")?.value;
+  const slot = document.getElementById("book-slot")?.value;
+  const note = document.getElementById("book-note")?.value.trim() || "";
+
+  if (!date || !slot) {
+    alert("Seleziona data e fascia oraria.");
+    return;
+  }
+
+  let bookings = getBookings();
+  const exists = bookings.find((b) => b.date === date && b.slot === slot);
+  if (exists) {
+    alert("Questa fascia oraria è già occupata. Scegli un altro orario.");
+    updateBookingSlots();
+    return;
+  }
+
+  bookings.push({
+    id: uid(),
+    clientId: user.id,
+    date,
+    slot,
+    note,
+    createdAt: new Date().toISOString(),
+  });
+  saveBookings(bookings);
+
+  document.getElementById("book-note").value = "";
+  updateBookingSlots();
+  renderClientBookingsList(user);
+
+  alert("Prenotazione registrata.");
+}
+
+function renderClientBookingsList(user) {
+  const box = document.getElementById("client-bookings-list");
+  if (!box) return;
+
+  const all = getBookings().filter((b) => b.clientId === user.id);
+
+  if (all.length === 0) {
+    box.innerHTML =
+      '<div class="list-item">Nessuna prenotazione inserita.</div>';
+    return;
+  }
+
+  const sorted = all.slice().sort(
+    (a, b) =>
+      new Date(a.date + "T" + a.slot) - new Date(b.date + "T" + b.slot)
+  );
+
+  box.innerHTML = "";
+  sorted.forEach((b) => {
+    const div = document.createElement("div");
+    div.className = "list-item";
+    const d = new Date(b.date);
+    const formattedDate = d.toLocaleDateString("it-IT", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    div.innerHTML = `
+      <div class="list-item-title">${formattedDate} – ore ${b.slot}</div>
+      <div class="list-item-meta">
+        Prenotazione registrata
+      </div>
+      <div>${b.note || ""}</div>
+    `;
+    box.appendChild(div);
+  });
+}
+
+/* NOTE CLIENTE */
+
+function loadClientNotes(user) {
+  const ta = document.getElementById("client-notes");
+  if (!ta) return;
+  const saved = localStorage.getItem(LS_CLIENT_NOTES + "_" + user.id);
+  if (saved) ta.value = saved;
+}
+
+function saveClientNotes() {
+  const user = loadJson(LS_ACTIVE, null);
+  if (!user || user.role !== "cliente") return;
+  const ta = document.getElementById("client-notes");
+  if (!ta) return;
+  localStorage.setItem(LS_CLIENT_NOTES + "_" + user.id, ta.value);
+
+  const lab = document.getElementById("client-notes-saved");
+  if (lab) {
+    lab.classList.remove("hidden");
+    setTimeout(() => lab.classList.add("hidden"), 1200);
+  }
+}
+
+/* ============================================
    AVVIO PAGINA
    ============================================ */
 
@@ -1225,7 +1410,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
-    openPortal(active);
+    if (active.role === "cliente") {
+      openClientPortal(active);
+    } else {
+      openPortal(active);
+    }
   } else {
     showLogin();
   }
