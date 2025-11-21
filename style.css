@@ -1,6 +1,4 @@
-/* =======================================================
-   RESET & VARIABILI GLOBALI
-   ======================================================= */
+/* ========== GENERALI ========== */
 
 *,
 *::before,
@@ -23,33 +21,19 @@
     "Segoe UI", sans-serif;
 }
 
-/* Base */
-
 body {
   margin: 0;
   font-family: var(--fm-font);
   color: var(--fm-text);
   background: radial-gradient(circle at top left, #e8f5f0, #f7fafc);
-  font-size: 16px;
 }
 
-/* Utility */
-
+/* Per nascondere elementi */
 .hidden {
   display: none !important;
 }
 
-button {
-  font-family: var(--fm-font);
-  cursor: pointer;
-  border: none;
-  outline: none;
-  background: none;
-}
-
-/* =======================================================
-   AUTH (LOGIN / REGISTRAZIONE)
-   ======================================================= */
+/* ========== AUTH (LOGIN) ========== */
 
 .auth-screen {
   min-height: 100vh;
@@ -70,7 +54,6 @@ button {
 }
 
 /* Logo solo immagine nel login */
-
 .auth-logo-only {
   text-align: center;
   margin-bottom: 18px;
@@ -82,8 +65,7 @@ button {
   height: auto;
 }
 
-/* Titolo login/registrazione */
-
+/* Titolo login */
 .login-title {
   text-align: center;
   margin-bottom: 12px;
@@ -95,8 +77,6 @@ button {
   margin: 14px 0 10px;
   font-size: 20px;
 }
-
-/* Label + input */
 
 label {
   display: block;
@@ -159,7 +139,12 @@ textarea {
   background: #e4e9f5;
 }
 
-/* Pulsanti */
+/* BUTTONS */
+
+button {
+  font-family: var(--fm-font);
+  cursor: pointer;
+}
 
 .btn-primary {
   width: 100%;
@@ -192,7 +177,22 @@ textarea {
   font-size: 13px;
 }
 
-/* Testi piccoli */
+.btn-outline {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: transparent;
+  color: #f9fafb;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.1s, color 0.1s, border-color 0.1s;
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* TEXT INFO */
 
 .small-text {
   font-size: 12px;
@@ -215,7 +215,7 @@ textarea {
   margin-top: 10px;
 }
 
-/* Errori */
+/* ERROR */
 
 .error-text,
 .error {
@@ -225,9 +225,7 @@ textarea {
   text-align: center;
 }
 
-/* =======================================================
-   PORTALE GENERALE (DIPENDENTI / TITOLARE / CLIENTI)
-   ======================================================= */
+/* ========== PORTALE ========== */
 
 .portal {
   min-height: 100vh;
@@ -244,7 +242,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 18px;
+  padding: 14px 28px;
   background: linear-gradient(90deg, var(--fm-green-dark), #0f766e);
   color: #ffffff;
 }
@@ -267,128 +265,95 @@ textarea {
 .topbar-title {
   font-weight: 650;
   letter-spacing: 0.03em;
+  font-size: 22px;
 }
 
 .topbar-subtitle {
-  font-size: 12px;
+  font-size: 14px;
   opacity: 0.85;
 }
 
 .topbar-user {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .user-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 6px 14px;
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.28);
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .role-badge {
-  padding: 2px 8px;
+  padding: 4px 10px;
   border-radius: 999px;
   background: rgba(248, 250, 252, 0.15);
-  font-size: 11px;
-}
-
-/* Pulsanti secondari (Home / Logout) */
-
-.btn-outline {
-  border-radius: 999px;
-  border: 1px solid rgba(248, 250, 252, 0.7);
-  padding: 6px 14px;
-  background: transparent;
-  color: #ffffff;
   font-size: 14px;
-  font-weight: 500;
-}
-
-.btn-outline:hover {
-  background: rgba(15, 23, 42, 0.22);
 }
 
 /* MAIN */
 
 .main {
   background: var(--fm-bg);
-  padding: 18px 16px 32px;
+  padding: 18px 24px 32px;
 }
 
 /* Sezioni generiche del portale */
-
 .section {
   display: none;
 }
-
 .section.visible {
   display: block;
 }
 
-/* Sottotitoli */
-
-.subtitle {
-  font-size: 14px;
-  color: var(--fm-muted);
-  margin-top: 2px;
-  margin-bottom: 14px;
-}
-
-/* =======================================================
-   HOME STILE APP (DIPENDENTI / TITOLARE / CLIENTI)
-   ======================================================= */
-
-/* Contenitore che centra tutto */
+/* ========== HOME STILE APP – DESKTOP FULL WIDTH ========== */
 
 .home-app-wrapper {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 16px 0;
   display: flex;
   justify-content: center;
 }
 
-/* “Telefono” grande (su PC è pannello largo) */
-
 .app-phone {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1500px;
   background: linear-gradient(180deg, #f0f9ff, #ffffff);
   border-radius: 24px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
-  padding: 22px 22px 18px;
+  padding: 30px 30px 24px;
 }
 
-/* Header verde in alto */
-
+/* barra in alto */
 .app-header {
   background: linear-gradient(135deg, #0d8a5c, #15b573);
   border-radius: 22px;
   padding: 16px 18px;
   color: #fff;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .app-header-top {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 12px;
+  font-size: 13px;
   opacity: 0.95;
 }
 
 .app-status-pill {
   align-self: flex-start;
   background: rgba(255, 255, 255, 0.18);
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 999px;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.09em;
 }
 
@@ -399,56 +364,48 @@ textarea {
 }
 
 .app-header-name {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
 }
 
 .app-header-sub {
-  font-size: 12px;
+  font-size: 15px;
   opacity: 0.9;
 }
 
-/* Griglia pulsanti – su PC 4 colonne */
-
-/* --- GRID DELLE ICONE (più spazio tra le righe) --- */
+/* griglia pulsanti – su PC 4 colonne */
 .app-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: 20px;     /* distanza orizzontale tra le colonne */
-  row-gap: 40px;        /* distanza verticale tra le righe aumentata */
+  gap: 22px;
   margin-bottom: 18px;
 }
+
 .app-tile {
-  border-radius: 16px;
-  padding: 14px 12px;
+  border: none;
+  border-radius: 18px;
+  padding: 22px 18px;
   color: #fff;
   text-align: left;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 110px;
+  min-height: 150px;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
-  border: none;
-}
-
-.app-tile:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
 }
 
 .app-tile-icon {
-  font-size: 22px;
+  font-size: 40px;
   margin-bottom: 4px;
 }
 
 .app-tile-text {
-  font-size: 15px;
+  font-size: 22px;
   font-weight: 600;
 }
 
-/* Colori tile */
-
+/* colori tile */
 .app-tile-orange { background: linear-gradient(135deg, #ff9800, #ffb74d); }
 .app-tile-green  { background: linear-gradient(135deg, #0d8a5c, #15b573); }
 .app-tile-pink   { background: linear-gradient(135deg, #ec407a, #f48fb1); }
@@ -458,36 +415,33 @@ textarea {
 .app-tile-grey   { background: linear-gradient(135deg, #546e7a, #90a4ae); }
 .app-tile-teal   { background: linear-gradient(135deg, #00897b, #4db6ac); }
 
-/* Nav inferiore */
-
+/* bottom nav */
 .app-bottom-nav {
   display: flex;
   justify-content: space-between;
   gap: 6px;
   background: #f5f7fb;
   border-radius: 999px;
-  padding: 8px 10px;
+  padding: 10px 12px;
 }
 
 .app-nav-btn {
   flex: 1;
+  border: none;
   border-radius: 999px;
-  font-size: 12px;
-  padding: 7px 6px;
+  font-size: 18px;
+  padding: 10px 12px;
   cursor: pointer;
   background: transparent;
   color: #555;
-  border: none;
 }
-
 .app-nav-btn-active,
 .app-nav-btn:hover {
   background: #0d8a5c;
   color: #fff;
 }
 
-/* Schermate interne */
-
+/* Schermate interne dell'app */
 .app-screens {
   min-height: 260px;
   margin-top: 6px;
@@ -496,19 +450,17 @@ textarea {
 .app-screen {
   display: none;
 }
-
 .app-screen-visible {
   display: block;
 }
 
 .app-section-title {
   margin: 0 0 8px 0;
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 600;
 }
 
-/* Form assenze (schermata interna) */
-
+/* Form assenze */
 .absence-form {
   background: #ffffff;
   border-radius: 14px;
@@ -518,19 +470,18 @@ textarea {
 }
 
 .absence-form label {
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 6px;
   margin-bottom: 3px;
 }
 
 .absence-form input[type="date"],
 .absence-form input[type="text"] {
-  font-size: 13px;
+  font-size: 14px;
   padding: 7px 8px;
 }
 
 /* Lista assenze */
-
 .absence-list {
   background: #f5f7fb;
   border-radius: 14px;
@@ -539,15 +490,15 @@ textarea {
 
 .absence-list h4 {
   margin: 0 0 6px 0;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .absence-pill {
   background: #ffffff;
   border-radius: 10px;
-  padding: 6px 8px;
+  padding: 10px 14px;
   margin-bottom: 6px;
-  font-size: 12px;
+  font-size: 16px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
@@ -557,12 +508,10 @@ textarea {
 
 .absence-pill span.absence-meta {
   color: #666;
-  font-size: 11px;
+  font-size: 14px;
 }
 
-/* =======================================================
-   LISTE / CARD / LAYOUT GENERICI
-   ======================================================= */
+/* LISTE / TABELLE GENERICHE */
 
 .list {
   display: flex;
@@ -576,6 +525,7 @@ textarea {
   border: 1px solid var(--fm-border);
   padding: 8px 10px;
   background: #ffffff;
+  font-size: 16px;
 }
 
 .list-item-title {
@@ -584,46 +534,96 @@ textarea {
 }
 
 .list-item-meta {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--fm-muted);
   margin-bottom: 4px;
 }
 
-/* Layout procedure */
+.bullet-list {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
+}
+
+.table-simple {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table-simple th,
+.table-simple td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 6px 6px;
+}
+
+.table-simple th {
+  text-align: left;
+  font-weight: 600;
+}
+
+/* CARD / LAYOUT GENERICO */
+
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 14px 14px 12px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.27);
+  margin-bottom: 14px;
+}
+
+.card h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.subtitle {
+  margin: 0 0 12px;
+  color: var(--fm-muted);
+  font-size: 14px;
+}
+
+/* LAYOUT 2 COLONNE */
+
+.two-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+  gap: 14px;
+}
+
+/* PROCEDURE LAYOUT */
 
 .proc-layout {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 14px;
 }
 
 .proc-categories {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 10px;
   border: 1px solid var(--fm-border);
 }
 
 .proc-cat-title {
   font-size: 13px;
-  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fm-muted);
   margin-bottom: 8px;
-}
-
-#proc-categories {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
 .proc-category-btn {
   width: 100%;
   text-align: left;
-  font-size: 13px;
   padding: 6px 8px;
   border-radius: 999px;
   border: none;
   background: #f3f4f6;
+  font-size: 13px;
+  margin-bottom: 4px;
   cursor: pointer;
 }
 
@@ -632,66 +632,11 @@ textarea {
   color: #ffffff;
 }
 
-/* Card generiche */
-
-.card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 14px 14px 12px;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-  margin-bottom: 14px;
-}
-
-.card h3 {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-}
-
-/* Tabelle semplici */
-
-.table-simple {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-.table-simple thead {
-  background: #e5e7eb;
-}
-
-.table-simple th,
-.table-simple td {
-  padding: 6px 8px;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: left;
-}
-
-/* Liste puntate */
-
-.bullet-list {
-  padding-left: 18px;
-  margin: 4px 0 0 0;
-}
-
-.bullet-list li {
-  margin-bottom: 4px;
-  font-size: 14px;
-}
-
-/* Layout a due colonne */
-
-.two-cols {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 16px;
-}
-
-/* Field row */
+/* CAMPI / RIGHE */
 
 .field-row {
   display: flex;
   gap: 10px;
-  margin-top: 6px;
 }
 
 .field-row > div {
@@ -703,16 +648,17 @@ textarea {
 }
 
 .field-flex {
-  flex: 1 1 200px;
+  flex: 1 1 180px;
 }
 
-/* Azioni in fondo alla card */
+/* CARD FOOTER */
 
 .card-actions-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 8px;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
 }
 
 .saved-label {
@@ -720,208 +666,50 @@ textarea {
   color: var(--fm-green-dark);
 }
 
-/* Grid area admin */
+/* ADMIN GRID */
 
 .admin-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+  gap: 14px;
 }
 
-/* =======================================================
-   ACCESSIBILITÀ / INGRANDIMENTI – BASE
-   (una leggera maggiorazione rispetto al default)
-   ======================================================= */
+/* ========== CLIENT PORTAL ========== */
 
-body {
-  font-size: 17px;
+.client-wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
 }
 
-.user-pill {
-  font-size: 14px;
+.client-title {
+  margin: 0 0 8px;
+  font-size: 24px;
 }
 
-.role-badge {
-  font-size: 12px;
-}
+/* ========== RESPONSIVE ========== */
 
-/* =======================================================
-   DESKTOP MODE – INGRANDIMENTO SOLO SU PC
-   (schermi da 900px in su)
-   ======================================================= */
-
-@media (min-width: 900px) {
-
-  body {
-    font-size: 20px;
-  }
-
-  /* TOPBAR */
-  .topbar {
-    padding: 20px 48px;
-  }
-
-  .topbar-title {
-    font-size: 26px;
-  }
-
-  .topbar-subtitle {
-    font-size: 15px;
-  }
-
-  .user-pill {
-    font-size: 18px;
-    padding: 8px 18px;
-  }
-
-  .role-badge {
-    font-size: 15px;
-    padding: 5px 10px;
-  }
-
-  .btn-outline {
-    font-size: 18px;
-    padding: 8px 18px;
-  }
-
-  /* LOGIN / REGISTRAZIONE PIÙ GRANDI SOLO SU PC */
-  .auth-card {
-    max-width: 520px;
-    padding: 30px 32px 26px;
-  }
-
-  .login-title {
-    font-size: 24px;
-  }
-
-  label {
-    font-size: 16px;
-  }
-
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="date"],
-  select,
-  textarea {
-    font-size: 16px;
-    padding: 12px 14px;
-  }
-
-  .btn-primary {
-    font-size: 18px;
-    padding: 11px 18px;
-  }
-
-  /* CARD CENTRALE APP SU PC – TUTTO +50% */
-  .home-app-wrapper {
-    padding-top: 20px;
-  }
-
-  .app-phone {
-    max-width: 1500px;
-    padding: 30px 28px 24px;
-  }
-
-  .app-header-name {
-    font-size: 28px;
-  }
-
-  .app-header-sub {
-    font-size: 16px;
-  }
-
-  .app-status-pill {
-    font-size: 14px;
-    padding: 5px 12px;
-  }
-
-  .app-header-top {
-    font-size: 14px;
-  }
-
+@media (max-width: 1024px) {
   .app-grid {
-    gap: 22px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
   }
 
   .app-tile {
-    min-height: 160px;
-    padding: 20px 18px;
+    min-height: 120px;
   }
 
-  .app-tile-icon {
-    font-size: 38px;
-  }
-
-  .app-tile-text {
-    font-size: 22px;
-  }
-
-  .app-bottom-nav {
-    padding: 10px 14px;
-  }
-
-  .app-nav-btn {
-    font-size: 18px;
-    padding: 10px 10px;
-  }
-
-  .app-section-title {
-    font-size: 20px;
-  }
-
-  .absence-pill {
-    font-size: 18px;
-    padding: 10px 14px;
-  }
-
-  .absence-pill span.absence-meta {
-    font-size: 16px;
-  }
-
-  /* Layout due colonne più comodo */
+  .two-cols,
+  .admin-grid,
   .proc-layout {
-    grid-template-columns: 260px minmax(0, 1fr);
-  }
-
-  .two-cols {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  }
-
-  .admin-grid {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  }
-
-  .card {
-    padding: 18px 18px 14px;
-  }
-
-  .card h3 {
-    font-size: 18px;
-  }
-
-  .table-simple {
-    font-size: 15px;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-/* =======================================================
-   MOBILE – RIPORTA IL LAYOUT COME PRIMA SUL TELEFONO
-   (massimo 600px di larghezza)
-   ======================================================= */
-
-@media (max-width: 600px) {
-
-  body {
-    font-size: 15px;
-  }
-
-  /* TOPBAR */
+@media (max-width: 800px) {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
-    padding: 10px 14px;
   }
 
   .topbar-user {
@@ -929,198 +717,43 @@ body {
     justify-content: space-between;
   }
 
-  .topbar-title {
-    font-size: 18px;
-  }
-
-  .topbar-subtitle {
-    font-size: 12px;
-  }
-
-  .user-pill {
-    font-size: 13px;
-    padding: 4px 10px;
-  }
-
-  .role-badge {
-    font-size: 11px;
-    padding: 3px 8px;
-  }
-
-  .btn-outline {
-    font-size: 13px;
-    padding: 6px 10px;
-  }
-
-  .main {
-    padding: 12px 10px 22px;
-  }
-
-  /* AUTH */
-
-  .auth-card {
-    padding-inline: 18px;
-    border-radius: 20px;
-  }
-
-  /* “Telefono” al centro come sul cellulare vero */
-
   .home-app-wrapper {
-    padding-inline: 0;
-    padding-top: 8px;
-    justify-content: center;
+    padding: 8px 0;
   }
 
   .app-phone {
-    max-width: 420px;
-    padding: 16px 12px 10px;
-    border-radius: 24px;
+    max-width: 430px;
+    border-radius: 26px;
     border: 4px solid #111;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
-  }
-
-  .app-header-name {
-    font-size: 18px;
-  }
-
-  .app-header-sub {
-    font-size: 12px;
-  }
-
-  .app-status-pill {
-    font-size: 11px;
-    padding: 3px 8px;
-  }
-
-  .app-header-top {
-    font-size: 11px;
+    padding: 16px 12px 12px;
   }
 
   .app-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: 10px;
   }
 
   .app-tile {
-    min-height: 90px;
-    padding: 10px 8px;
+    min-height: 100px;
+    padding: 14px 10px;
   }
 
   .app-tile-icon {
-    font-size: 22px;
+    font-size: 26px;
   }
 
   .app-tile-text {
-    font-size: 14px;
-  }
-
-  .app-bottom-nav {
-    padding: 6px 6px;
-  }
-
-  .app-nav-btn {
-    font-size: 13px;
-    padding: 6px 4px;
-  }
-
-  /* Layout colonne -> stack verticale */
-
-  .proc-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .two-cols,
-  .admin-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .field-row {
-    flex-direction: column;
+    font-size: 16px;
   }
 }
 
-/* =======================================================
-   DESKTOP – DASHBOARD A TUTTO SCHERMO
-   (solo schermi grandi)
-   ======================================================= */
+@media (max-width: 500px) {
+  .auth-card {
+    padding-inline: 18px;
+  }
 
-@media (min-width: 1100px) {
-
-  /* meno margine grigio ai lati */
   .main {
-    padding: 20px 16px 32px;
-  }
-
-  /* il contenitore centrale occupa tutta la larghezza utile */
-  .home-app-wrapper {
-    width: 100%;
-    max-width: 1800px;      /* limite solo per schermi enormi */
-    margin: 0 auto;
-    padding: 0 24px;        /* piccolo bordo laterale */
-    display: flex;
-    justify-content: center;
-  }
-
-  /* la “card” verde con le tile diventa larga quanto lo schermo */
-  .app-phone {
-    width: 100%;
-    max-width: none;        /* niente limite, prende tutta la riga */
-  }
-}
-
-/* =======================================================
-   DESKTOP – DASHBOARD A TUTTO SCHERMO (tutte le 3)
-   ======================================================= */
-
-@media (min-width: 1024px) {
-
-  /* meno bordo esterno grigio */
-  .main {
-    padding: 20px 24px 32px;
-  }
-
-  /* il wrapper centrale può occupare tutta la larghezza */
-  .home-app-wrapper {
-    max-width: 100%;
-    padding: 0 32px;
-    justify-content: center;
-  }
-
-  /* il “pannello” interno diventa praticamente full-width e più alto */
-  .app-phone {
-    max-width: 100%;
-    min-height: calc(100vh - 190px);  /* quasi tutto lo schermo in altezza */
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* la parte verde in alto nella card un po' più alta */
-  .app-header {
-    min-height: 120px;
-  }
-
-  /* se usi una griglia 4 colonne, resta così ma con più respiro */
-  .app-grid {
-    gap: 24px;
-  }
-}
-
-/* Rende la dashboard più alta su schermo grande */
-@media (min-width: 900px) {
-  .home-app-wrapper {
-    min-height: calc(100vh - 140px); /* spazio verticale */
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .app-phone {
-    width: 100%;
-    max-width: 1550px;    /* più largo */
-    min-height: 800px;    /* ALZA la dashboard */
-    padding: 40px 35px 32px;
-  }
-
-  .app-grid {
-    grid-auto-rows: 180px;     /* aumenta l’altezza delle tile */
+    padding-inline: 12px;
   }
 }
