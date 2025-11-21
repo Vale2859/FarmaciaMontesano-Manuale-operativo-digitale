@@ -1,102 +1,98 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmacia Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Dashboard Farmacia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-    <!-- MENU LATERALE -->
-    <aside id="sidebar">
-        <div class="sidebar-header">
-            <h2>Menu</h2>
-            <button id="closeSidebar">×</button>
-        </div>
-        <ul>
-            <li>Profilo</li>
-            <li>Formazione</li>
-            <li>Logout</li>
-        </ul>
-    </aside>
+  <!-- SIDEBAR (MENU LATERALE) -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2>Menu</h2>
+      <button id="closeSidebar" aria-label="Chiudi menu">×</button>
+    </div>
+    <ul class="sidebar-list">
+      <li>Profilo</li>
+      <li>Formazione</li>
+      <li>Impostazioni</li>
+      <li class="logout">Logout</li>
+    </ul>
+  </aside>
 
-    <!-- HAMBURGER -->
-    <button id="hamburger">☰</button>
+  <!-- PULSANTE HAMBURGER -->
+  <button id="hamburger" aria-label="Apri menu">☰</button>
 
-    <!-- HEADER -->
-    <header>
-        <h1>FARMACIA</h1>
-    </header>
+  <!-- HEADER -->
+  <header class="topbar">
+    <h1>FARMACIA</h1>
+  </header>
 
-    <!-- CONTENUTO PRINCIPALE -->
-    <main>
+  <!-- CONTENUTO PRINCIPALE -->
+  <main class="dashboard">
 
-        <!-- BLOCCO ASSENZE -->
-        <section class="card card-green">
-            <div class="card-icon">📅</div>
-            <h2>Assenze del personale</h2>
-            <p>2 richieste in attesa</p>
-            <p>Oggi: Mario G., Anna S.</p>
-            <p>Ferie: Luca B.</p>
-        </section>
+    <!-- RIGA SUPERIORE: 3 CARD CON CONTENUTO -->
+    <section class="card card-green">
+      <div class="card-icon">📅</div>
+      <h2>Assenze del personale</h2>
+      <p>2 richieste in attesa</p>
+      <p>Oggi: Mario G., Anna S.</p>
+      <p>Ferie: Luca B.</p>
+    </section>
 
-        <!-- BLOCCO TURNI -->
-        <section class="card card-blue">
-            <div class="card-icon">🕒</div>
-            <h2>Turni delle farmacie</h2>
-            <p>00:00 – 24:00</p>
-            <p>Reperibilità</p>
-            <p>Farmacia di turno</p>
-        </section>
+    <section class="card card-teal">
+      <div class="card-icon">🕒</div>
+      <h2>Turni delle farmacie</h2>
+      <p>00:00 – 24:00</p>
+      <p>Reperibilità attiva</p>
+      <p>Farmacia di turno: Montesano</p>
+    </section>
 
-        <!-- BLOCCO COMUNICAZIONI -->
-        <section class="card card-pink">
-            <div class="card-icon">📣</div>
-            <h2>Comunicazioni</h2>
-            <p>Nuova procedura disponibile</p>
-            <p>Aggiornare il registro sicurezza</p>
-            <p>Incontro all’orario di chiusura</p>
-        </section>
+    <section class="card card-pink">
+      <div class="card-icon">📣</div>
+      <h2>Comunicazioni</h2>
+      <p>Nuova procedura disponibile</p>
+      <p>Aggiornare il registro sicurezza</p>
+      <p>Incontro all’orario di chiusura</p>
+    </section>
 
-        <!-- ICONE GRANDI -->
-        <div class="tile-grid">
+    <!-- RIGA INFERIORE: ICONE GRANDI -->
+    <section class="tile-grid">
+      <div class="tile tile-procedure">
+        <div class="tile-icon">📁</div>
+        <h3>Procedure</h3>
+      </div>
 
-            <div class="tile tile-greenlight">
-                <div class="tile-icon">📁</div>
-                <h3>Procedure</h3>
-            </div>
+      <div class="tile tile-logistica">
+        <div class="tile-icon">📦</div>
+        <h3>Logistica</h3>
+      </div>
 
-            <div class="tile tile-yellow">
-                <div class="tile-icon">📦</div>
-                <h3>Logistica</h3>
-            </div>
+      <div class="tile tile-magazzino">
+        <div class="tile-icon">📋</div>
+        <h3>Magazziniera</h3>
+      </div>
 
-            <div class="tile tile-blue">
-                <div class="tile-icon">📋</div>
-                <h3>Magazziniera</h3>
-            </div>
+      <div class="tile tile-formazione">
+        <div class="tile-icon">🎓</div>
+        <h3>Formazione</h3>
+      </div>
 
-            <div class="tile tile-purple">
-                <div class="tile-icon">🎓</div>
-                <h3>Formazione</h3>
-            </div>
+      <div class="tile tile-area">
+        <div class="tile-icon">👤</div>
+        <h3>Area personale</h3>
+      </div>
 
-            <div class="tile tile-cyan">
-                <div class="tile-icon">👤</div>
-                <h3>Area personale</h3>
-            </div>
+      <div class="tile tile-admin">
+        <div class="tile-icon">🔧</div>
+        <h3>Admin</h3>
+      </div>
+    </section>
 
-            <div class="tile tile-green">
-                <div class="tile-icon">🔧</div>
-                <h3>Admin</h3>
-            </div>
+  </main>
 
-        </div>
-
-    </main>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
