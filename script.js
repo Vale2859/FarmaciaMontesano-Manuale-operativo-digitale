@@ -40,108 +40,87 @@ function uid() {
 /* Tutte le farmacie di Matera che compaiono
    nei turni di novembre e dicembre 2025 */
 
+// 🔹 Anagrafica farmacie Matera (nome, indirizzo, telefono)
 const PHARMACIES = {
   MONTESANO: {
-    key: "MONTESANO",
     name: "Farmacia Montesano",
-    address: "Via Cappelluti 61, 75100 Matera (MT)",
+    address: "Via Vincenzo Cappelluti, 61 – 75100 Matera",
     phone: "0835 335921"
   },
   SAN_GIUSEPPE: {
-    key: "SAN_GIUSEPPE",
     name: "Farmacia San Giuseppe",
-    address: "Via La Martella 33, 75100 Matera (MT)",
+    address: "Via La Martella, 33 – 75100 Matera",
     phone: "0835 405002"
   },
-  ROMEO: {
-    key: "ROMEO",
-    name: "Farmacia Romeo",
-    address: "Via Pasquale Vena 3/BIS, 75100 Matera (MT)",
-    phone: "0835 333901"
-  },
-  MOTTA_ANTONIETTA: {
-    key: "MOTTA_ANTONIETTA",
-    name: "Farmacia Motta Antonietta",
-    address: "Via Dante 33, 75100 Matera (MT)",
-    phone: "0835 330751"
-  },
-  MOTTA_SILVIA: {
-    key: "MOTTA_SILVIA",
-    name: "Farmacia Motta Silvia",
-    address: "Via Ridola 16, 75100 Matera (MT)",
-    phone: "0835 333341"
-  },
-  MOTTA_UVA_TERESA: {
-    key: "MOTTA_UVA_TERESA",
-    name: "Farmacia Motta-Uva Teresa",
-    address: "Via Nazionale 120, 75100 Matera (MT)",
-    phone: "0835 385632"
-  },
   PISTONE: {
-    key: "PISTONE",
     name: "Farmacia Pistone",
-    address: "Via Annunziatella 76, 75100 Matera (MT)",
+    address: "Via Annunziatella, 76 – 75100 Matera",
     phone: "0835 332752"
   },
+  ROMEO: {
+    name: "Farmacia Romeo",
+    address: "Via Pasquale Vena, 3/Bis – 75100 Matera",
+    phone: "0835 333901"
+  },
+  MATERANA: {
+    name: "Farmacia Materana",
+    address: "Via Enrico Mattei, 76 – 75100 Matera",
+    phone: "0835 309098"
+  },
+  MOTTA_SILVIA: {
+    name: "Farmacia Motta Silvia",
+    address: "Via Domenico Ridola, 16 – 75100 Matera",
+    phone: "0835 333341"
+  },
+  MIRAGLIA: {
+    name: "Farmacia Miraglia",
+    address: "Via dei Pesci, 48 – 75100 Matera",
+    phone: "0835 1975468"
+  },
   UVA_SAS: {
-    key: "UVA_SAS",
-    name: "Farmacia Uva & C.",
-    address: "Via Gravina 40, 75100 Matera (MT)",
+    name: "Farmacia Uva & C. S.a.s.",
+    address: "Via Gravina, 38/40 – 75100 Matera",
     phone: "0835 264331"
   },
-  VEZZOSO: {
-    key: "VEZZOSO",
-    name: "Farmacia Vezzoso",
-    address: "Via Lucana 289, 75100 Matera (MT)",
-    phone: "0835 310004"
-  },
-  VIVALDI: {
-    key: "VIVALDI",
-    name: "Farmacia Vivaldi",
-    address: "Piazzetta Antonio Vivaldi 29, 75100 Matera (MT)",
-    phone: "0835 1654461"
-  },
-  CONIGLIO: {
-    key: "CONIGLIO",
-    name: "Farmacia Coniglio",
-    address: "Via Ascanio Persio 48, 75100 Matera (MT)",
-    phone: "0835 333911"
-  },
-  DARIA_CLAUDIO: {
-    key: "DARIA_CLAUDIO",
-    name: "Farmacia D'Aria Claudio",
-    address: "Via XX Settembre 77, 75100 Matera (MT)",
-    phone: "0835 332282"
-  },
-  DARIA_GIUSEPPINA: {
-    key: "DARIA_GIUSEPPINA",
-    name: "Farmacia D'Aria Giuseppina",
-    address: "Via Nazionale 238, 75100 Matera (MT)",
-    phone: "0835 261728"
-  },
   DINNELLA: {
-    key: "DINNELLA",
     name: "Farmacia Dinnella",
-    address: "Via Cappuccini 72, 75100 Matera (MT)",
+    address: "Via Cappuccini, 72 – 75100 Matera",
     phone: "0835 314707"
   },
   GUERRICCHIO: {
-    key: "GUERRICCHIO",
     name: "Farmacia Guerricchio",
-    address: "Via Don Luigi Sturzo 55/A, 75100 Matera (MT)",
+    address: "Via Don Luigi Sturzo, 55/A – 75100 Matera",
     phone: "0835 264428"
   },
-  MATERANA: {
-    key: "MATERANA",
-    name: "Farmacia Materana",
-    address: "Via Enrico Mattei 76, 75100 Matera (MT)",
-    phone: "0835 309098"
+  MOTTA_UVA: {
+    name: "Farmacia Motta–Uva Teresa",
+    address: "Via Nazionale, 120 – 75100 Matera",
+    phone: "0835 385632"
   },
-  MIRAGLIA: {
-    key: "MIRAGLIA",
-    name: "Farmacia Miraglia",
-    address: "Via dei Pesci 48, 75100 Matera (MT)",
-    phone: "0835 1975468"
+  VIVALDI: {
+    name: "Farmacia Vivaldi",
+    address: "Piazzetta Antonio Vivaldi, 29 – 75100 Matera",
+    phone: "0835 1654461"
+  },
+  VEZZOSO: {
+    name: "Farmacia Vezzoso",
+    address: "Via Lucana, 289 – 75100 Matera",
+    phone: "0835 310004"
+  },
+  DARIA_GIUSEPPINA: {
+    name: "Farmacia D'Aria Giuseppina",
+    address: "Via Nazionale, 238 – 75100 Matera",
+    phone: "0835 261728"
+  },
+  DARIA_CLAUDIO: {
+    name: "Farmacia D'Aria (Via XX Settembre)",
+    address: "Via XX Settembre, 77 – 75100 Matera",
+    phone: "0835 332282"
+  },
+  CONIGLIO: {
+    name: "Farmacia Coniglio",
+    address: "Via Ascanio Persio, 48 – 75100 Matera",
+    phone: "0835 333911"
   }
 };
 
