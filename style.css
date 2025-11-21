@@ -1,298 +1,713 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <title>Portale Professionale – Farmacia Montesano</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+/* ===============================
+   STILI GENERALI
+   =============================== */
 
-  <!-- Icone per avere il logo sulla home del telefono -->
-  <link rel="icon" type="image/png" href="icon-192.png" />
-  <link rel="apple-touch-icon" href="icon-512.png" />
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
+:root {
+  --fm-green: #0a7b43;
+  --fm-green-dark: #075231;
+  --fm-bg: #f4f5f7;
+  --fm-border: #dde1ea;
+  --fm-text: #1f2933;
+  --fm-muted: #6b7280;
+  --fm-danger: #dc2626;
+  --fm-radius: 14px;
+  --fm-shadow: 0 12px 35px rgba(15, 118, 110, 0.18);
+  --fm-font: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+}
 
-  <!-- ========== LOGIN ========== -->
-  <div id="auth" class="auth-screen">
-    <div class="auth-card">
-      <div class="auth-logo-only">
-        <!-- Usa il tuo logo reale -->
-        <img src="logomedio.jpg" alt="Farmacia Montesano" class="auth-logo-img" />
-      </div>
+body {
+  margin: 0;
+  font-family: var(--fm-font);
+  color: var(--fm-text);
+  background: radial-gradient(circle at top left, #e8f5f0, #f7fafc);
+}
 
-      <h2 class="login-title">Accesso al portale</h2>
+/* Utility */
 
-      <label for="login-email">Email</label>
-      <input type="email" id="login-email" placeholder="es. valerio@farmaciamontesano.it" />
+.hidden {
+  display: none !important;
+}
 
-      <label for="login-password">Password</label>
-      <div class="password-row">
-        <input type="password" id="login-password" placeholder="Password" />
-        <button type="button" class="btn-eye" onclick="togglePassword()" aria-label="Mostra / nascondi password">👁</button>
-      </div>
+/* ===============================
+   LOGIN
+   =============================== */
 
-      <label class="remember-row">
-        <input type="checkbox" id="remember-me" />
-        Ricordami su questo dispositivo
-      </label>
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
 
-      <button class="btn-primary" onclick="login()">Entra</button>
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 26px;
+  padding: 24px 28px 22px;
+  border: 1px solid rgba(10, 123, 67, 0.08);
+  box-shadow: var(--fm-shadow);
+}
 
-      <p id="auth-error" class="error-text hidden"></p>
+.auth-logo-only {
+  text-align: center;
+  margin-bottom: 18px;
+}
 
-      <p class="small-text muted-center">
-        L'utilizzo del portale è riservato al personale autorizzato della Farmacia Montesano.
-      </p>
-    </div>
-  </div>
+.auth-logo-img {
+  width: 170px;
+  max-width: 80%;
+  height: auto;
+}
 
-  <!-- ========== PORTALE INTERNO ========== -->
-  <div id="portal" class="portal hidden">
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <img src="logo-farmacia-montesano.jpg" alt="Farmacia Montesano" class="topbar-logo-img" />
-        <div>
-          <div class="topbar-title">Farmacia Montesano</div>
-          <div class="topbar-subtitle">Portale professionale interno</div>
-        </div>
-      </div>
-      <div class="topbar-user">
-        <div class="user-pill">
-          <span id="user-name-display">Utente</span>
-          <span id="user-role-display" class="role-badge"></span>
-        </div>
-        <button class="btn-outline" onclick="goHome()">Home</button>
-        <button class="btn-outline" onclick="showSection('farmacia')">Farmacia</button>
-        <button class="btn-outline" onclick="logout()">Logout</button>
-      </div>
-    </header>
+.login-title {
+  text-align: center;
+  margin-bottom: 12px;
+  font-size: 22px;
+  font-weight: 650;
+}
 
-    <!-- CONTENUTO PRINCIPALE -->
-    <main class="main">
-      <div class="content-wrapper">
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
 
-        <!-- HOME TITOLARE -->
-        <section id="home-titolare" class="section">
-          <div class="card card-big">
-            <div class="home-header">
-              <div>
-                <div class="home-eyebrow">Benvenuto</div>
-                <h1 class="home-title">Pannello Titolare</h1>
-                <p class="home-subtitle">
-                  Da qui gestisci le <strong>assenze dei dipendenti</strong> con calendario mensile,
-                  storico per persona e controlli rapidi.
-                </p>
-              </div>
-            </div>
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-family: var(--fm-font);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+  background-color: #ffffff;
+}
 
-            <div class="home-grid">
-              <button class="home-tile home-tile-green" onclick="showSection('assenze')">
-                <div class="home-tile-icon">🗓️</div>
-                <div class="home-tile-title">Assenze dipendenti</div>
-                <div class="home-tile-text">
-                  Calendario mensile, riepilogo mesi, storico per dipendente e gestione approvazioni.
-                </div>
-              </button>
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--fm-green);
+  box-shadow: 0 0 0 1px rgba(10, 123, 67, 0.25);
+  background-color: #f9fffc;
+}
 
-              <button class="home-tile home-tile-blue" onclick="showSection('farmacia')">
-                <div class="home-tile-icon">🏥</div>
-                <div class="home-tile-title">Pagina Farmacia</div>
-                <div class="home-tile-text">
-                  Spazio dedicato alla farmacia (in costruzione), visibile anche al profilo "Farmacia".
-                </div>
-              </button>
-            </div>
-          </div>
-        </section>
+textarea {
+  resize: vertical;
+}
 
-        <!-- HOME FARMACIA (per l'utente farmacia@...) -->
-        <section id="home-farmacia" class="section">
-          <div class="card card-big">
-            <h1 class="home-title">Area Farmacia</h1>
-            <p class="home-subtitle">
-              Account generico per l'utilizzo in farmacia. Questa sezione può ospitare
-              promozioni, link rapidi, procedure sintetiche, ecc.
-            </p>
+.password-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
-            <div class="home-grid">
-              <div class="home-tile home-tile-green disabled">
-                <div class="home-tile-icon">💊</div>
-                <div class="home-tile-title">Funzioni in arrivo</div>
-                <div class="home-tile-text">
-                  Qui potremo aggiungere in futuro: promozioni, prenotazione farmaci,
-                  servizi rapidi per il banco, ecc.
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+.password-row input {
+  flex: 1;
+}
 
-        <!-- PAGINA FARMACIA (sezione comune, ma semplice per ora) -->
-        <section id="farmacia" class="section">
-          <div class="card card-big">
-            <h1 class="home-title">Pagina "Farmacia"</h1>
-            <p class="home-subtitle">
-              Sezione condivisa. Per ora contiene solo un testo informativo,
-              in futuro potrà ospitare strumenti o promozioni visibili a tutti.
-            </p>
-            <p>
-              • Accessibile sia al <strong>Titolare</strong> sia all'utente <strong>Farmacia</strong>.<br />
-              • Contenuti da definire (promozioni, link gestionali, ecc.).<br />
-              • Grafica allineata al resto del portale.
-            </p>
-          </div>
-        </section>
+.btn-eye {
+  border: 1px solid #dde1ea;
+  background: #f5f7fb;
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.btn-eye:hover {
+  background: #e4e9f5;
+}
 
-        <!-- PAGINA ASSENZE – SOLO TITOLARE -->
-        <section id="assenze" class="section">
-          <h1 class="section-title">Assenze dipendenti – vista Titolare</h1>
-          <p class="subtitle">
-            Riepilogo mese per mese e storico per singolo dipendente.
-            Clicca sul calendario per vedere il dettaglio del giorno, gestire
-            approvazioni e registrare nuove assenze.
-          </p>
+.remember-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-top: 8px;
+  color: var(--fm-muted);
+}
 
-          <div class="assenze-layout">
-            <!-- COLONNA SINISTRA -->
-            <div class="assenze-left">
+button {
+  font-family: var(--fm-font);
+  cursor: pointer;
+}
 
-              <!-- CALENDARIO -->
-              <div class="card">
-                <div class="card-header-between">
-                  <div>
-                    <div class="card-title">Calendario mensile</div>
-                    <div id="cal-month-label" class="card-subtitle"></div>
-                  </div>
-                  <div class="cal-nav">
-                    <button type="button" onclick="changeMonth(-1)">‹</button>
-                    <button type="button" onclick="goToToday()">Oggi</button>
-                    <button type="button" onclick="changeMonth(1)">›</button>
-                  </div>
-                </div>
+/* BUTTONS */
 
-                <div class="cal-grid" id="cal-grid">
-                  <!-- intestazioni giorni -->
-                </div>
-              </div>
+.btn-primary {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, var(--fm-green), #16a34a);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: 0 10px 24px rgba(22, 163, 74, 0.3);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.1s;
+}
 
-              <!-- DETTAGLIO GIORNO -->
-              <div class="card">
-                <div class="card-title" id="day-detail-title">Dettaglio giorno selezionato</div>
-                <div id="day-detail-list" class="list small-list">
-                  <div class="list-item-muted">Seleziona un giorno dal calendario.</div>
-                </div>
-              </div>
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(22, 163, 74, 0.4);
+}
 
-              <!-- MESE CORRENTE -->
-              <div class="card">
-                <div class="card-title" id="month-current-title">Mese corrente</div>
-                <div id="month-current-list" class="list small-list">
-                  <div class="list-item-muted">Nessuna assenza registrata per questo mese.</div>
-                </div>
-              </div>
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 7px 16px rgba(22, 163, 74, 0.4);
+  opacity: 0.9;
+}
 
-              <!-- MESE SUCCESSIVO -->
-              <div class="card">
-                <div class="card-title" id="month-next-title">Mese successivo</div>
-                <div id="month-next-list" class="list small-list">
-                  <div class="list-item-muted">Nessuna assenza registrata per il mese successivo.</div>
-                </div>
-              </div>
-            </div>
+.btn-primary.small {
+  width: auto;
+  padding-inline: 16px;
+  font-size: 13px;
+}
 
-            <!-- COLONNA DESTRA -->
-            <div class="assenze-right">
+.btn-outline {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: transparent;
+  padding: 7px 14px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+}
+.btn-outline.small {
+  color: var(--fm-green-dark);
+  border-color: #cbd5e1;
+  background: #ffffff;
+  box-shadow: none;
+}
 
-              <!-- ELENCO DIPENDENTI -->
-              <div class="card">
-                <div class="card-title">Dipendenti</div>
-                <p class="small-text">
-                  Clicca su un nome per vedere lo storico delle sue assenze.
-                </p>
-                <ul id="employee-list" class="employee-list"></ul>
-              </div>
+.btn-outline.small:hover {
+  background: #f1f5f9;
+}
 
-              <!-- STORICO DIPENDENTE -->
-              <div class="card">
-                <div class="card-title">Storico assenze dipendente selezionato</div>
-                <div class="filters-row">
-                  <select id="filter-type" onchange="renderEmployeeHistory()">
-                    <option value="tutti">Tutti i tipi</option>
-                    <option value="ferie">Ferie</option>
-                    <option value="malattia">Malattia</option>
-                    <option value="permesso_orario">Permesso orario</option>
-                    <option value="permesso_giornata">Permesso giornata</option>
-                    <option value="altro">Altro</option>
-                  </select>
-                </div>
-                <div id="employee-history-list" class="list small-list">
-                  <div class="list-item-muted">Seleziona un dipendente nella lista sopra.</div>
-                </div>
-              </div>
+.small-text {
+  font-size: 12px;
+  color: var(--fm-muted);
+  margin-top: 6px;
+}
 
-              <!-- FORM NUOVA / MODIFICA ASSENZA -->
-              <div class="card">
-                <div class="card-title">Nuova / modifica assenza</div>
+.small-text a {
+  color: var(--fm-green-dark);
+  text-decoration: none;
+  font-weight: 600;
+}
 
-                <div class="form-grid">
-                  <div class="field">
-                    <label for="abs-employee">Dipendente</label>
-                    <select id="abs-employee"></select>
-                  </div>
+.small-text a:hover {
+  text-decoration: underline;
+}
 
-                  <div class="field">
-                    <label for="abs-type">Tipo</label>
-                    <select id="abs-type">
-                      <option value="ferie">Ferie</option>
-                      <option value="malattia">Malattia</option>
-                      <option value="permesso_orario">Permesso orario</option>
-                      <option value="permesso_giornata">Permesso giornata</option>
-                      <option value="altro">Altro</option>
-                    </select>
-                  </div>
+.muted-center {
+  text-align: center;
+  margin-top: 10px;
+}
 
-                  <div class="field">
-                    <label for="abs-start">Data inizio</label>
-                    <input type="date" id="abs-start" />
-                  </div>
+.error-text {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--fm-danger);
+  text-align: center;
+}
 
-                  <div class="field">
-                    <label for="abs-end">Data fine (opzionale)</label>
-                    <input type="date" id="abs-end" />
-                  </div>
+/* ===============================
+   PORTALE – STRUTTURA BASE
+   =============================== */
 
-                  <div class="field">
-                    <label for="abs-status">Stato</label>
-                    <select id="abs-status">
-                      <option value="approvata">Approvata</option>
-                      <option value="in_attesa">In attesa</option>
-                      <option value="rifiutata">Rifiutata</option>
-                    </select>
-                  </div>
+.portal {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-                  <div class="field field-full">
-                    <label for="abs-note">Note (opzionali)</label>
-                    <textarea id="abs-note" rows="2" placeholder="Es. ferie estive, visita medica, ecc."></textarea>
-                  </div>
-                </div>
+/* TOPBAR */
 
-                <input type="hidden" id="abs-edit-id" />
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 22px;
+  background: linear-gradient(90deg, var(--fm-green-dark), #0f766e);
+  color: #ffffff;
+}
 
-                <div class="form-actions-row">
-                  <button class="btn-primary small" onclick="saveAbsenceFromForm()">Salva assenza</button>
-                  <button class="btn-outline small" type="button" onclick="resetAbsenceForm()">Pulisci form</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-      </div>
-    </main>
-  </div>
+.topbar-logo-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px;
+}
 
-  <script src="script.js"></script>
-</body>
-</html>
+.topbar-title {
+  font-weight: 650;
+  letter-spacing: 0.03em;
+}
+
+.topbar-subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.3);
+  font-size: 13px;
+}
+
+.role-badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.18);
+  font-size: 11px;
+}
+
+/* MAIN */
+
+.main {
+  flex: 1;
+  background: var(--fm-bg);
+  padding: 18px 16px 30px;
+}
+
+.content-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Sezioni generiche */
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+.section-title {
+  margin: 4px 0 6px;
+  font-size: 22px;
+}
+
+/* CARD GENERICHE */
+
+.card {
+  background: #ffffff;
+  border-radius: var(--fm-radius);
+  padding: 18px 18px 16px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.card-big {
+  padding: 20px 22px 20px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  color: var(--fm-muted);
+}
+
+.card-header-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* LISTE */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.small-list {
+  font-size: 13px;
+}
+
+.list-item {
+  border-radius: 12px;
+  border: 1px solid var(--fm-border);
+  padding: 8px 10px;
+  background: #ffffff;
+}
+
+.list-item-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.list-item-meta {
+  font-size: 12px;
+  color: var(--fm-muted);
+  margin-bottom: 4px;
+}
+
+.list-item-muted {
+  font-size: 13px;
+  color: var(--fm-muted);
+}
+
+/* ===============================
+   HOME
+   =============================== */
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.home-eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fm-muted);
+}
+
+.home-title {
+  margin: 4px 0 4px;
+  font-size: 26px;
+}
+
+.home-subtitle {
+  font-size: 14px;
+  color: var(--fm-muted);
+  max-width: 700px;
+}
+
+.home-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.home-tile {
+  border-radius: 18px;
+  border: none;
+  text-align: left;
+  padding: 16px 15px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+  min-height: 130px;
+}
+
+.home-tile.disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.home-tile-icon {
+  font-size: 26px;
+}
+
+.home-tile-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.home-tile-text {
+  font-size: 13px;
+  opacity: 0.96;
+}
+
+/* colori tile */
+.home-tile-green {
+  background: linear-gradient(135deg, #0d8a5c, #16a34a);
+}
+
+.home-tile-blue {
+  background: linear-gradient(135deg, #1e88e5, #60a5fa);
+}
+
+/* ===============================
+   ASSENZE – LAYOUT
+   =============================== */
+
+.subtitle {
+  font-size: 14px;
+  color: var(--fm-muted);
+  margin-bottom: 16px;
+}
+
+.assenze-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.4fr);
+  gap: 16px;
+}
+
+.assenze-left,
+.assenze-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* CALENDARIO */
+
+.cal-nav {
+  display: flex;
+  gap: 6px;
+}
+
+.cal-nav button {
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #f9fafb;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.cal-nav button:hover {
+  background: #e5f3ee;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-weight: 600;
+  color: var(--fm-muted);
+  padding-bottom: 2px;
+}
+
+.cal-day {
+  min-height: 52px;
+  background: #f9fafb;
+  border-radius: 9px;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cal-day-number {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.cal-day-count {
+  font-size: 11px;
+  color: var(--fm-muted);
+  align-self: flex-end;
+}
+
+.cal-day-outside {
+  opacity: 0.35;
+}
+
+.cal-day-has {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+
+.cal-day-selected {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.8);
+}
+
+/* DIPENDENTI & STORICO */
+
+.employee-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.employee-list li {
+  padding: 6px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid var(--fm-border);
+  background: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.employee-list li span {
+  pointer-events: none;
+}
+
+.employee-list li:hover {
+  background: #e5f3ee;
+}
+
+.employee-list li.active {
+  background: #0d8a5c;
+  border-color: #0d8a5c;
+  color: #ffffff;
+}
+
+.filters-row {
+  margin-top: 6px;
+}
+
+/* FORM ASSENZE */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 10px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.form-actions-row {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+/* BOTTONI PICCOLI NELLE LISTE */
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.badge-status.approvata {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-status.in_attesa {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.badge-status.rifiutata {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-chip {
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #f9fafb;
+  padding: 3px 9px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.btn-chip.danger {
+  border-color: #fecaca;
+  color: #b91c1c;
+  background: #fff1f2;
+}
+.btn-chip + .btn-chip {
+  margin-left: 4px;
+}
+
+/* ===============================
+   RESPONSIVE
+   =============================== */
+
+@media (max-width: 900px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .topbar-user {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+
+  .home-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .assenze-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .auth-card {
+    padding-inline: 18px;
+  }
+
+  .cal-grid {
+    font-size: 11px;
+  }
+
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
