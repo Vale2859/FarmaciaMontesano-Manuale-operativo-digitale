@@ -1,4 +1,4 @@
-/* ========= RESET & VARIABILI ========= */
+/* ========== VARIABILI GENERALI ========== */
 
 *,
 *::before,
@@ -8,16 +8,15 @@
 
 :root {
   --fm-green: #0a7b43;
-  --fm-green-dark: #064e3b;
-  --fm-green-soft: #e3f3eb;
-  --fm-bg: #f3f4f6;
-  --fm-border: #d1d5db;
-  --fm-text: #111827;
+  --fm-green-dark: #075231;
+  --fm-green-soft: #e4f3eb;
+  --fm-bg: #f4f5f7;
+  --fm-border: #dde0e6;
+  --fm-text: #1f2933;
   --fm-muted: #6b7280;
-  --fm-danger: #dc2626;
-  --fm-radius: 14px;
-  --fm-shadow-soft: 0 18px 36px rgba(15, 23, 42, 0.16);
-  --fm-shadow-strong: 0 28px 60px rgba(5, 150, 105, 0.45);
+  --fm-danger: #d90429;
+  --fm-radius: 10px;
+  --fm-shadow: 0 12px 30px rgba(15, 118, 110, 0.16);
   --fm-font: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
 }
@@ -26,42 +25,15 @@ body {
   margin: 0;
   font-family: var(--fm-font);
   color: var(--fm-text);
-  background: radial-gradient(circle at top left, #e5f3ee, #f8fafc);
+  background: radial-gradient(circle at top left, #e8f5f0, #f7fafc);
 }
 
-/* Utilità generiche */
-
+/* Nascondere elementi generici */
 .hidden {
   display: none !important;
 }
 
-.small-text {
-  font-size: 12px;
-  color: var(--fm-muted);
-}
-
-/* Badge numerici */
-
-.badge-circle,
-.topbar-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 999px;
-  background: #ef4444;
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.hidden-badge {
-  display: none !important;
-}
-
-/* ========= LOGIN ========= */
+/* ========== LOGIN ========== */
 
 .auth-screen {
   min-height: 100vh;
@@ -73,17 +45,17 @@ body {
 
 .auth-card {
   width: 100%;
-  max-width: 460px;
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 28px;
-  box-shadow: var(--fm-shadow-soft);
-  padding: 22px 26px 20px;
-  border: 1px solid rgba(148, 163, 184, 0.28);
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: var(--fm-shadow);
+  padding: 24px 28px 22px;
+  border: 1px solid rgba(10, 123, 67, 0.08);
 }
 
 .auth-logo-only {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 
 .auth-logo-img {
@@ -94,16 +66,9 @@ body {
 
 .login-title {
   text-align: center;
-  margin: 2px 0 6px;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.login-subtitle {
-  text-align: center;
-  margin: 0 0 16px;
-  font-size: 13px;
-  color: var(--fm-muted);
+  margin: 4px 0 14px;
+  font-size: 22px;
+  font-weight: 650;
 }
 
 label {
@@ -122,9 +87,9 @@ input[type="time"],
 select,
 textarea {
   width: 100%;
-  padding: 9px 10px;
-  border-radius: 9px;
-  border: 1px solid #d1d5db;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
   font-family: var(--fm-font);
   font-size: 14px;
   outline: none;
@@ -136,7 +101,7 @@ input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--fm-green);
-  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 0 1px rgba(10, 123, 67, 0.3);
   background-color: #f9fffc;
 }
 
@@ -144,8 +109,7 @@ textarea {
   resize: vertical;
 }
 
-/* Riga password */
-
+/* Riga password con icona occhio */
 .password-row {
   display: flex;
   align-items: center;
@@ -157,15 +121,19 @@ textarea {
 }
 
 .btn-eye {
-  border: 1px solid #e5e7eb;
-  background: #f3f4f6;
+  border: 1px solid #dde1ea;
+  background: #f5f7fb;
   border-radius: 999px;
   padding: 6px 10px;
   cursor: pointer;
   font-size: 14px;
 }
 
-/* Pulsanti */
+.btn-eye:hover {
+  background: #e4e9f5;
+}
+
+/* Pulsanti generali */
 
 button {
   font-family: var(--fm-font);
@@ -178,37 +146,53 @@ button {
   padding: 9px 14px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(130deg, #059669, #16a34a);
+  background: linear-gradient(135deg, var(--fm-green), #16a34a);
   color: #ffffff;
   font-weight: 600;
   font-size: 15px;
-  box-shadow: var(--fm-shadow-strong);
+  box-shadow: 0 10px 24px rgba(22, 163, 74, 0.3);
   transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.1s;
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 32px 70px rgba(5, 150, 105, 0.55);
+  box-shadow: 0 14px 28px rgba(22, 163, 74, 0.4);
 }
 
 .btn-primary:active {
   transform: translateY(0);
-  box-shadow: 0 14px 32px rgba(5, 150, 105, 0.55);
-  opacity: 0.95;
+  box-shadow: 0 7px 16px rgba(22, 163, 74, 0.4);
+  opacity: 0.9;
 }
 
 .btn-primary.small {
   width: auto;
   padding-inline: 14px;
   font-size: 13px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
 }
 
-.btn-primary.small.fullwidth {
-  width: 100%;
+.btn-outline {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: transparent;
+  color: #f9fafb;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.1s, color 0.1s, border-color 0.1s;
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Testi piccoli */
+
+.small-text {
+  font-size: 12px;
+  color: var(--fm-muted);
+  margin-top: 6px;
+}
 
 .small-text a {
   color: var(--fm-green-dark);
@@ -229,7 +213,7 @@ button {
   text-align: center;
 }
 
-/* ========= PORTALE COMUNE ========= */
+/* ========== PORTALE STAFF ========== */
 
 .portal {
   min-height: 100vh;
@@ -246,10 +230,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 22px;
-  background: radial-gradient(circle at left, #064e3b, #0f766e);
+  padding: 10px 18px;
+  background: linear-gradient(90deg, var(--fm-green-dark), #0f766e);
   color: #ffffff;
-  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.55);
 }
 
 .topbar-left {
@@ -259,23 +242,22 @@ button {
 }
 
 .topbar-logo-img {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  object-fit: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  object-fit: contain;
   background: rgba(255, 255, 255, 0.1);
-  padding: 2px;
+  padding: 4px;
 }
 
 .topbar-title {
-  font-weight: 700;
+  font-weight: 650;
   letter-spacing: 0.03em;
-  font-size: 19px;
 }
 
 .topbar-subtitle {
   font-size: 12px;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .topbar-user {
@@ -288,10 +270,10 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 11px;
+  padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.35);
-  font-size: 14px;
+  background: rgba(15, 23, 42, 0.28);
+  font-size: 13px;
 }
 
 .role-badge {
@@ -301,145 +283,13 @@ button {
   font-size: 11px;
 }
 
-/* Badge in topbar */
+/* MAIN */
 
-.topbar-badge {
-  margin-right: 4px;
-}
-
-/* Pulsanti topbar */
-
-.btn-outline {
-  padding: 7px 13px;
-  border-radius: 999px;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  background: transparent;
-  color: #f9fafb;
-  font-size: 13px;
-  font-weight: 500;
-  transition: background-color 0.12s, color 0.12s, border-color 0.12s;
-}
-
-.btn-outline:hover {
-  background: rgba(255, 255, 255, 0.14);
-}
-
-/* ========= LAYOUT STAFF ========= */
-
-.staff-main {
-  flex: 1;
-  background: radial-gradient(circle at top left, #d9f9f0, #eef2ff);
-  padding: 16px 22px 22px;
+.main {
+  background: var(--fm-bg);
+  padding: 18px 20px 24px;
   overflow-x: hidden;
 }
-
-.layout {
-  max-width: 1360px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 250px minmax(0, 1fr);
-  gap: 16px;
-}
-
-/* SIDEBAR */
-
-.sidebar {
-  background: rgba(15, 23, 42, 0.97);
-  border-radius: 22px;
-  color: #e5e7eb;
-  padding: 12px 10px 10px;
-  box-shadow: 0 22px 48px rgba(15, 23, 42, 0.7);
-}
-
-.sidebar-header {
-  padding: 8px 10px 12px;
-}
-
-.sidebar-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: #9ca3af;
-}
-
-.sidebar-sub {
-  margin-top: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #f9fafb;
-}
-
-.sidebar-nav {
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: none;
-  background: transparent;
-  color: #e5e7eb;
-  font-size: 14px;
-  text-align: left;
-  transition: background-color 0.12s, color 0.12s, transform 0.06s;
-}
-
-.sidebar-link span:first-child {
-  font-size: 18px;
-}
-
-.sidebar-link:hover {
-  background: rgba(55, 65, 81, 0.85);
-}
-
-.sidebar-link.active {
-  background: linear-gradient(130deg, #059669, #10b981);
-  color: #f9fafb;
-  transform: translateY(-1px);
-}
-
-.sidebar-link-admin {
-  margin-top: 4px;
-  border-top: 1px solid rgba(75, 85, 99, 0.8);
-  padding-top: 9px;
-}
-
-.sidebar-separator {
-  height: 1px;
-  background: rgba(75, 85, 99, 0.9);
-  margin: 6px 4px 4px;
-}
-
-.sidebar-footer {
-  margin-top: 12px;
-  padding: 7px 10px 5px;
-  border-radius: 16px;
-  background: rgba(31, 41, 55, 0.9);
-}
-
-.sidebar-foot-label {
-  font-size: 11px;
-  color: #9ca3af;
-}
-
-.sidebar-foot-sub {
-  font-size: 12px;
-  color: #e5e7eb;
-}
-
-/* CONTENUTO */
-
-.content {
-  min-height: 0;
-}
-
-/* Sezioni */
 
 .section {
   display: none;
@@ -449,116 +299,44 @@ button {
   display: block;
 }
 
-/* Header pagine */
+/* Header sezioni */
 
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.page-header h2 {
+.section-header h2 {
   margin: 0 0 4px;
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .subtitle {
-  margin: 0;
+  margin: 0 0 12px;
   color: var(--fm-muted);
   font-size: 14px;
-}
-
-.today-pill {
-  padding: 4px 11px;
-  border-radius: 999px;
-  background: #e5f3eb;
-  color: #047857;
-  font-size: 12px;
-  font-weight: 600;
 }
 
 /* Card generiche */
 
 .card {
   background: #ffffff;
-  border-radius: 20px;
-  padding: 13px 14px 12px;
-  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(209, 213, 219, 0.85);
+  border-radius: 18px;
+  padding: 14px 14px 12px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.27);
 }
 
-.card-hero {
-  background: radial-gradient(circle at top left, #22c55e, #0f766e);
-  color: #f9fafb;
-  box-shadow: var(--fm-shadow-strong);
-  border: none;
+.card-highlight {
+  background: radial-gradient(circle at top left, var(--fm-green-soft), #ffffff);
 }
 
-.card-hero-turni {
-  background: radial-gradient(circle at top right, #38bdf8, #0f766e);
+.card h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
 }
-
-.card-hero-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.card-hero h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.chip-label {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.32);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-.chip-admin {
-  background: rgba(248, 250, 252, 0.12);
-  border: 1px solid rgba(248, 250, 252, 0.4);
-}
-
-/* Card piccole */
-
-.mini-card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* Header card semplice */
 
 .card-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 6px;
-}
-
-/* Griglie */
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
-  gap: 14px;
-  margin-bottom: 14px;
-}
-
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  margin-bottom: 4px;
 }
 
 /* Tabelle / liste */
@@ -573,6 +351,7 @@ button {
 .table-simple td {
   border-bottom: 1px solid #e5e7eb;
   padding: 4px 6px;
+  vertical-align: top;
 }
 
 .table-simple th {
@@ -582,17 +361,9 @@ button {
 }
 
 .table-wrapper {
-  max-height: 230px;
+  max-height: 360px;
   overflow: auto;
 }
-
-.inner-card {
-  margin-top: 10px;
-  border-radius: 16px;
-  background: #f9fafb;
-}
-
-/* Liste */
 
 .list {
   display: flex;
@@ -602,7 +373,7 @@ button {
 }
 
 .list-item {
-  border-radius: 14px;
+  border-radius: 12px;
   border: 1px solid var(--fm-border);
   padding: 8px 10px;
   background: #ffffff;
@@ -625,7 +396,24 @@ button {
   font-size: 14px;
 }
 
-/* Azioni card */
+/* Layout 2 colonne */
+
+.two-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.3fr);
+  gap: 14px;
+}
+
+.field-row {
+  display: flex;
+  gap: 10px;
+}
+
+.field-row > div {
+  flex: 1;
+}
+
+/* Footer card */
 
 .card-actions-row {
   display: flex;
@@ -637,17 +425,61 @@ button {
 
 .saved-label {
   font-size: 12px;
-  color: #047857;
+  color: var(--fm-green-dark);
 }
 
-/* HOME – assenze pill */
+/* ========== HOME STAFF ========== */
+
+.home-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Card assenze (verde) */
+
+.home-card-absences {
+  padding: 16px 18px 12px;
+  border-radius: 24px;
+  background: radial-gradient(circle at top left, #22c55e, #0f766e);
+  color: #ffffff;
+  box-shadow: 0 14px 32px rgba(16, 185, 129, 0.35);
+}
+
+.home-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.home-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.2);
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.home-tag-blue {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+.home-card-title {
+  font-size: 17px;
+  font-weight: 650;
+}
 
 .home-abs-list {
   margin-top: 4px;
 }
 
 .home-abs-pill {
-  background: rgba(15, 23, 42, 0.22);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   padding: 6px 8px;
   margin-bottom: 4px;
@@ -658,10 +490,176 @@ button {
   font-weight: 650;
 }
 
-/* Assenze future – sezione assenze */
+/* Card turni (azzurra) */
+
+.home-card-turni {
+  padding: 16px 18px 14px;
+  border-radius: 24px;
+  background: radial-gradient(circle at top left, #38bdf8, #0ea5e9);
+  color: #0f172a;
+  box-shadow: 0 14px 32px rgba(56, 189, 248, 0.4);
+}
+
+.home-turni-box {
+  margin-top: 4px;
+  background: rgba(15, 23, 42, 0.03);
+  border-radius: 18px;
+  padding: 10px 12px;
+}
+
+.turni-home-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.turni-home-tag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.12);
+}
+
+.turni-home-date {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.turni-home-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.turni-home-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-top: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.turni-home-row:first-of-type {
+  border-top: none;
+}
+
+.turni-label {
+  width: 130px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #0f172a;
+}
+
+.turni-value {
+  font-size: 13px;
+}
+
+/* Griglia stile app */
+
+.home-card-app {
+  padding: 14px 16px 16px;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.app-grid-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.app-grid-title {
+  font-weight: 650;
+  font-size: 15px;
+}
+
+.app-grid-subtitle {
+  font-size: 13px;
+  color: var(--fm-muted);
+}
+
+.home-app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.app-tile {
+  border: none;
+  border-radius: 16px;
+  padding: 10px 9px;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 80px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+.app-tile-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.app-tile-text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.app-tile-sub {
+  font-size: 11px;
+}
+
+/* colori tile */
+
+.app-tile-orange {
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
+}
+
+.app-tile-green {
+  background: linear-gradient(135deg, #0d8a5c, #15b573);
+}
+
+.app-tile-pink {
+  background: linear-gradient(135deg, #ec407a, #f48fb1);
+}
+
+.app-tile-blue {
+  background: linear-gradient(135deg, #1e88e5, #64b5f6);
+}
+
+.app-tile-yellow {
+  background: linear-gradient(135deg, #fbc02d, #ffd54f);
+  color: #333;
+}
+
+.app-tile-purple {
+  background: linear-gradient(135deg, #7e57c2, #b39ddb);
+}
+
+.app-tile-teal {
+  background: linear-gradient(135deg, #00897b, #4db6ac);
+}
+
+.app-tile-grey {
+  background: linear-gradient(135deg, #546e7a, #90a4ae);
+}
+
+/* Assenze – lista grande */
 
 .assenze-future-list {
-  max-height: 260px;
+  max-height: 320px;
   overflow: auto;
 }
 
@@ -670,7 +668,7 @@ button {
   border-radius: 12px;
   padding: 6px 8px;
   margin-bottom: 6px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
   font-size: 13px;
 }
 
@@ -683,23 +681,12 @@ button {
   font-size: 12px;
 }
 
-/* Righe campi */
-
-.field-row {
-  display: flex;
-  gap: 10px;
-}
-
-.field-row > div {
-  flex: 1;
-}
-
-/* PROCEDURE layout */
+/* ========== PROCEDURE ========== */
 
 .proc-layout {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 14px;
 }
 
 .proc-categories {
@@ -707,9 +694,9 @@ button {
 }
 
 .proc-cat-title {
-  font-size: 12px;
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.12em;
   color: var(--fm-muted);
   margin-bottom: 8px;
 }
@@ -730,126 +717,196 @@ button {
   color: #ffffff;
 }
 
-/* ========= AREA CLIENTI ========= */
+/* ADMIN */
 
-.customer-main {
-  flex: 1;
-  padding: 20px 22px 26px;
-  background: radial-gradient(circle at top, #ccfbf1, #eff6ff);
+.admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+  gap: 14px;
 }
 
-.customer-hero {
-  max-width: 1360px;
-  margin: 0 auto 14px;
-  padding: 16px 20px;
-  border-radius: 24px;
-  background: linear-gradient(120deg, #0f766e, #22c55e);
-  color: #f9fafb;
+/* ========== SEZIONE TURNI FARMACIE ========== */
+
+.turni-month-header-row td {
+  background: #f3f4f6;
+  font-weight: 600;
+  font-size: 13px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.turni-month-header {
+  padding: 6px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4b5563;
+}
+
+.small-turni-text {
+  font-size: 12px;
+  color: #4b5563;
+}
+
+/* ========== AREA CLIENTI ========== */
+
+#customer-wrapper {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.customer-header {
+  background: linear-gradient(120deg, #0a7b43, #13c29a);
+  border-radius: 18px;
+  padding: 14px 18px;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  margin-bottom: 16px;
+}
+
+.customer-header-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  box-shadow: var(--fm-shadow-strong);
 }
 
-.customer-hero h1 {
-  margin: 0 0 4px;
-  font-size: 24px;
+.customer-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.customer-hero p {
+.customer-logo-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.customer-header-title h1 {
   margin: 0;
-  font-size: 14px;
+  font-size: 20px;
 }
 
-.customer-hero-info {
+.customer-header-title p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.customer-header-info {
   text-align: right;
   font-size: 13px;
 }
 
-.customer-grid-wrapper {
-  max-width: 1360px;
-  margin: 0 auto;
-  margin-top: 12px;
+.customer-main {
+  margin-top: 8px;
 }
 
 .customer-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
-.customer-card {
+.customer-tile {
   border: none;
-  border-radius: 20px;
-  padding: 11px 10px;
+  border-radius: 16px;
+  padding: 10px 9px;
   text-align: left;
-  background: #ffffff;
-  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.16);
+  color: #ffffff;
+  min-height: 90px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 120px;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  font-family: inherit;
 }
 
-.customer-icon {
-  font-size: 22px;
+.customer-tile-icon {
+  font-size: 20px;
   margin-bottom: 4px;
 }
 
-.customer-title {
-  font-size: 15px;
+.customer-tile-text {
+  font-size: 14px;
   font-weight: 700;
-  margin-bottom: 2px;
 }
 
-.customer-text {
-  font-size: 12px;
-  color: var(--fm-muted);
+.customer-tile-sub {
+  font-size: 11px;
+  opacity: 0.9;
 }
 
-.customer-footnote {
+/* colori area clienti */
+
+.customer-tile-green {
+  background: linear-gradient(135deg, #0d9488, #22c55e);
+}
+
+.customer-tile-blue {
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+}
+
+.customer-tile-pink {
+  background: linear-gradient(135deg, #ec4899, #f97316);
+}
+
+.customer-tile-orange {
+  background: linear-gradient(135deg, #f97316, #facc15);
+}
+
+.customer-tile-teal {
+  background: linear-gradient(135deg, #0f766e, #22c55e);
+}
+
+.customer-tile-purple {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+}
+
+.customer-tile-grey {
+  background: linear-gradient(135deg, #4b5563, #9ca3af);
+}
+
+.customer-tile-dark {
+  background: linear-gradient(135deg, #111827, #4b5563);
+}
+
+.customer-note {
   margin-top: 10px;
   font-size: 12px;
   color: #4b5563;
 }
 
-/* ========= RESPONSIVE ========= */
+/* ========== RESPONSIVE ========== */
 
 @media (max-width: 980px) {
-  .layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .sidebar {
-    order: -1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .sidebar-nav {
-    flex-wrap: wrap;
-    flex-direction: row;
-  }
-
-  .sidebar-link {
-    flex: 1 1 calc(50% - 6px);
-  }
-
-  .grid-2 {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .grid-3 {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
+  .two-cols,
+  .admin-grid,
   .proc-layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .home-app-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .customer-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .customer-header-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .turni-home-main {
+    flex-direction: column;
   }
 }
 
@@ -869,33 +926,40 @@ button {
     justify-content: space-between;
   }
 
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .customer-hero {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .customer-hero-info {
-    text-align: left;
+  .home-app-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .customer-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .turni-label {
+    width: 110px;
+  }
 }
 
-/* Schermi grandi */
+/* INGRANDIMENTO SU SCHERMI GRANDI (SOLO PC) */
 
-@media (min-width: 1100px) {
+@media (min-width: 1024px) {
   body {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .auth-card {
-    transform: scale(1.03);
+    transform: scale(1.05);
+  }
+
+  .home-app-grid .app-tile-text,
+  .home-app-grid .app-tile-sub {
+    font-size: 1rem;
+  }
+
+  .topbar-title {
+    font-size: 20px;
+  }
+
+  .user-pill {
+    font-size: 14px;
   }
 }
