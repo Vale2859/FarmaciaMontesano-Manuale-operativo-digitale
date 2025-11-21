@@ -590,3 +590,52 @@ button {
     font-size: 24px;
   }
 }
+
+/* ======= GRIGLIA 6 ICONE GRANDI (3 + 3) ======= */
+
+.icone-grandi-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 35px;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* Icona */
+.icona-grande {
+  height: 200px;
+  border-radius: 30px;      
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: center;
+}
+
+/* immagine simbolo */
+.icona-grande img {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 12px;
+}
+
+/* effetto hover (solo PC) */
+.icona-grande:hover {
+  transform: translateY(-6px);
+  filter: brightness(1.08);
+}
+
+/* ======= COLORI ICONE ======= */
+.icona-gialla    { background: #F4C430; }  /* Notizie */
+.icona-verde     { background: #4CAF50; }  /* Offerte */
+.icona-arancione { background: #FF9800; }  /* Prenota */
+.icona-rosa      { background: #E91E63; }  /* Servizi */
+.icona-lime      { background: #8BC34A; }  /* Catalogo */
+.icona-nera      { background: #212121; }  /* Agenda */
