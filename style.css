@@ -15,8 +15,8 @@
   --fm-text: #111827;
   --fm-muted: #6b7280;
   --fm-border: #d1d5db;
-  --fm-radius-lg: 20px;
-  --fm-radius-md: 14px;
+  --fm-radius-lg: 22px;
+  --fm-radius-md: 16px;
   --fm-font: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
 }
@@ -48,15 +48,15 @@ body {
   width: 100%;
   max-width: 420px;
   background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
+  border-radius: 26px;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.28);
   padding: 24px 26px 20px;
   border: 1px solid rgba(148, 163, 184, 0.5);
 }
 
 .auth-logo-only {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .auth-logo-img {
@@ -200,7 +200,7 @@ button {
   flex-direction: column;
 }
 
-/* Topbar stile app mobile */
+/* Topbar */
 
 .app-topbar {
   position: sticky;
@@ -209,7 +209,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 18px;
+  column-gap: 12px;
+  padding: 8px 16px;
   background: #ffffff;
   border-bottom: 1px solid rgba(209, 213, 219, 0.9);
 }
@@ -217,16 +218,11 @@ button {
 .app-topbar-left {
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
-.topbar-logo-img {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: #f3f4f6;
-  object-fit: contain;
-  padding: 4px;
+.topbar-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .topbar-title {
@@ -238,6 +234,34 @@ button {
   font-size: 11px;
   color: var(--fm-muted);
 }
+
+/* Centro topbar – visibile solo su desktop */
+.app-topbar-center {
+  display: none;
+  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.topbar-logo-big {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  object-fit: contain;
+  background: #f3f4f6;
+  padding: 6px;
+}
+
+.promo-strip {
+  font-size: 12px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0ea5e9, #22c55e);
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+/* Destra topbar */
 
 .app-topbar-right {
   display: flex;
@@ -251,24 +275,24 @@ button {
   color: var(--fm-muted);
 }
 
-/* Hamburger */
+/* Hamburger più grande */
 
 .hamburger-btn {
-  width: 34px;
-  height: 30px;
+  width: 44px;
+  height: 36px;
   border-radius: 999px;
   background: #f3f4f6;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 5px;
   padding: 0;
 }
 
 .hamburger-btn span {
-  width: 16px;
-  height: 2px;
+  width: 20px;
+  height: 2.5px;
   border-radius: 999px;
   background: #111827;
 }
@@ -350,7 +374,7 @@ button {
 
 .app-main {
   flex: 1;
-  padding: 16px;
+  padding: 16px 10px 18px;
   display: flex;
   justify-content: center;
 }
@@ -361,26 +385,28 @@ button {
 
 .home-screen {
   width: 100%;
-  max-width: 1080px;
+  max-width: 1100px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
 }
 
+/* Card con icone */
+
 .icon-grid-wrapper {
   background: #ffffff;
   border-radius: var(--fm-radius-lg);
   border: 1px solid rgba(209, 213, 219, 0.9);
-  padding: 18px 14px 16px;
+  padding: 18px 14px 14px;
   box-shadow: 0 14px 36px rgba(15, 23, 42, 0.18);
 }
 
-/* Griglia 3x4 come nello screenshot */
+/* Griglia 3x4 su mobile */
 
 .icon-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px 8px;
+  gap: 16px 10px;
   justify-items: center;
 }
 
@@ -403,7 +429,7 @@ button {
   box-shadow: 0 6px 14px rgba(15, 23, 42, 0.2);
 }
 
-/* Colori come app tipo */
+/* Colori */
 
 .icon-yellow {
   background: #facc15;
@@ -438,7 +464,7 @@ button {
 }
 
 .icon-bordeaux {
-  background: #f97373;
+  background: #fb7185;
 }
 
 .icon-cyan {
@@ -465,6 +491,19 @@ button {
   font-size: 12px;
   color: var(--fm-muted);
   text-align: center;
+}
+
+/* Banner pubblicità */
+
+.home-banner {
+  margin-top: 12px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: radial-gradient(circle at top left, #0ea5e9, #22c55e);
+  color: #ffffff;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 600;
 }
 
 /* Pannello laterale per desktop */
@@ -496,33 +535,53 @@ button {
    ============================ */
 
 @media (min-width: 900px) {
+  /* Topbar: mostra centro con logo grande + promo */
+  .app-topbar {
+    padding: 10px 24px;
+  }
+
+  .app-topbar-center {
+    display: flex;
+  }
+
+  /* Layout home: icone larghe + pannello dx */
   .home-screen {
-    grid-template-columns: minmax(0, 1.2fr) 300px;
+    max-width: 1300px;
+    grid-template-columns: minmax(0, 2.1fr) 320px;
     align-items: stretch;
+    gap: 18px;
   }
 
-  .home-desktop-panel {
-    display: block;
+  .icon-grid-wrapper {
+    padding: 20px 22px 16px;
+    border-radius: 26px;
   }
 
+  /* Griglia più “da angolo a angolo” e icone quadrate/allargate */
   .icon-grid {
-    gap: 18px 14px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px 16px;
   }
 
   .icon-circle {
-    width: 70px;
-    height: 70px;
-    font-size: 30px;
+    width: 90px;
+    height: 90px;
+    border-radius: 20px; /* più quadrato */
+    font-size: 32px;
   }
 
   .icon-label {
     font-size: 12px;
   }
+
+  .home-desktop-panel {
+    display: block;
+  }
 }
 
 @media (max-width: 600px) {
   .app-main {
-    padding: 12px;
+    padding: 12px 6px 16px;
   }
 
   .icon-circle {
