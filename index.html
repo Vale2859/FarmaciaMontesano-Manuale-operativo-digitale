@@ -1,1 +1,147 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Portale Farmacia Montesano</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="role-dipendente">
+  <div class="app-root">
+    <!-- HEADER -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="logo-pill">
+          <span class="logo-cross">✚</span>
+        </div>
+        <div class="topbar-text">
+          <div class="topbar-title">Farmacia Montesano</div>
+          <div class="topbar-subtitle">Portale interno</div>
+        </div>
+      </div>
 
+      <div class="topbar-center">
+        <span id="portalLabel">Portale Dipendenti</span>
+      </div>
+
+      <div class="topbar-right">
+        <button id="roleToggle" class="chip-button">
+          Modalità: Dipendente
+        </button>
+        <button id="menuToggle" class="icon-button" aria-label="Apri menu">
+          ☰
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENUTO PRINCIPALE -->
+    <main class="app-shell">
+      <!-- Cartellino stato farmacia -->
+      <section class="status-card">
+        <div class="status-pill">FARMACIA APERTA</div>
+        <div class="status-hours">08:00–13:00 · 15:00–20:00</div>
+        <div class="status-location">Matera</div>
+        <div class="status-name">Farmacia Montesano</div>
+        <div class="status-tagline">Pannello operativo quotidiano</div>
+      </section>
+
+      <!-- TILE PRINCIPALI -->
+      <section class="tiles-grid" id="tilesGrid">
+        <!-- Ogni tile ha un "key" usato per la personalizzazione -->
+        <article class="tile" data-key="assenze">
+          <div class="tile-icon">📅</div>
+          <div class="tile-title">Assenze personale / titolare</div>
+          <div class="tile-subtitle">Richieste ferie, permessi, malattia</div>
+        </article>
+
+        <article class="tile" data-key="comunicazioni">
+          <div class="tile-icon">✉️</div>
+          <div class="tile-title">Comunicazioni</div>
+          <div class="tile-subtitle">Messaggi interni, avvisi urgenti</div>
+        </article>
+
+        <article class="tile" data-key="magazzino">
+          <div class="tile-icon">📦</div>
+          <div class="tile-title">Magazziniera</div>
+          <div class="tile-subtitle">Ordini, mancanze, resi</div>
+        </article>
+
+        <article class="tile" data-key="turni">
+          <div class="tile-icon">🕒</div>
+          <div class="tile-title">Turni farmacie</div>
+          <div class="tile-subtitle">Calendario turni e reperibilità</div>
+        </article>
+      </section>
+
+      <!-- BARRA INFORMATIVA / PUBBLICITÀ -->
+      <section class="bottom-strip">
+        <span id="bottomText">
+          Spazio info / promozioni interne Farmacia Montesano
+        </span>
+      </section>
+    </main>
+  </div>
+
+  <!-- MENU LATERALE -->
+  <nav id="sideMenu" class="side-menu" aria-hidden="true">
+    <div class="side-menu-header">
+      <span class="side-menu-title">Menu</span>
+      <button id="closeMenu" class="icon-button" aria-label="Chiudi menu">×</button>
+    </div>
+    <ul class="side-menu-list">
+      <li data-target="assenze">Assenze personale / titolare</li>
+      <li data-target="comunicazioni">Comunicazioni</li>
+      <li data-target="magazzino">Magazziniera</li>
+      <li data-target="turni">Turni farmacie</li>
+
+      <li class="menu-separator"></li>
+
+      <li>Formazione</li>
+
+      <!-- Voci visibili solo per il titolare -->
+      <li class="only-owner">Area personale</li>
+      <li class="only-owner">Area Admin</li>
+      <li class="only-owner open-settings">Impostazioni interfaccia</li>
+
+      <li class="menu-separator"></li>
+      <li class="logout-item">Logout</li>
+    </ul>
+  </nav>
+
+  <!-- PULSANTE FLOTANTE PER IMPOSTAZIONI (solo titolare) -->
+  <button id="openSettingsFab" class="fab only-owner" title="Impostazioni interfaccia">
+    🎨
+  </button>
+
+  <!-- MODALE IMPOSTAZIONI INTERFACCIA -->
+  <div id="settingsModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Impostazioni interfaccia</h2>
+        <button id="closeSettings" class="icon-button">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">
+          Qui il <strong>Titolare</strong> può cambiare testo e colore delle sezioni
+          principali. Le modifiche vengono salvate sul dispositivo.
+        </p>
+
+        <form id="settingsForm">
+          <!-- I campi vengono generati via JS in base alle tile -->
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button id="resetSettings" type="button" class="ghost-button">
+          Ripristina predefiniti
+        </button>
+        <button id="saveSettings" type="button" class="primary-button">
+          Salva impostazioni
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
