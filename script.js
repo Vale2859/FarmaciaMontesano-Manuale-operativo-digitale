@@ -1,7 +1,7 @@
 /* ============================================
    Portale Professionale – Farmacia Montesano
    Gestione front-end con localStorage
-   (versione con Turni Farmacie Matera 11-12/2025)
+   Versione: turni Matera nov/dic 2025 + auto-refresh
    ============================================ */
 
 const LS_USERS = "fm_users";
@@ -37,95 +37,113 @@ function uid() {
    ANAGRAFICA FARMACIE + TURNI 2025 (NOV–DIC)
    ============================================ */
 
-/* Tutte le farmacie di Matera che compaiono
-   nei turni di novembre e dicembre 2025 */
-
-// 🔹 Anagrafica farmacie Matera (nome, indirizzo, telefono)
+// Farmacie coinvolte nei turni di novembre/dicembre
 const PHARMACIES = {
   MONTESANO: {
+    key: "MONTESANO",
     name: "Farmacia Montesano",
     address: "Via Vincenzo Cappelluti, 61 – 75100 Matera",
     phone: "0835 335921"
   },
   SAN_GIUSEPPE: {
+    key: "SAN_GIUSEPPE",
     name: "Farmacia San Giuseppe",
     address: "Via La Martella, 33 – 75100 Matera",
     phone: "0835 405002"
   },
-  PISTONE: {
-    name: "Farmacia Pistone",
-    address: "Via Annunziatella, 76 – 75100 Matera",
-    phone: "0835 332752"
-  },
   ROMEO: {
+    key: "ROMEO",
     name: "Farmacia Romeo",
     address: "Via Pasquale Vena, 3/Bis – 75100 Matera",
     phone: "0835 333901"
   },
-  MATERANA: {
-    name: "Farmacia Materana",
-    address: "Via Enrico Mattei, 76 – 75100 Matera",
-    phone: "0835 309098"
+  MOTTA_ANTONIETTA: {
+    key: "MOTTA_ANTONIETTA",
+    name: "Farmacia Motta Antonietta",
+    address: "Via Dante Alighieri, 33 – 75100 Matera",
+    phone: "0835 330751"
   },
   MOTTA_SILVIA: {
+    key: "MOTTA_SILVIA",
     name: "Farmacia Motta Silvia",
     address: "Via Domenico Ridola, 16 – 75100 Matera",
     phone: "0835 333341"
   },
-  MIRAGLIA: {
-    name: "Farmacia Miraglia",
-    address: "Via dei Pesci, 48 – 75100 Matera",
-    phone: "0835 1975468"
+  MOTTA_UVA_TERESA: {
+    key: "MOTTA_UVA_TERESA",
+    name: "Farmacia Motta–Uva Teresa",
+    address: "Via Nazionale, 120 – 75100 Matera",
+    phone: "0835 385632"
+  },
+  PISTONE: {
+    key: "PISTONE",
+    name: "Farmacia Pistone",
+    address: "Via Annunziatella, 76 – 75100 Matera",
+    phone: "0835 332752"
   },
   UVA_SAS: {
+    key: "UVA_SAS",
     name: "Farmacia Uva & C. S.a.s.",
     address: "Via Gravina, 38/40 – 75100 Matera",
     phone: "0835 264331"
   },
+  VEZZOSO: {
+    key: "VEZZOSO",
+    name: "Farmacia Vezzoso",
+    address: "Via Lucana, 289 – 75100 Matera",
+    phone: "0835 310004"
+  },
+  VIVALDI: {
+    key: "VIVALDI",
+    name: "Farmacia Vivaldi",
+    address: "Piazzetta Antonio Vivaldi, 29 – 75100 Matera",
+    phone: "0835 1654461"
+  },
+  CONIGLIO: {
+    key: "CONIGLIO",
+    name: "Farmacia Coniglio",
+    address: "Via Ascanio Persio, 48 – 75100 Matera",
+    phone: "0835 333911"
+  },
+  DARIA_CLAUDIO: {
+    key: "DARIA_CLAUDIO",
+    name: "Farmacia D'Aria (Via XX Settembre)",
+    address: "Via XX Settembre, 77 – 75100 Matera",
+    phone: "0835 332282"
+  },
+  DARIA_GIUSEPPINA: {
+    key: "DARIA_GIUSEPPINA",
+    name: "Farmacia D'Aria Giuseppina",
+    address: "Via Nazionale, 238 – 75100 Matera",
+    phone: "0835 261728"
+  },
   DINNELLA: {
+    key: "DINNELLA",
     name: "Farmacia Dinnella",
     address: "Via Cappuccini, 72 – 75100 Matera",
     phone: "0835 314707"
   },
   GUERRICCHIO: {
+    key: "GUERRICCHIO",
     name: "Farmacia Guerricchio",
     address: "Via Don Luigi Sturzo, 55/A – 75100 Matera",
     phone: "0835 264428"
   },
-  MOTTA_UVA: {
-    name: "Farmacia Motta–Uva Teresa",
-    address: "Via Nazionale, 120 – 75100 Matera",
-    phone: "0835 385632"
+  MATERANA: {
+    key: "MATERANA",
+    name: "Farmacia Materana",
+    address: "Via Enrico Mattei, 76 – 75100 Matera",
+    phone: "0835 309098"
   },
-  VIVALDI: {
-    name: "Farmacia Vivaldi",
-    address: "Piazzetta Antonio Vivaldi, 29 – 75100 Matera",
-    phone: "0835 1654461"
-  },
-  VEZZOSO: {
-    name: "Farmacia Vezzoso",
-    address: "Via Lucana, 289 – 75100 Matera",
-    phone: "0835 310004"
-  },
-  DARIA_GIUSEPPINA: {
-    name: "Farmacia D'Aria Giuseppina",
-    address: "Via Nazionale, 238 – 75100 Matera",
-    phone: "0835 261728"
-  },
-  DARIA_CLAUDIO: {
-    name: "Farmacia D'Aria (Via XX Settembre)",
-    address: "Via XX Settembre, 77 – 75100 Matera",
-    phone: "0835 332282"
-  },
-  CONIGLIO: {
-    name: "Farmacia Coniglio",
-    address: "Via Ascanio Persio, 48 – 75100 Matera",
-    phone: "0835 333911"
+  MIRAGLIA: {
+    key: "MIRAGLIA",
+    name: "Farmacia Miraglia",
+    address: "Via dei Pesci, 48 – 75100 Matera",
+    phone: "0835 1975468"
   }
 };
-/* Turni ufficiali Matera – novembre/dicembre 2025.
-   Ogni riga: data ISO, farmacia di turno, eventuale appoggio. */
 
+// Turni ufficiali Matera – novembre/dicembre 2025
 const TURNI_2025_NOV_DIC = [
   // NOVEMBRE 2025
   { date: "2025-11-01", turno: "SAN_GIUSEPPE", appoggio: "MOTTA_SILVIA" },
@@ -214,6 +232,21 @@ function getUpcomingTurn(fromDate = new Date()) {
   return best;
 }
 
+const MONTH_NAMES_IT = [
+  "Gennaio",
+  "Febbraio",
+  "Marzo",
+  "Aprile",
+  "Maggio",
+  "Giugno",
+  "Luglio",
+  "Agosto",
+  "Settembre",
+  "Ottobre",
+  "Novembre",
+  "Dicembre"
+];
+
 /* ============================================
    AUTENTICAZIONE
    ============================================ */
@@ -254,12 +287,12 @@ function saveUsers(users) {
   saveJson(LS_USERS, users);
 }
 
-/* Admin di default se non esistono utenti – o ripristino */
+/* Admin di default */
 function seedAdminIfNeeded() {
   let users = loadUsers();
 
   const adminEmail = "admin@farmaciamontesano.it";
-  const adminPassword = "admin123"; // puoi cambiarla qui
+  const adminPassword = "admin123";
 
   let admin = users.find(
     (u) => u.email.toLowerCase() === adminEmail.toLowerCase()
@@ -287,13 +320,13 @@ function seedAdminIfNeeded() {
   saveUsers(users);
 }
 
-/* Registrazione: account in attesa di approvazione */
+/* Registrazione (dipendente o cliente, scelto in registrazione) */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
   const pass = document.getElementById("reg-password").value;
   const roleEl = document.getElementById("reg-role");
-  const chosenRole = roleEl ? roleEl.value : "staff"; // "staff" o "cliente"
+  const chosenRole = roleEl ? roleEl.value : "staff";
 
   const errReg = document.getElementById("auth-error-register");
   if (errReg) {
@@ -336,7 +369,7 @@ function registerUser() {
   showLogin();
 }
 
-/* Login – riconosce automaticamente il ruolo dalla registrazione */
+/* Login (il ruolo viene riconosciuto dall’utente salvato) */
 function login() {
   const email = document.getElementById("login-email").value.trim();
   const pass = document.getElementById("login-password").value;
@@ -553,10 +586,10 @@ function renderFutureAbsencesHome() {
 }
 
 /* ============================================
-   TURNI FARMACIE – RENDER
+   TURNI FARMACIE – HOME + SEZIONE
    ============================================ */
 
-/* Card in home: evidenzia oggi o il prossimo turno disponibile */
+/* Card in home (riquadro celeste) */
 function renderTurniHome() {
   const box = document.getElementById("home-turni-box");
   if (!box) return;
@@ -619,16 +652,38 @@ function renderTurniHome() {
   `;
 }
 
-/* Tabella interna con tutti i turni di novembre/dicembre */
+/* Tabella interna – suddivisione per mese (Novembre, Dicembre) */
 function renderTurniTable() {
   const tbody = document.getElementById("turni-table-body");
   if (!tbody) return;
 
   tbody.innerHTML = "";
 
-  TURNI_2025_NOV_DIC.forEach((t) => {
-    const tr = document.createElement("tr");
+  const sorted = TURNI_2025_NOV_DIC.slice().sort(
+    (a, b) => new Date(a.date + "T00:00:00") - new Date(b.date + "T00:00:00")
+  );
+
+  let currentMonthKey = null;
+
+  sorted.forEach((t) => {
     const d = new Date(t.date + "T00:00:00");
+    const year = d.getFullYear();
+    const month = d.getMonth(); // 0-11
+    const monthKey = `${year}-${month}`;
+
+    // cambio mese -> riga intestazione mese
+    if (monthKey !== currentMonthKey) {
+      currentMonthKey = monthKey;
+      const headerTr = document.createElement("tr");
+      headerTr.className = "turni-month-header-row";
+      headerTr.innerHTML = `
+        <td colspan="3" class="turni-month-header">
+          ${MONTH_NAMES_IT[month]} ${year}
+        </td>
+      `;
+      tbody.appendChild(headerTr);
+    }
+
     const turnoPh = getPharmacy(t.turno);
     const appPh = getPharmacy(t.appoggio);
 
@@ -638,6 +693,7 @@ function renderTurniTable() {
       month: "2-digit"
     });
 
+    const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${dateLabel}</td>
       <td>
@@ -1355,7 +1411,7 @@ function adminResetPassword(id) {
   const u = users.find((x) => x.id === id);
   if (!u) return;
   const newPass = prompt(
-    "Nuova password per " + u.name + " (" + u.email + "):"
+    "Nuova  password per " + u.name + " (" + u.email + "):"
   );
   if (!newPass) return;
   u.password = newPass;
@@ -1421,6 +1477,40 @@ function renderAdminProceduresList() {
 }
 
 /* ============================================
+   AUTO-REFRESH DASHBOARD OGNI 60 SECONDI
+   ============================================ */
+
+function autoRefreshDashboard() {
+  setInterval(() => {
+    const active = loadJson(LS_ACTIVE, null);
+    if (!active) return;
+
+    if (active.role === "cliente") {
+      // in futuro: refresh area clienti
+      return;
+    }
+
+    // Rirenderizza le parti principali
+    renderFutureAbsencesHome();
+    renderTurniHome();
+    renderTurniTable();
+    renderMessages(active);
+    renderProcedures();
+    renderLogistics();
+    loadPersonalData(active);
+    renderTraining(active);
+    renderLeaveTable(active);
+    renderFutureAbsences();
+    if (active.role === "admin") {
+      renderAdminUsers();
+      renderAdminProceduresList();
+      renderAdminLeaveList();
+      populateMessageTargets();
+    }
+  }, 60000); // 1 minuto
+}
+
+/* ============================================
    AVVIO PAGINA
    ============================================ */
 
@@ -1435,4 +1525,7 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     showLogin();
   }
+
+  // parte il refresh automatico ogni minuto
+  autoRefreshDashboard();
 });
