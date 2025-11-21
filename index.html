@@ -111,12 +111,8 @@
     <div id="app" class="app hidden">
       <!-- Barra alta stile app -->
       <header class="app-topbar">
+        <!-- Sinistra: testo farmacia + ruolo -->
         <div class="app-topbar-left">
-          <img
-            src="logo-farmacia-montesano.jpg"
-            alt="Farmacia Montesano"
-            class="topbar-logo-img"
-          />
           <div class="topbar-text">
             <div class="topbar-title">Farmacia Montesano</div>
             <div class="topbar-subtitle" id="topbar-role-label">
@@ -125,6 +121,19 @@
           </div>
         </div>
 
+        <!-- Centro: logo grande + strip promo (solo desktop) -->
+        <div class="app-topbar-center">
+          <img
+            src="logo-farmacia-montesano.jpg"
+            alt="Logo Farmacia Montesano"
+            class="topbar-logo-big"
+          />
+          <div id="promo-strip" class="promo-strip">
+            Sconti -20% a dicembre su Caudalie
+          </div>
+        </div>
+
+        <!-- Destra: utente + hamburger -->
         <div class="app-topbar-right">
           <span id="topbar-user-name" class="topbar-user-name">Utente</span>
           <button
@@ -166,7 +175,7 @@
         <!-- Contenuto principale -->
         <main class="app-main">
           <section id="home-screen" class="home-screen">
-            <!-- Griglia icone tonde stile app telefono -->
+            <!-- Griglia icone tonde/squadrate -->
             <div class="icon-grid-wrapper">
               <div class="icon-grid">
                 <!-- Riga 1 -->
@@ -237,9 +246,14 @@
               <p id="home-placeholder" class="home-placeholder">
                 Tocca un’icona per aprire la funzione (in arrivo).
               </p>
+
+              <!-- Banner pubblicità / promo -->
+              <div class="home-banner">
+                Spazio pubblicità / promo Farmacia Montesano
+              </div>
             </div>
 
-            <!-- Per schermi grandi: riquadro info a destra -->
+            <!-- Pannello info per desktop -->
             <aside class="home-desktop-panel">
               <h3>Benvenuto nel portale</h3>
               <p id="home-welcome-text">
@@ -247,8 +261,8 @@
                 al sito e a tutte le funzioni interne della Farmacia Montesano.
               </p>
               <p class="home-desktop-note">
-                Vista desktop: la griglia rimane centrale come su telefono, qui a
-                lato puoi mostrare riepiloghi (assenze, turni, promozioni, ecc.).
+                Vista desktop: la griglia occupa quasi tutto lo schermo. A lato
+                puoi mostrare riepiloghi (assenze, turni, promozioni speciali).
               </p>
             </aside>
           </section>
