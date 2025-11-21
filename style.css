@@ -1066,3 +1066,40 @@ body {
     max-width: none;        /* niente limite, prende tutta la riga */
   }
 }
+
+/* =======================================================
+   DESKTOP – DASHBOARD A TUTTO SCHERMO (tutte le 3)
+   ======================================================= */
+
+@media (min-width: 1024px) {
+
+  /* meno bordo esterno grigio */
+  .main {
+    padding: 20px 24px 32px;
+  }
+
+  /* il wrapper centrale può occupare tutta la larghezza */
+  .home-app-wrapper {
+    max-width: 100%;
+    padding: 0 32px;
+    justify-content: center;
+  }
+
+  /* il “pannello” interno diventa praticamente full-width e più alto */
+  .app-phone {
+    max-width: 100%;
+    min-height: calc(100vh - 190px);  /* quasi tutto lo schermo in altezza */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* la parte verde in alto nella card un po' più alta */
+  .app-header {
+    min-height: 120px;
+  }
+
+  /* se usi una griglia 4 colonne, resta così ma con più respiro */
+  .app-grid {
+    gap: 24px;
+  }
+}
