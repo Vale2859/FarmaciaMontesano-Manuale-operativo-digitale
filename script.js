@@ -53,6 +53,11 @@ function clearError() {
 function showRegister(ev) {
   if (ev) ev.preventDefault();
   clearError();
+  const eReg = document.getElementById("auth-error-register");
+  if (eReg) {
+    eReg.textContent = "";
+    eReg.classList.add("hidden");
+  }
   document.getElementById("login-box").classList.add("hidden");
   document.getElementById("register-box").classList.remove("hidden");
 }
@@ -60,6 +65,11 @@ function showRegister(ev) {
 function showLogin(ev) {
   if (ev) ev.preventDefault();
   clearError();
+  const eReg = document.getElementById("auth-error-register");
+  if (eReg) {
+    eReg.textContent = "";
+    eReg.classList.add("hidden");
+  }
   document.getElementById("register-box").classList.add("hidden");
   document.getElementById("login-box").classList.remove("hidden");
 }
@@ -105,11 +115,13 @@ function seedAdminIfNeeded() {
   saveUsers(users);
 }
 
-/* Registrazione: account in attesa di approvazione (dipendente) */
+/* Registrazione: dipendente o cliente */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
   const pass = document.getElementById("reg-password").value;
+  const roleSel = document.getElementById("reg-role");
+  const roleChoice = roleSel ? roleSel.value : "dipendente";
 
   const errReg = document.getElementById("auth-error-register");
   if (errReg) {
@@ -134,30 +146,38 @@ function registerUser() {
     return;
   }
 
+  let role = roleChoice === "cliente" ? "cliente" : "staff";
+  let approved = role === "cliente";
+  let active = role === "cliente";
+
   users.push({
     id: uid(),
     name,
     email,
     password: pass,
-    role: "staff", // dipendente
-    active: false,
-    approved: false,
+    role,
+    active,
+    approved,
     createdAt: new Date().toISOString()
   });
 
   saveUsers(users);
-  alert(
-    "Richiesta inviata! L'account dovrà essere approvato dal Titolare prima di poter accedere."
-  );
+
+  if (role === "staff") {
+    alert(
+      "Richiesta inviata! L'account dipendente dovrà essere approvato dal Titolare prima di poter accedere."
+    );
+  } else {
+    alert("Registrazione completata! Puoi effettuare subito l'accesso.");
+  }
+
   showLogin();
 }
 
-/* Login */
+/* Login senza scelta ruolo: decide in base all'utente salvato */
 function login() {
   const email = document.getElementById("login-email").value.trim();
   const pass = document.getElementById("login-password").value;
-  const roleChoiceEl = document.getElementById("login-role");
-  const roleChoice = roleChoiceEl ? roleChoiceEl.value : "dipendente";
 
   if (!email || !pass) {
     showError("Inserisci email e password.");
@@ -166,19 +186,13 @@ function login() {
 
   const users = loadUsers();
 
-  const user = users.find((u) => {
-    if (u.email.toLowerCase() !== email.toLowerCase()) return false;
-    if (u.password !== pass) return false;
-
-    if (roleChoice === "admin") return u.role === "admin";
-    if (roleChoice === "cliente") return u.role === "cliente";
-    // dipendente: qualunque non admin/cliente
-    if (roleChoice === "dipendente") return u.role === "staff";
-    return false;
-  });
+  const user = users.find(
+    (u) =>
+      u.email.toLowerCase() === email.toLowerCase() && u.password === pass
+  );
 
   if (!user) {
-    showError("Credenziali o tipo di accesso non validi.");
+    showError("Credenziali non valide.");
     return;
   }
 
@@ -245,6 +259,8 @@ function openPortal(user) {
     renderLeaveTable(user);
     renderFutureAbsences();
     renderTraining(user);
+    renderTurniHome();
+    renderTurniSection();
     if (user.role === "admin") {
       renderAdminUsers();
       renderAdminProceduresList();
@@ -259,17 +275,22 @@ function openPortal(user) {
 
     showSection("section-home");
   }
+
+  updateLeaveBadges();
 }
 
 function goHome() {
   const active = loadJson(LS_ACTIVE, null);
   if (!active) return;
+  const staffPortal = document.getElementById("staff-portal");
+  const customerPortal = document.getElementById("customer-portal");
+
   if (active.role === "cliente") {
-    document.getElementById("customer-portal").classList.remove("hidden");
-    document.getElementById("staff-portal").classList.add("hidden");
+    if (customerPortal) customerPortal.classList.remove("hidden");
+    if (staffPortal) staffPortal.classList.add("hidden");
   } else {
-    document.getElementById("staff-portal").classList.remove("hidden");
-    document.getElementById("customer-portal").classList.add("hidden");
+    if (staffPortal) staffPortal.classList.remove("hidden");
+    if (customerPortal) customerPortal.classList.add("hidden");
     showSection("section-home");
   }
 }
@@ -281,11 +302,33 @@ function showSection(id) {
   const target = document.getElementById(id);
   if (target) target.classList.add("visible");
 
+  // evidenzia nel menu laterale
+  const links = document.querySelectorAll(".sidebar-link");
+  links.forEach((btn) => {
+    const sec = btn.getAttribute("data-section");
+    if (sec === id) btn.classList.add("active");
+    else btn.classList.remove("active");
+  });
+
   if (id === "section-assenze") {
     renderFutureAbsences();
     const active = loadJson(LS_ACTIVE, null);
     if (active) renderLeaveTable(active);
   }
+
+  if (id === "section-home") {
+    const active = loadJson(LS_ACTIVE, null);
+    if (active) {
+      renderFutureAbsencesHome();
+      renderHomeMessagesPreview(active);
+    }
+  }
+
+  if (id === "section-turni") {
+    renderTurniSection();
+  }
+
+  updateLeaveBadges();
 }
 
 /* ============================================
@@ -316,14 +359,10 @@ function initHome(user) {
   const tag = document.getElementById("home-daytag");
   if (tag) tag.textContent = todayLabel();
 
-  const summary = document.getElementById("home-abs-summary");
-  if (summary) {
-    summary.innerHTML = "<p>Caricamento assenze…</p>";
-  }
-
   renderFutureAbsencesHome();
-
-  // Piccolo "random tips" potremmo metterlo in futuro qui
+  renderTurniHome();
+  renderHomeMessagesPreview(user);
+  updateLeaveBadges();
 }
 
 /* Assenze future per card verde in home */
@@ -375,7 +414,142 @@ function renderFutureAbsencesHome() {
   });
 }
 
-/* ========== PROCEDURE ========== */
+/* Preview comunicazioni in home */
+function renderHomeMessagesPreview(user) {
+  const preview = document.getElementById("home-messages-preview");
+  if (!preview) return;
+  const all = getMessages();
+  const visible = all.filter(
+    (m) => m.target === "all" || m.target === (user ? user.id : null)
+  );
+  if (visible.length === 0) {
+    preview.textContent = "Nessuna comunicazione recente.";
+    return;
+  }
+  const last = visible[visible.length - 1];
+  preview.textContent = last.title;
+}
+
+/* Badge assenze (pallini numerici) */
+
+function countPendingLeavesGlobal() {
+  const all = loadJson(LS_LEAVE, []);
+  return all.filter((r) => r.status === "attesa").length;
+}
+
+function countPendingLeavesForUser(user) {
+  const all = loadJson(LS_LEAVE, []);
+  return all.filter(
+    (r) => r.status === "attesa" && r.userId === user.id
+  ).length;
+}
+
+function updateLeaveBadges() {
+  const active = loadJson(LS_ACTIVE, null);
+  const total = countPendingLeavesGlobal();
+  let myPending = 0;
+  if (active) {
+    myPending = countPendingLeavesForUser(active);
+  }
+
+  const homeBadge = document.getElementById("badge-home-assenze");
+  const sideBadge = document.getElementById("badge-sidebar-assenze");
+  const topBadge = document.getElementById("topbar-badge-assenze");
+
+  const showCount =
+    active && active.role === "admin" ? total : myPending;
+
+  function applyBadge(el, count) {
+    if (!el) return;
+    if (!count) {
+      el.classList.add("hidden-badge");
+      el.textContent = "";
+    } else {
+      el.classList.remove("hidden-badge");
+      el.textContent = count > 99 ? "99+" : String(count);
+    }
+  }
+
+  applyBadge(homeBadge, showCount);
+  applyBadge(sideBadge, showCount);
+
+  // in topbar solo per titolare, con conteggio globale
+  if (topBadge) {
+    if (active && active.role === "admin" && total > 0) {
+      topBadge.classList.remove("hidden-badge");
+      topBadge.textContent = total > 99 ? "99+" : String(total);
+    } else {
+      topBadge.classList.add("hidden-badge");
+      topBadge.textContent = "";
+    }
+  }
+}
+
+/* ============================================
+   TURNI FARMACIE (statico per ora)
+   ============================================ */
+
+const STATIC_TURNS = [
+  {
+    giorno: "Oggi",
+    descrizione: "Farmacia Montesano (h24) · Farmacia Centrale"
+  },
+  {
+    giorno: "Domani",
+    descrizione: "Farmacia San Pio · Farmacia Madonna della Bruna"
+  },
+  {
+    giorno: "Dopodomani",
+    descrizione: "Farmacia Venusio · Farmacia XX Settembre"
+  }
+];
+
+function getTurniFarmacie() {
+  return STATIC_TURNS;
+}
+
+function renderTurniHome() {
+  const box = document.getElementById("home-turni-list");
+  if (!box) return;
+  const data = getTurniFarmacie();
+  if (!data || data.length === 0) {
+    box.innerHTML =
+      "<div class='home-abs-pill'>Nessun turno caricato.</div>";
+    return;
+  }
+  box.innerHTML = "";
+  data.forEach((t) => {
+    const div = document.createElement("div");
+    div.className = "home-abs-pill";
+    div.innerHTML = `<strong>${t.giorno}</strong><br/><span>${t.descrizione}</span>`;
+    box.appendChild(div);
+  });
+}
+
+function renderTurniSection() {
+  const box = document.getElementById("turni-list");
+  if (!box) return;
+  const data = getTurniFarmacie();
+  if (!data || data.length === 0) {
+    box.innerHTML =
+      "<div class='list-item'>Nessun turno disponibile.</div>";
+    return;
+  }
+  box.innerHTML = "";
+  data.forEach((t) => {
+    const div = document.createElement("div");
+    div.className = "list-item";
+    div.innerHTML = `
+      <div class="list-item-title">${t.giorno}</div>
+      <div>${t.descrizione}</div>
+    `;
+    box.appendChild(div);
+  });
+}
+
+/* ============================================
+   PROCEDURE
+   ============================================ */
 
 function ensureDemoProcedures() {
   let procs = loadJson(LS_PROCEDURES, null);
@@ -445,7 +619,6 @@ function renderProcedures() {
     return;
   }
 
-  // titolo
   const title = document.createElement("div");
   title.className = "proc-cat-title";
   title.textContent = "Categorie";
@@ -545,15 +718,17 @@ function renderMessages(user) {
   );
   if (visible.length === 0) {
     cont.innerHTML = `<div class="list-item">Nessuna comunicazione.</div>`;
-    return;
+  } else {
+    cont.innerHTML = visible
+      .slice()
+      .reverse()
+      .map((m) =>
+        templateMessage(m.title, m.body, m.priority, m.createdAt)
+      )
+      .join("");
   }
-  cont.innerHTML = visible
-    .slice()
-    .reverse()
-    .map((m) =>
-      templateMessage(m.title, m.body, m.priority, m.createdAt)
-    )
-    .join("");
+
+  renderHomeMessagesPreview(user);
 }
 
 function adminSendMessage() {
@@ -584,7 +759,6 @@ function adminSendMessage() {
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
     renderMessages(active);
-    renderFutureAbsencesHome();
   }
 
   alert("Comunicazione inviata.");
@@ -596,7 +770,7 @@ function populateMessageTargets() {
   const users = loadUsers().filter((u) => u.approved && u.active);
   sel.innerHTML = `<option value="all">Tutti i dipendenti</option>`;
   users.forEach((u) => {
-    if (u.role === "cliente") return; // non serve per ora
+    if (u.role === "cliente") return;
     const opt = document.createElement("option");
     opt.value = u.id;
     opt.textContent = u.name + " (" + u.email + ")";
@@ -673,6 +847,7 @@ function sendLeaveRequest() {
     renderAdminLeaveList();
   }
 
+  updateLeaveBadges();
   alert("Richiesta inviata.");
 }
 
@@ -830,6 +1005,7 @@ function adminSetLeaveStatus(id, status) {
   }
   renderFutureAbsencesHome();
   renderFutureAbsences();
+  updateLeaveBadges();
 }
 
 /* ============================================
@@ -1147,4 +1323,6 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     showLogin();
   }
+
+  updateLeaveBadges();
 });
