@@ -1,6 +1,7 @@
 /* ============================================
    Portale Professionale – Farmacia Montesano
    Gestione front-end con localStorage
+   (versione con Turni Farmacie Matera 11-12/2025)
    ============================================ */
 
 const LS_USERS = "fm_users";
@@ -33,6 +34,209 @@ function uid() {
 }
 
 /* ============================================
+   ANAGRAFICA FARMACIE + TURNI 2025 (NOV–DIC)
+   ============================================ */
+
+/* Tutte le farmacie di Matera che compaiono
+   nei turni di novembre e dicembre 2025 */
+
+const PHARMACIES = {
+  MONTESANO: {
+    key: "MONTESANO",
+    name: "Farmacia Montesano",
+    address: "Via Cappelluti 61, 75100 Matera (MT)",
+    phone: "0835 335921"
+  },
+  SAN_GIUSEPPE: {
+    key: "SAN_GIUSEPPE",
+    name: "Farmacia San Giuseppe",
+    address: "Via La Martella 33, 75100 Matera (MT)",
+    phone: "0835 405002"
+  },
+  ROMEO: {
+    key: "ROMEO",
+    name: "Farmacia Romeo",
+    address: "Via Pasquale Vena 3/BIS, 75100 Matera (MT)",
+    phone: "0835 333901"
+  },
+  MOTTA_ANTONIETTA: {
+    key: "MOTTA_ANTONIETTA",
+    name: "Farmacia Motta Antonietta",
+    address: "Via Dante 33, 75100 Matera (MT)",
+    phone: "0835 330751"
+  },
+  MOTTA_SILVIA: {
+    key: "MOTTA_SILVIA",
+    name: "Farmacia Motta Silvia",
+    address: "Via Ridola 16, 75100 Matera (MT)",
+    phone: "0835 333341"
+  },
+  MOTTA_UVA_TERESA: {
+    key: "MOTTA_UVA_TERESA",
+    name: "Farmacia Motta-Uva Teresa",
+    address: "Via Nazionale 120, 75100 Matera (MT)",
+    phone: "0835 385632"
+  },
+  PISTONE: {
+    key: "PISTONE",
+    name: "Farmacia Pistone",
+    address: "Via Annunziatella 76, 75100 Matera (MT)",
+    phone: "0835 332752"
+  },
+  UVA_SAS: {
+    key: "UVA_SAS",
+    name: "Farmacia Uva & C.",
+    address: "Via Gravina 40, 75100 Matera (MT)",
+    phone: "0835 264331"
+  },
+  VEZZOSO: {
+    key: "VEZZOSO",
+    name: "Farmacia Vezzoso",
+    address: "Via Lucana 289, 75100 Matera (MT)",
+    phone: "0835 310004"
+  },
+  VIVALDI: {
+    key: "VIVALDI",
+    name: "Farmacia Vivaldi",
+    address: "Piazzetta Antonio Vivaldi 29, 75100 Matera (MT)",
+    phone: "0835 1654461"
+  },
+  CONIGLIO: {
+    key: "CONIGLIO",
+    name: "Farmacia Coniglio",
+    address: "Via Ascanio Persio 48, 75100 Matera (MT)",
+    phone: "0835 333911"
+  },
+  DARIA_CLAUDIO: {
+    key: "DARIA_CLAUDIO",
+    name: "Farmacia D'Aria Claudio",
+    address: "Via XX Settembre 77, 75100 Matera (MT)",
+    phone: "0835 332282"
+  },
+  DARIA_GIUSEPPINA: {
+    key: "DARIA_GIUSEPPINA",
+    name: "Farmacia D'Aria Giuseppina",
+    address: "Via Nazionale 238, 75100 Matera (MT)",
+    phone: "0835 261728"
+  },
+  DINNELLA: {
+    key: "DINNELLA",
+    name: "Farmacia Dinnella",
+    address: "Via Cappuccini 72, 75100 Matera (MT)",
+    phone: "0835 314707"
+  },
+  GUERRICCHIO: {
+    key: "GUERRICCHIO",
+    name: "Farmacia Guerricchio",
+    address: "Via Don Luigi Sturzo 55/A, 75100 Matera (MT)",
+    phone: "0835 264428"
+  },
+  MATERANA: {
+    key: "MATERANA",
+    name: "Farmacia Materana",
+    address: "Via Enrico Mattei 76, 75100 Matera (MT)",
+    phone: "0835 309098"
+  },
+  MIRAGLIA: {
+    key: "MIRAGLIA",
+    name: "Farmacia Miraglia",
+    address: "Via dei Pesci 48, 75100 Matera (MT)",
+    phone: "0835 1975468"
+  }
+};
+
+/* Turni ufficiali Matera – novembre/dicembre 2025.
+   Ogni riga: data ISO, farmacia di turno, eventuale appoggio. */
+
+const TURNI_2025_NOV_DIC = [
+  // NOVEMBRE 2025
+  { date: "2025-11-01", turno: "SAN_GIUSEPPE", appoggio: "MOTTA_SILVIA" },
+  { date: "2025-11-02", turno: "ROMEO", appoggio: "GUERRICCHIO" },
+  { date: "2025-11-03", turno: "MOTTA_ANTONIETTA", appoggio: null },
+  { date: "2025-11-04", turno: "MOTTA_SILVIA", appoggio: null },
+  { date: "2025-11-05", turno: "MOTTA_UVA_TERESA", appoggio: null },
+  { date: "2025-11-06", turno: "PISTONE", appoggio: null },
+  { date: "2025-11-07", turno: "ROMEO", appoggio: null },
+  { date: "2025-11-08", turno: "SAN_GIUSEPPE", appoggio: null },
+  { date: "2025-11-09", turno: "PISTONE", appoggio: "DINNELLA" },
+  { date: "2025-11-10", turno: "UVA_SAS", appoggio: null },
+  { date: "2025-11-11", turno: "VEZZOSO", appoggio: null },
+  { date: "2025-11-12", turno: "VIVALDI", appoggio: null },
+  { date: "2025-11-13", turno: "CONIGLIO", appoggio: null },
+  { date: "2025-11-14", turno: "DARIA_CLAUDIO", appoggio: null },
+  { date: "2025-11-15", turno: "DARIA_GIUSEPPINA", appoggio: null },
+  { date: "2025-11-16", turno: "MOTTA_UVA_TERESA", appoggio: "VEZZOSO" },
+  { date: "2025-11-17", turno: "DINNELLA", appoggio: null },
+  { date: "2025-11-18", turno: "GUERRICCHIO", appoggio: null },
+  { date: "2025-11-19", turno: "MATERANA", appoggio: null },
+  { date: "2025-11-20", turno: "MIRAGLIA", appoggio: null },
+  { date: "2025-11-21", turno: "MONTESANO", appoggio: null },
+  { date: "2025-11-22", turno: "MOTTA_ANTONIETTA", appoggio: null },
+  { date: "2025-11-23", turno: "MOTTA_SILVIA", appoggio: "SAN_GIUSEPPE" },
+  { date: "2025-11-24", turno: "MOTTA_UVA_TERESA", appoggio: null },
+  { date: "2025-11-25", turno: "PISTONE", appoggio: null },
+  { date: "2025-11-26", turno: "MOTTA_SILVIA", appoggio: null },
+  { date: "2025-11-27", turno: "ROMEO", appoggio: null },
+  { date: "2025-11-28", turno: "SAN_GIUSEPPE", appoggio: null },
+  { date: "2025-11-29", turno: "VEZZOSO", appoggio: null },
+  { date: "2025-11-30", turno: "MOTTA_ANTONIETTA", appoggio: "MIRAGLIA" },
+
+  // DICEMBRE 2025
+  { date: "2025-12-01", turno: "UVA_SAS", appoggio: null },
+  { date: "2025-12-02", turno: "VIVALDI", appoggio: null },
+  { date: "2025-12-03", turno: "CONIGLIO", appoggio: null },
+  { date: "2025-12-04", turno: "DARIA_CLAUDIO", appoggio: null },
+  { date: "2025-12-05", turno: "DARIA_GIUSEPPINA", appoggio: null },
+  { date: "2025-12-06", turno: "DINNELLA", appoggio: null },
+  { date: "2025-12-07", turno: "MONTESANO", appoggio: "DARIA_GIUSEPPINA" },
+  { date: "2025-12-08", turno: "PISTONE", appoggio: "VIVALDI" },
+  { date: "2025-12-09", turno: "GUERRICCHIO", appoggio: null },
+  { date: "2025-12-10", turno: "MATERANA", appoggio: null },
+  { date: "2025-12-11", turno: "MIRAGLIA", appoggio: null },
+  { date: "2025-12-12", turno: "MONTESANO", appoggio: null },
+  { date: "2025-12-13", turno: "MOTTA_ANTONIETTA", appoggio: null },
+  { date: "2025-12-14", turno: "MIRAGLIA", appoggio: "MOTTA_ANTONIETTA" },
+  { date: "2025-12-15", turno: "MOTTA_SILVIA", appoggio: null },
+  { date: "2025-12-16", turno: "MOTTA_UVA_TERESA", appoggio: null },
+  { date: "2025-12-17", turno: "PISTONE", appoggio: null },
+  { date: "2025-12-18", turno: "ROMEO", appoggio: null },
+  { date: "2025-12-19", turno: "SAN_GIUSEPPE", appoggio: null },
+  { date: "2025-12-20", turno: "VEZZOSO", appoggio: null },
+  { date: "2025-12-21", turno: "MATERANA", appoggio: "CONIGLIO" },
+  { date: "2025-12-22", turno: "UVA_SAS", appoggio: null },
+  { date: "2025-12-23", turno: "VIVALDI", appoggio: null },
+  { date: "2025-12-24", turno: "CONIGLIO", appoggio: null },
+  { date: "2025-12-25", turno: "GUERRICCHIO", appoggio: "ROMEO" },
+  { date: "2025-12-26", turno: "DINNELLA", appoggio: "PISTONE" },
+  { date: "2025-12-27", turno: "DARIA_CLAUDIO", appoggio: null },
+  { date: "2025-12-28", turno: "DARIA_GIUSEPPINA", appoggio: "MONTESANO" },
+  { date: "2025-12-29", turno: "DINNELLA", appoggio: null },
+  { date: "2025-12-30", turno: "GUERRICCHIO", appoggio: null },
+  { date: "2025-12-31", turno: "DARIA_GIUSEPPINA", appoggio: null }
+];
+
+function getPharmacy(key) {
+  return key ? PHARMACIES[key] || null : null;
+}
+
+function getTurnByDate(isoDate) {
+  return TURNI_2025_NOV_DIC.find((t) => t.date === isoDate) || null;
+}
+
+function getUpcomingTurn(fromDate = new Date()) {
+  const ref = new Date(fromDate);
+  ref.setHours(0, 0, 0, 0);
+  let best = null;
+  TURNI_2025_NOV_DIC.forEach((t) => {
+    const d = new Date(t.date + "T00:00:00");
+    if (d >= ref) {
+      if (!best || d < new Date(best.date + "T00:00:00")) best = t;
+    }
+  });
+  return best;
+}
+
+/* ============================================
    AUTENTICAZIONE
    ============================================ */
 
@@ -53,11 +257,6 @@ function clearError() {
 function showRegister(ev) {
   if (ev) ev.preventDefault();
   clearError();
-  const eReg = document.getElementById("auth-error-register");
-  if (eReg) {
-    eReg.textContent = "";
-    eReg.classList.add("hidden");
-  }
   document.getElementById("login-box").classList.add("hidden");
   document.getElementById("register-box").classList.remove("hidden");
 }
@@ -65,11 +264,6 @@ function showRegister(ev) {
 function showLogin(ev) {
   if (ev) ev.preventDefault();
   clearError();
-  const eReg = document.getElementById("auth-error-register");
-  if (eReg) {
-    eReg.textContent = "";
-    eReg.classList.add("hidden");
-  }
   document.getElementById("register-box").classList.add("hidden");
   document.getElementById("login-box").classList.remove("hidden");
 }
@@ -115,13 +309,13 @@ function seedAdminIfNeeded() {
   saveUsers(users);
 }
 
-/* Registrazione: dipendente o cliente */
+/* Registrazione: account in attesa di approvazione */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
   const pass = document.getElementById("reg-password").value;
-  const roleSel = document.getElementById("reg-role");
-  const roleChoice = roleSel ? roleSel.value : "dipendente";
+  const roleEl = document.getElementById("reg-role");
+  const chosenRole = roleEl ? roleEl.value : "staff"; // "staff" o "cliente"
 
   const errReg = document.getElementById("auth-error-register");
   if (errReg) {
@@ -146,35 +340,25 @@ function registerUser() {
     return;
   }
 
-  let role = roleChoice === "cliente" ? "cliente" : "staff";
-  let approved = role === "cliente";
-  let active = role === "cliente";
-
   users.push({
     id: uid(),
     name,
     email,
     password: pass,
-    role,
-    active,
-    approved,
+    role: chosenRole === "cliente" ? "cliente" : "staff",
+    active: false,
+    approved: false,
     createdAt: new Date().toISOString()
   });
 
   saveUsers(users);
-
-  if (role === "staff") {
-    alert(
-      "Richiesta inviata! L'account dipendente dovrà essere approvato dal Titolare prima di poter accedere."
-    );
-  } else {
-    alert("Registrazione completata! Puoi effettuare subito l'accesso.");
-  }
-
+  alert(
+    "Richiesta inviata! L'account dovrà essere approvato dal Titolare prima di poter accedere."
+  );
   showLogin();
 }
 
-/* Login senza scelta ruolo: decide in base all'utente salvato */
+/* Login – riconosce automaticamente il ruolo dalla registrazione */
 function login() {
   const email = document.getElementById("login-email").value.trim();
   const pass = document.getElementById("login-password").value;
@@ -208,8 +392,10 @@ function login() {
 /* Logout */
 function logout() {
   localStorage.removeItem(LS_ACTIVE);
-  document.getElementById("portal").classList.add("hidden");
-  document.getElementById("auth").classList.remove("hidden");
+  const portal = document.getElementById("portal");
+  const auth = document.getElementById("auth");
+  if (portal) portal.classList.add("hidden");
+  if (auth) auth.classList.remove("hidden");
   showLogin();
 }
 
@@ -225,8 +411,10 @@ function togglePassword() {
    ============================================ */
 
 function openPortal(user) {
-  document.getElementById("auth").classList.add("hidden");
-  document.getElementById("portal").classList.remove("hidden");
+  const auth = document.getElementById("auth");
+  const portal = document.getElementById("portal");
+  if (auth) auth.classList.add("hidden");
+  if (portal) portal.classList.remove("hidden");
 
   const nameSpan = document.getElementById("user-name-display");
   const roleSpan = document.getElementById("user-role-display");
@@ -250,7 +438,6 @@ function openPortal(user) {
     if (customerPortal) customerPortal.classList.add("hidden");
     if (staffPortal) staffPortal.classList.remove("hidden");
 
-    // inizializzazioni portale staff
     initHome(user);
     renderProcedures();
     renderMessages(user);
@@ -260,7 +447,8 @@ function openPortal(user) {
     renderFutureAbsences();
     renderTraining(user);
     renderTurniHome();
-    renderTurniSection();
+    renderTurniTable();
+
     if (user.role === "admin") {
       renderAdminUsers();
       renderAdminProceduresList();
@@ -275,8 +463,6 @@ function openPortal(user) {
 
     showSection("section-home");
   }
-
-  updateLeaveBadges();
 }
 
 function goHome() {
@@ -302,33 +488,15 @@ function showSection(id) {
   const target = document.getElementById(id);
   if (target) target.classList.add("visible");
 
-  // evidenzia nel menu laterale
-  const links = document.querySelectorAll(".sidebar-link");
-  links.forEach((btn) => {
-    const sec = btn.getAttribute("data-section");
-    if (sec === id) btn.classList.add("active");
-    else btn.classList.remove("active");
-  });
-
   if (id === "section-assenze") {
     renderFutureAbsences();
     const active = loadJson(LS_ACTIVE, null);
     if (active) renderLeaveTable(active);
   }
 
-  if (id === "section-home") {
-    const active = loadJson(LS_ACTIVE, null);
-    if (active) {
-      renderFutureAbsencesHome();
-      renderHomeMessagesPreview(active);
-    }
-  }
-
   if (id === "section-turni") {
-    renderTurniSection();
+    renderTurniTable();
   }
-
-  updateLeaveBadges();
 }
 
 /* ============================================
@@ -344,25 +512,17 @@ function todayLabel() {
   });
 }
 
-function randomPhrase() {
-  const list = [
-    "Controllare sempre gli anticipi prima di chiusura cassa.",
-    "Ricordarsi di verificare il collegamento POS/gestionale.",
-    "Aggiornare i display delle promozioni se necessario.",
-    "Gentilezza sempre con tutti i clienti.",
-    "Segnare eventuali resi o anomalie in logistica."
-  ];
-  return list[Math.floor(Math.random() * list.length)];
-}
-
 function initHome(user) {
   const tag = document.getElementById("home-daytag");
   if (tag) tag.textContent = todayLabel();
 
+  const summary = document.getElementById("home-abs-summary");
+  if (summary) {
+    summary.innerHTML = "<p>Caricamento assenze…</p>";
+  }
+
   renderFutureAbsencesHome();
   renderTurniHome();
-  renderHomeMessagesPreview(user);
-  updateLeaveBadges();
 }
 
 /* Assenze future per card verde in home */
@@ -414,136 +574,114 @@ function renderFutureAbsencesHome() {
   });
 }
 
-/* Preview comunicazioni in home */
-function renderHomeMessagesPreview(user) {
-  const preview = document.getElementById("home-messages-preview");
-  if (!preview) return;
-  const all = getMessages();
-  const visible = all.filter(
-    (m) => m.target === "all" || m.target === (user ? user.id : null)
-  );
-  if (visible.length === 0) {
-    preview.textContent = "Nessuna comunicazione recente.";
-    return;
-  }
-  const last = visible[visible.length - 1];
-  preview.textContent = last.title;
-}
-
-/* Badge assenze (pallini numerici) */
-
-function countPendingLeavesGlobal() {
-  const all = loadJson(LS_LEAVE, []);
-  return all.filter((r) => r.status === "attesa").length;
-}
-
-function countPendingLeavesForUser(user) {
-  const all = loadJson(LS_LEAVE, []);
-  return all.filter(
-    (r) => r.status === "attesa" && r.userId === user.id
-  ).length;
-}
-
-function updateLeaveBadges() {
-  const active = loadJson(LS_ACTIVE, null);
-  const total = countPendingLeavesGlobal();
-  let myPending = 0;
-  if (active) {
-    myPending = countPendingLeavesForUser(active);
-  }
-
-  const homeBadge = document.getElementById("badge-home-assenze");
-  const sideBadge = document.getElementById("badge-sidebar-assenze");
-  const topBadge = document.getElementById("topbar-badge-assenze");
-
-  const showCount =
-    active && active.role === "admin" ? total : myPending;
-
-  function applyBadge(el, count) {
-    if (!el) return;
-    if (!count) {
-      el.classList.add("hidden-badge");
-      el.textContent = "";
-    } else {
-      el.classList.remove("hidden-badge");
-      el.textContent = count > 99 ? "99+" : String(count);
-    }
-  }
-
-  applyBadge(homeBadge, showCount);
-  applyBadge(sideBadge, showCount);
-
-  // in topbar solo per titolare, con conteggio globale
-  if (topBadge) {
-    if (active && active.role === "admin" && total > 0) {
-      topBadge.classList.remove("hidden-badge");
-      topBadge.textContent = total > 99 ? "99+" : String(total);
-    } else {
-      topBadge.classList.add("hidden-badge");
-      topBadge.textContent = "";
-    }
-  }
-}
-
 /* ============================================
-   TURNI FARMACIE (statico per ora)
+   TURNI FARMACIE – RENDER
    ============================================ */
 
-const STATIC_TURNS = [
-  {
-    giorno: "Oggi",
-    descrizione: "Farmacia Montesano (h24) · Farmacia Centrale"
-  },
-  {
-    giorno: "Domani",
-    descrizione: "Farmacia San Pio · Farmacia Madonna della Bruna"
-  },
-  {
-    giorno: "Dopodomani",
-    descrizione: "Farmacia Venusio · Farmacia XX Settembre"
-  }
-];
-
-function getTurniFarmacie() {
-  return STATIC_TURNS;
-}
-
+/* Card in home: evidenzia oggi o il prossimo turno disponibile */
 function renderTurniHome() {
-  const box = document.getElementById("home-turni-list");
+  const box = document.getElementById("home-turni-box");
   if (!box) return;
-  const data = getTurniFarmacie();
-  if (!data || data.length === 0) {
+
+  const today = new Date();
+  const todayIso = today.toISOString().slice(0, 10);
+  let turn = getTurnByDate(todayIso);
+  let isToday = true;
+
+  if (!turn) {
+    turn = getUpcomingTurn(today);
+    isToday = false;
+  }
+
+  if (!turn) {
     box.innerHTML =
-      "<div class='home-abs-pill'>Nessun turno caricato.</div>";
+      "<p class='small-text'>Nessun turno disponibile per novembre/dicembre 2025.</p>";
     return;
   }
-  box.innerHTML = "";
-  data.forEach((t) => {
-    const div = document.createElement("div");
-    div.className = "home-abs-pill";
-    div.innerHTML = `<strong>${t.giorno}</strong><br/><span>${t.descrizione}</span>`;
-    box.appendChild(div);
+
+  const turnoPh = getPharmacy(turn.turno);
+  const appPh = getPharmacy(turn.appoggio);
+
+  const d = new Date(turn.date + "T00:00:00");
+  const dateLabel = d.toLocaleDateString("it-IT", {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit"
   });
+
+  box.innerHTML = `
+    <div class="turni-home-header">
+      <div class="turni-home-tag">${
+        isToday ? "Turno di oggi" : "Prossimo turno disponibile"
+      }</div>
+      <div class="turni-home-date">${dateLabel}</div>
+    </div>
+    <div class="turni-home-main">
+      <div class="turni-home-row">
+        <span class="turni-label">Farmacia di turno</span>
+        <span class="turni-value">
+          <strong>${turnoPh ? turnoPh.name : "-"}</strong><br>
+          <span>${turnoPh ? turnoPh.address : ""}</span><br>
+          <span>Tel: ${turnoPh ? turnoPh.phone : ""}</span>
+        </span>
+      </div>
+      ${
+        appPh
+          ? `<div class="turni-home-row">
+               <span class="turni-label">Farmacia di appoggio</span>
+               <span class="turni-value">
+                 <strong>${appPh.name}</strong><br>
+                 <span>${appPh.address}</span><br>
+                 <span>Tel: ${appPh.phone}</span>
+               </span>
+             </div>`
+          : ""
+      }
+    </div>
+  `;
 }
 
-function renderTurniSection() {
-  const box = document.getElementById("turni-list");
-  if (!box) return;
-  const data = getTurniFarmacie();
-  if (!data || data.length === 0) {
-    box.innerHTML =
-      "<div class='list-item'>Nessun turno disponibile.</div>";
-    return;
-  }
-  box.innerHTML = "";
-  data.forEach((t) => {
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerHTML = `
-      <div class="list-item-title">${t.giorno}</div>
-      <div>${t.descrizione}</div>
+/* Tabella interna con tutti i turni di novembre/dicembre */
+function renderTurniTable() {
+  const tbody = document.getElementById("turni-table-body");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  TURNI_2025_NOV_DIC.forEach((t) => {
+    const tr = document.createElement("tr");
+    const d = new Date(t.date + "T00:00:00");
+    const turnoPh = getPharmacy(t.turno);
+    const appPh = getPharmacy(t.appoggio);
+
+    const dateLabel = d.toLocaleDateString("it-IT", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit"
+    });
+
+    tr.innerHTML = `
+      <td>${dateLabel}</td>
+      <td>
+        <strong>${turnoPh ? turnoPh.name : "-"}</strong><br>
+        <span class="small-turni-text">${
+          turnoPh ? turnoPh.address : ""
+        }</span><br>
+        <span class="small-turni-text">${
+          turnoPh ? "Tel: " + turnoPh.phone : ""
+        }</span>
+      </td>
+      <td>
+        ${
+          appPh
+            ? `<strong>${appPh.name}</strong><br>
+               <span class="small-turni-text">${appPh.address}</span><br>
+               <span class="small-turni-text">Tel: ${appPh.phone}</span>`
+            : "<span class='small-turni-text'>—</span>"
+        }
+      </td>
     `;
-    box.appendChild(div);
+    tbody.appendChild(tr);
   });
 }
 
@@ -718,17 +856,15 @@ function renderMessages(user) {
   );
   if (visible.length === 0) {
     cont.innerHTML = `<div class="list-item">Nessuna comunicazione.</div>`;
-  } else {
-    cont.innerHTML = visible
-      .slice()
-      .reverse()
-      .map((m) =>
-        templateMessage(m.title, m.body, m.priority, m.createdAt)
-      )
-      .join("");
+    return;
   }
-
-  renderHomeMessagesPreview(user);
+  cont.innerHTML = visible
+    .slice()
+    .reverse()
+    .map((m) =>
+      templateMessage(m.title, m.body, m.priority, m.createdAt)
+    )
+    .join("");
 }
 
 function adminSendMessage() {
@@ -759,6 +895,7 @@ function adminSendMessage() {
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
     renderMessages(active);
+    renderFutureAbsencesHome();
   }
 
   alert("Comunicazione inviata.");
@@ -847,14 +984,12 @@ function sendLeaveRequest() {
     renderAdminLeaveList();
   }
 
-  updateLeaveBadges();
   alert("Richiesta inviata.");
 }
 
 function renderLeaveTable(user) {
-  const tbody = document
-    .getElementById("leave-table")
-    ?.querySelector("tbody");
+  const table = document.getElementById("leave-table");
+  const tbody = table ? table.querySelector("tbody") : null;
   if (!tbody) return;
 
   const all = loadJson(LS_LEAVE, []);
@@ -1005,7 +1140,6 @@ function adminSetLeaveStatus(id, status) {
   }
   renderFutureAbsencesHome();
   renderFutureAbsences();
-  updateLeaveBadges();
 }
 
 /* ============================================
@@ -1323,6 +1457,4 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     showLogin();
   }
-
-  updateLeaveBadges();
 });
