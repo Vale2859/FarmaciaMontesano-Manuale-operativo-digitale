@@ -1103,3 +1103,23 @@ body {
     gap: 24px;
   }
 }
+
+/* Rende la dashboard più alta su schermo grande */
+@media (min-width: 900px) {
+  .home-app-wrapper {
+    min-height: calc(100vh - 140px); /* spazio verticale */
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .app-phone {
+    width: 100%;
+    max-width: 1550px;    /* più largo */
+    min-height: 800px;    /* ALZA la dashboard */
+    padding: 40px 35px 32px;
+  }
+
+  .app-grid {
+    grid-auto-rows: 180px;     /* aumenta l’altezza delle tile */
+  }
+}
