@@ -5,6 +5,7 @@
 
 const LS_USERS = "fm_users";
 const LS_ACTIVE = "fm_activeUser";
+const LS_ABSENCES = "fm_absences";        // assenze dipendenti
 const LS_PROCEDURES = "fm_procedures";
 const LS_MESSAGES = "fm_messages";
 const LS_LEAVE = "fm_leave";
@@ -88,16 +89,17 @@ function seedAdminIfNeeded() {
       id: uid(),
       name: "Valerio Montesano",
       email: adminEmail,
+      phone: "",
       password: adminPassword,
-      role: "admin",
+      role: "titolare",        // <- ruolo titolare
       active: true,
       approved: true,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
     users.push(admin);
   } else {
     admin.password = adminPassword;
-    admin.role = "admin";
+    admin.role = "titolare";
     admin.active = true;
     admin.approved = true;
   }
@@ -105,57 +107,32 @@ function seedAdminIfNeeded() {
   saveUsers(users);
 }
 
-/* Registrazione: CLIENTI / DIPENDENTI / TITOLARE */
+/* Registrazione: account con RUOLO */
 function registerUser() {
   const name = document.getElementById("reg-name").value.trim();
-  const phone = document.getElementById("reg-phone").value.trim();
   const email = document.getElementById("reg-email").value.trim();
+  const phone = document.getElementById("reg-phone").value.trim();
   const pass = document.getElementById("reg-password").value;
-  const roleSelect = document.getElementById("reg-role");
-  const chosenRole = roleSelect ? roleSelect.value : "staff"; // staff = dipendente
+  const role = document.getElementById("reg-role").value;
 
-  const errReg = document.getElementById("auth-error-register");
-  if (errReg) {
-    errReg.textContent = "";
-    errReg.classList.add("hidden");
-  }
-
-  // Controlli base
-  if (!name || !email || !pass || !phone) {
-    if (errReg) {
-      errReg.textContent = "Compila tutti i campi per registrarti.";
-      errReg.classList.remove("hidden");
-    }
+  if (!name || !email || !phone || !pass || !role) {
+    showError("Compila tutti i campi per registrarti.");
     return;
   }
 
   let users = loadUsers();
   if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
-    if (errReg) {
-      errReg.textContent = "Esiste già un utente con questa email.";
-      errReg.classList.remove("hidden");
-    }
+    showError("Esiste già un utente con questa email.");
     return;
   }
 
-  // Definizione ruolo + attivazione
-  let role = "staff";
-  let active = false;
-  let approved = false;
-
-  if (chosenRole === "cliente") {
-    role = "cliente";
-    active = true;
-    approved = true; // cliente entra subito
-  } else if (chosenRole === "admin") {
-    role = "admin";
-    active = true;
-    approved = true; // titolare attivo
-  } else {
-    // dipendente
-    role = "staff";
+  // Cliente: attivo subito
+  // Dipendente / Titolare: in attesa di approvazione
+  let active = true;
+  let approved = true;
+  if (role === "dipendente" || role === "titolare") {
     active = false;
-    approved = false; // in attesa approvazione titolare
+    approved = false;
   }
 
   users.push({
@@ -167,15 +144,13 @@ function registerUser() {
     role,
     active,
     approved,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
 
   saveUsers(users);
 
   if (role === "cliente") {
-    alert("Registrazione completata! Ora puoi accedere come Cliente.");
-  } else if (role === "admin") {
-    alert("Registrazione Titolare completata. Puoi accedere come Admin.");
+    alert("Registrazione completata! Puoi accedere subito alla tua Area Clienti.");
   } else {
     alert(
       "Richiesta inviata! L'account dovrà essere approvato dal Titolare prima di poter accedere."
@@ -184,8 +159,8 @@ function registerUser() {
 
   showLogin();
 }
+
 /* Login */
-/* Login SENZA scelta ruolo: decide dal profilo salvato */
 function login() {
   const email = document.getElementById("login-email").value.trim();
   const pass = document.getElementById("login-password").value;
@@ -196,11 +171,8 @@ function login() {
   }
 
   const users = loadUsers();
-
   const user = users.find(
-    (u) =>
-      u.email.toLowerCase() === email.toLowerCase() &&
-      u.password === pass
+    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
   );
 
   if (!user) {
@@ -214,21 +186,16 @@ function login() {
   }
 
   saveJson(LS_ACTIVE, user);
-  openPortal(user); // qui decide se far vedere area clienti, staff o admin
+  openPortal(user);
 }
+
 /* Logout */
 function logout() {
   localStorage.removeItem(LS_ACTIVE);
   document.getElementById("portal").classList.add("hidden");
+  document.getElementById("portal-cliente").classList.add("hidden");
   document.getElementById("auth").classList.remove("hidden");
   showLogin();
-}
-
-/* Mostra/nascondi password */
-function togglePassword() {
-  const input = document.getElementById("login-password");
-  if (!input) return;
-  input.type = input.type === "password" ? "text" : "password";
 }
 
 /* ============================================
@@ -237,83 +204,73 @@ function togglePassword() {
 
 function openPortal(user) {
   document.getElementById("auth").classList.add("hidden");
-  document.getElementById("portal").classList.remove("hidden");
 
-  const nameSpan = document.getElementById("user-name-display");
-  const roleSpan = document.getElementById("user-role-display");
-  if (nameSpan) nameSpan.textContent = user.name;
-  if (roleSpan) {
-    roleSpan.textContent =
-      user.role === "admin"
-        ? "Titolare"
-        : user.role === "cliente"
-        ? "Cliente"
-        : "Dipendente";
-  }
-
-  const staffPortal = document.getElementById("staff-portal");
-  const customerPortal = document.getElementById("customer-portal");
+  // Nascondo entrambi i portali, poi mostro quello giusto
+  document.getElementById("portal").classList.add("hidden");
+  document.getElementById("portal-cliente").classList.add("hidden");
 
   if (user.role === "cliente") {
-    if (staffPortal) staffPortal.classList.add("hidden");
-    if (customerPortal) customerPortal.classList.remove("hidden");
-  } else {
-    if (customerPortal) customerPortal.classList.add("hidden");
-    if (staffPortal) staffPortal.classList.remove("hidden");
+    // AREA CLIENTI
+    const pc = document.getElementById("portal-cliente");
+    if (pc) pc.classList.remove("hidden");
 
-    initHome(user);
-    renderProcedures();
-    renderMessages(user);
-    renderLogistics();
-    loadPersonalData(user);
-    renderLeaveTable(user);
-    renderFutureAbsences();
-    renderTraining(user);
-    if (user.role === "admin") {
-      renderAdminUsers();
-      renderAdminProceduresList();
-      renderAdminLeaveList();
-      populateMessageTargets();
-      const adminTile = document.getElementById("admin-tile");
-      if (adminTile) adminTile.style.display = "flex";
-    } else {
-      const adminTile = document.getElementById("admin-tile");
-      if (adminTile) adminTile.style.display = "none";
-    }
+    const cName = document.getElementById("client-name-display");
+    if (cName) cName.textContent = user.name;
 
-    showSection("section-home");
+    return;
   }
+
+  // DIPENDENTE / TITOLARE -> PORTALE INTERNO
+  const p = document.getElementById("portal");
+  if (p) p.classList.remove("hidden");
+
+  document.getElementById("user-name-display").textContent = user.name;
+  document.getElementById("user-role-display").textContent =
+    user.role === "titolare" ? "Titolare" : "Dipendente";
+
+  // inizializza varie sezioni
+  initHome(user);
+  renderProcedures();
+  renderMessages(user);
+  renderLogistics();
+  loadPersonalData(user);
+  renderLeaveTable(user);
+  renderTraining(user);
+
+  if (user.role === "titolare") {
+    renderAdminUsers();
+    renderAdminProceduresList();
+    renderAdminLeaveList();
+    populateMessageTargets();
+  }
+
+  // schermata iniziale
+  showSection("home");
+  showAppScreen("home");
+  renderApprovedAbsences();
 }
 
+// Pulsante Home globale
 function goHome() {
-  const active = loadJson(LS_ACTIVE, null);
-  if (!active) return;
-  if (active.role === "cliente") {
-    document.getElementById("customer-portal").classList.remove("hidden");
-    document.getElementById("staff-portal").classList.add("hidden");
-  } else {
-    document.getElementById("staff-portal").classList.remove("hidden");
-    document.getElementById("customer-portal").classList.add("hidden");
-    showSection("section-home");
-  }
+  showSection("home");
+  showAppScreen("home");
 }
 
-/* Cambio sezione del portale staff */
-function showSection(id) {
+/* Cambio sezione (solo portale dipendenti/titolare) */
+function showSection(id, btn) {
   const sections = document.querySelectorAll(".section");
   sections.forEach((s) => s.classList.remove("visible"));
+
   const target = document.getElementById(id);
   if (target) target.classList.add("visible");
 
-  if (id === "section-assenze") {
-    renderFutureAbsences();
-    const active = loadJson(LS_ACTIVE, null);
-    if (active) renderLeaveTable(active);
-  }
+  const buttons = document.querySelectorAll(".nav-btn");
+  buttons.forEach((b) => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
 }
 
 /* ============================================
-   HOME STAFF
+   DASHBOARD / HOME
    ============================================ */
 
 function todayLabel() {
@@ -321,125 +278,132 @@ function todayLabel() {
   return d.toLocaleDateString("it-IT", {
     weekday: "long",
     day: "2-digit",
-    month: "2-digit"
+    month: "2-digit",
   });
 }
 
 function randomPhrase() {
   const list = [
-    "Controllare sempre gli anticipi prima di chiusura cassa.",
-    "Ricordarsi di verificare il collegamento POS/gestionale.",
-    "Aggiornare i display delle promozioni se necessario.",
-    "Gentilezza sempre con tutti i clienti.",
-    "Segnare eventuali resi o anomalie in logistica."
+    "Aggiornare listini se necessario",
+    "Ricordarsi di controllare il cassetto 2",
+    "Controllare scorte in scadenza",
+    "Gentilezza sempre con tutti i clienti",
+    "Verificare eventuali resi da corrieri",
   ];
   return list[Math.floor(Math.random() * list.length)];
 }
 
 function initHome(user) {
+  // Se vuoi usare questi elementi, puoi aggiungerli nell'HTML
   const tag = document.getElementById("home-daytag");
   if (tag) tag.textContent = todayLabel();
 
-  const summary = document.getElementById("home-abs-summary");
-  if (summary) {
-    summary.innerHTML = "<p>Caricamento assenze…</p>";
+  const ul = document.getElementById("home-highlights");
+  if (ul) {
+    ul.innerHTML = "";
+    for (let i = 0; i < 4; i++) {
+      const li = document.createElement("li");
+      li.textContent = randomPhrase();
+      ul.appendChild(li);
+    }
   }
 
-  renderFutureAbsencesHome();
+  renderHomeLeaveSummary(user);
+  renderHomeLogisticsSummary();
+  renderHomeLastMessages(user);
 }
 
-function getApprovedFutureLeave() {
-  const all = loadJson(LS_LEAVE, []);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  return all.filter((r) => {
-    if (r.status !== "approvato") return false;
-    const start = new Date(r.start);
-    const end = r.end ? new Date(r.end) : new Date(r.start);
-    start.setHours(0, 0, 0, 0);
-    end.setHours(0, 0, 0, 0);
-    return end >= today;
-  });
+function openProcedureFromHome(cat, title) {
+  showSection("procedures");
+  selectProcedureCategory(cat);
+  scrollToProcedure(title);
 }
 
-function renderFutureAbsencesHome() {
-  const box = document.getElementById("home-abs-summary");
+/* Home – riepilogo ferie */
+function renderHomeLeaveSummary(user) {
+  const box = document.getElementById("home-leave-summary");
   if (!box) return;
+  const all = loadJson(LS_LEAVE, []);
+  const mine = all.filter((r) => r.userId === user.id);
+  if (mine.length === 0) {
+    box.innerHTML = `<div class="list-item">Nessuna richiesta inserita.</div>`;
+    return;
+  }
+  const next = mine[mine.length - 1];
+  box.innerHTML = `
+    <div class="list-item">
+      <div class="list-item-title">Ultima richiesta</div>
+      <div class="list-item-meta">
+        Tipo: ${formatLeaveType(next.type)} – Stato: ${formatLeaveStatus(
+          next.status
+        )}
+      </div>
+      <div>
+        Dal ${next.start || "-"} ${next.end ? "al " + next.end : ""}
+      </div>
+    </div>
+  `;
+}
 
-  const approved = getApprovedFutureLeave().sort(
-    (a, b) => new Date(a.start) - new Date(b.start)
-  );
+/* Home – logistica breve */
+function renderHomeLogisticsSummary() {
+  const ul = document.getElementById("home-logistics-summary");
+  if (!ul) return;
+  ul.innerHTML = `
+    <li>Ritiro corriere: 16:00</li>
+    <li>Controllo frigoriferi dopo le 20</li>
+    <li>Arrivo merce sabato ore 11</li>
+  `;
+}
 
-  if (approved.length === 0) {
-    box.innerHTML =
-      "<div class='home-abs-pill'>Nessuna assenza approvata nei prossimi giorni.</div>";
+/* Home – ultime comunicazioni */
+function renderHomeLastMessages(user) {
+  const cont = document.getElementById("home-last-messages");
+  if (!cont) return;
+  const all = getMessages();
+  const visible = all
+    .filter((m) => m.target === "all" || m.target === user.id)
+    .slice(-3)
+    .reverse();
+
+  if (visible.length === 0) {
+    cont.innerHTML = `<div class="list-item">Nessuna comunicazione recente.</div>`;
     return;
   }
 
-  box.innerHTML = "";
-  approved.slice(0, 5).forEach((r) => {
-    const start = new Date(r.start);
-    const end = r.end ? new Date(r.end) : null;
-    const period = end
-      ? `${start.toLocaleDateString("it-IT")} → ${end.toLocaleDateString(
-          "it-IT"
-        )}`
-      : start.toLocaleDateString("it-IT");
-
-    const div = document.createElement("div");
-    div.className = "home-abs-pill";
-    div.innerHTML = `<strong>${r.userName}</strong> – ${formatLeaveType(
-      r.type
-    )}<br/><span>${period}</span>`;
-    box.appendChild(div);
-  });
+  cont.innerHTML = visible
+    .map((m) => templateMessage(m.title, m.body, m.priority, m.createdAt))
+    .join("");
 }
 
-/* ========== PROCEDURE ========== */
+/* ============================================
+   TEMPLATE MESSAGGI / PROCEDURE
+   ============================================ */
 
-function ensureDemoProcedures() {
-  let procs = loadJson(LS_PROCEDURES, null);
-  if (!procs || procs.length === 0) {
-    procs = [
-      {
-        id: uid(),
-        category: "Cassa",
-        title: "Anticipi – i clienti pagano subito",
-        body: "Spiega qui passo passo come gestire gli anticipi, dove mettere i soldi (sotto cassa), quando fare lo scontrino, ecc."
-      },
-      {
-        id: uid(),
-        category: "Cassa",
-        title: "Ticket SSN",
-        body: "Procedura completa per ticket: caricamento ricetta, verifica dati, stampa scontrino, ecc."
-      },
-      {
-        id: uid(),
-        category: "Cassa",
-        title: "POS collegato",
-        body: "Cosa fare in caso di errore POS, disallineamento con gestionale, riavvio, ecc."
-      },
-      {
-        id: uid(),
-        category: "Cassa",
-        title: "Sotto cassa",
-        body: "Regole per la gestione del sotto cassa, conteggio, reintegro."
-      },
-      {
-        id: uid(),
-        category: "Magazzino",
-        title: "Controllo scadenze",
-        body: "Cadenza mensile, scaffali da controllare, come gestire il reso, dove segnare le anomalie."
-      }
-    ];
-    saveJson(LS_PROCEDURES, procs);
-  }
-}
+function templateMessage(title, body, priority, date) {
+  const color =
+    priority === "urgente"
+      ? "#dc2626"
+      : priority === "alta"
+      ? "#ea580c"
+      : "#0a7b43";
 
-function getProcedures() {
-  ensureDemoProcedures();
-  return loadJson(LS_PROCEDURES, []);
+  const d = date
+    ? new Date(date).toLocaleString("it-IT", {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
+
+  return `
+  <div class="list-item">
+    <div class="list-item-title" style="color:${color}">${title}</div>
+    <div class="list-item-meta">${d}</div>
+    <div>${body}</div>
+  </div>
+  `;
 }
 
 function templateProcedureItem(p) {
@@ -451,6 +415,54 @@ function templateProcedureItem(p) {
   `;
 }
 
+/* ============================================
+   PROCEDURE
+   ============================================ */
+
+function ensureDemoProcedures() {
+  let procs = loadJson(LS_PROCEDURES, null);
+  if (!procs || procs.length === 0) {
+    procs = [
+      {
+        id: uid(),
+        category: "Cassa",
+        title: "Anticipi – i clienti pagano subito",
+        body: "Spiega qui passo passo come gestire gli anticipi, dove mettere i soldi (sotto cassa), quando fare lo scontrino, ecc.",
+      },
+      {
+        id: uid(),
+        category: "Cassa",
+        title: "Ticket SSN",
+        body: "Procedura completa per ticket: caricamento ricetta, verifica dati, stampa scontrino, ecc.",
+      },
+      {
+        id: uid(),
+        category: "Cassa",
+        title: "POS collegato",
+        body: "Cosa fare in caso di errore POS, disallineamento con gestionale, riavvio, ecc.",
+      },
+      {
+        id: uid(),
+        category: "Cassa",
+        title: "Sotto cassa",
+        body: "Regole per la gestione del sotto cassa, conteggio, reintegro.",
+      },
+      {
+        id: uid(),
+        category: "Magazzino",
+        title: "Controllo scadenze",
+        body: "Cadenza mensile, scaffali da controllare, come gestire il reso, dove segnare le anomalie.",
+      },
+    ];
+    saveJson(LS_PROCEDURES, procs);
+  }
+}
+
+function getProcedures() {
+  ensureDemoProcedures();
+  return loadJson(LS_PROCEDURES, []);
+}
+
 function renderProcedures() {
   const procs = getProcedures();
   const catBox = document.getElementById("proc-categories");
@@ -460,17 +472,6 @@ function renderProcedures() {
   const cats = Array.from(new Set(procs.map((p) => p.category)));
   catBox.innerHTML = "";
 
-  if (cats.length === 0) {
-    listBox.innerHTML =
-      '<div class="list-item">Nessuna procedura disponibile.</div>';
-    return;
-  }
-
-  const title = document.createElement("div");
-  title.className = "proc-cat-title";
-  title.textContent = "Categorie";
-  catBox.appendChild(title);
-
   cats.forEach((c, idx) => {
     const btn = document.createElement("button");
     btn.className = "proc-category-btn" + (idx === 0 ? " active" : "");
@@ -479,7 +480,12 @@ function renderProcedures() {
     catBox.appendChild(btn);
   });
 
-  renderProcedureListForCategory(cats[0]);
+  if (cats.length > 0) {
+    renderProcedureListForCategory(cats[0]);
+  } else {
+    listBox.innerHTML =
+      '<div class="list-item">Nessuna procedura disponibile.</div>';
+  }
 }
 
 function selectProcedureCategory(cat) {
@@ -493,15 +499,28 @@ function selectProcedureCategory(cat) {
 
 function renderProcedureListForCategory(cat) {
   const listBox = document.getElementById("proc-list");
-  if (!listBox) return;
-
   const procs = getProcedures().filter((p) => p.category === cat);
+  if (!listBox) return;
   if (procs.length === 0) {
     listBox.innerHTML =
       '<div class="list-item">Nessuna procedura per questa categoria.</div>';
     return;
   }
   listBox.innerHTML = procs.map((p) => templateProcedureItem(p)).join("");
+}
+
+function scrollToProcedure(title) {
+  const listBox = document.getElementById("proc-list");
+  if (!listBox) return;
+  const items = listBox.querySelectorAll(".list-item");
+  items.forEach((item) => {
+    const t = item.querySelector(".list-item-title")?.textContent.trim();
+    if (t && t.toLowerCase() === title.toLowerCase()) {
+      item.scrollIntoView({ behavior: "smooth", block: "start" });
+      item.style.boxShadow = "0 0 0 2px #22c55e";
+      setTimeout(() => (item.style.boxShadow = ""), 1200);
+    }
+  });
 }
 
 /* ============================================
@@ -518,8 +537,8 @@ function ensureDemoMessages() {
         body: "Da oggi tutte le procedure e le comunicazioni ufficiali passano da qui.",
         priority: "normale",
         target: "all",
-        createdAt: new Date().toISOString()
-      }
+        createdAt: new Date().toISOString(),
+      },
     ];
     saveJson(LS_MESSAGES, msgs);
   }
@@ -528,32 +547,6 @@ function ensureDemoMessages() {
 function getMessages() {
   ensureDemoMessages();
   return loadJson(LS_MESSAGES, []);
-}
-
-function templateMessage(title, body, priority, date) {
-  const color =
-    priority === "urgente"
-      ? "#dc2626"
-      : priority === "alta"
-      ? "#ea580c"
-      : "#0a7b43";
-
-  const d = date
-    ? new Date(date).toLocaleString("it-IT", {
-        day: "2-digit",
-        month: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit"
-      })
-    : "";
-
-  return `
-  <div class="list-item">
-    <div class="list-item-title" style="color:${color}">${title}</div>
-    <div class="list-item-meta">${d}</div>
-    <div>${body}</div>
-  </div>
-  `;
 }
 
 function renderMessages(user) {
@@ -594,7 +587,7 @@ function adminSendMessage() {
     body,
     priority,
     target,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
   saveJson(LS_MESSAGES, msgs);
 
@@ -604,7 +597,7 @@ function adminSendMessage() {
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
     renderMessages(active);
-    renderFutureAbsencesHome();
+    renderHomeLastMessages(active);
   }
 
   alert("Comunicazione inviata.");
@@ -613,10 +606,11 @@ function adminSendMessage() {
 function populateMessageTargets() {
   const sel = document.getElementById("admin-msg-target");
   if (!sel) return;
-  const users = loadUsers().filter((u) => u.approved && u.active);
+  const users = loadUsers().filter(
+    (u) => u.approved && u.active && u.role !== "cliente"
+  );
   sel.innerHTML = `<option value="all">Tutti i dipendenti</option>`;
   users.forEach((u) => {
-    if (u.role === "cliente") return;
     const opt = document.createElement("option");
     opt.value = u.id;
     opt.textContent = u.name + " (" + u.email + ")";
@@ -653,8 +647,6 @@ function sendLeaveRequest() {
   const type = document.getElementById("leave-type").value;
   const start = document.getElementById("leave-start").value;
   const end = document.getElementById("leave-end").value;
-  const timeFrom = document.getElementById("leave-time-from").value;
-  const timeTo = document.getElementById("leave-time-to").value;
   const note = document.getElementById("leave-note").value.trim();
 
   if (!start) {
@@ -673,25 +665,15 @@ function sendLeaveRequest() {
     type,
     start,
     end,
-    timeFrom,
-    timeTo,
     note,
     status: "attesa",
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
   saveJson(LS_LEAVE, all);
 
   document.getElementById("leave-note").value = "";
-  document.getElementById("leave-time-from").value = "";
-  document.getElementById("leave-time-to").value = "";
-
   renderLeaveTable(user);
-  renderFutureAbsencesHome();
-  renderFutureAbsences();
-  const active = loadJson(LS_ACTIVE, null);
-  if (active && active.role === "admin") {
-    renderAdminLeaveList();
-  }
+  if (user.role === "titolare") renderAdminLeaveList();
 
   alert("Richiesta inviata.");
 }
@@ -719,76 +701,16 @@ function renderLeaveTable(user) {
       const tr = document.createElement("tr");
       const created = new Date(r.createdAt).toLocaleDateString("it-IT", {
         day: "2-digit",
-        month: "2-digit"
+        month: "2-digit",
       });
-      const period =
-        r.end && r.end !== r.start
-          ? `${r.start} → ${r.end}`
-          : r.start +
-            (r.timeFrom && r.timeTo
-              ? ` (${r.timeFrom}–${r.timeTo})`
-              : "");
       tr.innerHTML = `
         <td>${created}</td>
         <td>${formatLeaveType(r.type)}</td>
-        <td>${period}</td>
+        <td>${r.start}${r.end ? " → " + r.end : ""}</td>
         <td>${formatLeaveStatus(r.status)}</td>
       `;
       tbody.appendChild(tr);
     });
-}
-
-function renderFutureAbsences() {
-  const container = document.getElementById("assenze-future-list");
-  if (!container) return;
-
-  const approved = getApprovedFutureLeave().sort(
-    (a, b) => new Date(a.start) - new Date(b.start)
-  );
-
-  if (approved.length === 0) {
-    container.innerHTML =
-      "<p class='small-text'>Nessuna assenza approvata nei prossimi giorni.</p>";
-    return;
-  }
-
-  container.innerHTML = "";
-  approved.forEach((a) => {
-    const start = new Date(a.start);
-    const end = a.end ? new Date(a.end) : null;
-    const formattedStart = start.toLocaleDateString("it-IT", {
-      weekday: "short",
-      day: "2-digit",
-      month: "2-digit"
-    });
-    const period = end
-      ? `${formattedStart} → ${end.toLocaleDateString("it-IT", {
-          weekday: "short",
-          day: "2-digit",
-          month: "2-digit"
-        })}`
-      : formattedStart;
-
-    let extra = "";
-    if (a.timeFrom && a.timeTo) {
-      extra = ` · ${a.timeFrom}–${a.timeTo}`;
-    }
-
-    const div = document.createElement("div");
-    div.className = "assenza-pill";
-    div.innerHTML =
-      "<span><strong>" +
-      a.userName +
-      "</strong> – " +
-      formatLeaveType(a.type) +
-      "</span>" +
-      "<span class='assenza-meta'>" +
-      period +
-      extra +
-      (a.note ? " · " + a.note : "") +
-      "</span>";
-    container.appendChild(div);
-  });
 }
 
 function renderAdminLeaveList() {
@@ -808,22 +730,17 @@ function renderAdminLeaveList() {
     .forEach((r) => {
       const div = document.createElement("div");
       div.className = "list-item";
-      const period =
-        r.end && r.end !== r.start
-          ? `${r.start} → ${r.end}`
-          : r.start +
-            (r.timeFrom && r.timeTo
-              ? ` (${r.timeFrom}–${r.timeTo})`
-              : "");
       div.innerHTML = `
         <div class="list-item-title">
           ${r.userName} – ${formatLeaveType(r.type)}
         </div>
         <div class="list-item-meta">
-          Periodo: ${period} – Stato: ${formatLeaveStatus(r.status)}
+          Dal ${r.start}${r.end ? " al " + r.end : ""} – Stato: ${formatLeaveStatus(
+            r.status
+          )}
         </div>
         <div>${r.note || ""}</div>
-        <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px;">
+        <div style="margin-top:6px;">
           <button class="btn-primary small" onclick="adminSetLeaveStatus('${
             r.id
           }','approvato')">Approva</button>
@@ -845,10 +762,9 @@ function adminSetLeaveStatus(id, status) {
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
     renderLeaveTable(active);
-    if (active.role === "admin") renderAdminLeaveList();
+    if (active.role === "titolare") renderAdminLeaveList();
+    renderHomeLeaveSummary(active);
   }
-  renderFutureAbsencesHome();
-  renderFutureAbsences();
 }
 
 /* ============================================
@@ -860,8 +776,8 @@ function renderTraining(user) {
   if (list) {
     list.innerHTML = `
       <li>Ripasso procedure cassa e anticipi.</li>
-      <li>Nuovi prodotti e promozioni del mese.</li>
-      <li>Corsi ECM programmati / formazione obbligatoria.</li>
+      <li>Nuovi prodotti della stagione.</li>
+      <li>Corsi ECM programmati.</li>
     `;
   }
 
@@ -894,13 +810,13 @@ function renderLogistics() {
   if (cour) {
     cour.innerHTML = `
       <li>Corriere principale: ritiro ore 16:00.</li>
-      <li>Resi programmati ogni martedì mattina.</li>
+      <li>Resi programmati ogni martedì.</li>
     `;
   }
   if (exp) {
     exp.innerHTML = `
-      <li>Controllo frigoriferi ogni sera dopo chiusura.</li>
-      <li>Verifica scadenze mensile su dermocosmesi e banco etico.</li>
+      <li>Controllo frigoriferi ogni sera.</li>
+      <li>Verifica scadenze mensile su dermocosmesi.</li>
     `;
   }
 }
@@ -973,7 +889,7 @@ function addPersonalDoc() {
     id: uid(),
     title,
     desc,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
   saveJson(LS_PERSONAL, all);
 
@@ -1000,7 +916,7 @@ function renderPersonalDocs(docs) {
       div.className = "list-item";
       const when = new Date(d.createdAt).toLocaleDateString("it-IT", {
         day: "2-digit",
-        month: "2-digit"
+        month: "2-digit",
       });
       div.innerHTML = `
         <div class="list-item-title">${d.title}</div>
@@ -1027,10 +943,16 @@ function renderAdminUsers() {
     div.innerHTML = `
       <div class="list-item-title">
         ${u.name} ${
-      u.role === "admin" ? "(Admin)" : u.role === "cliente" ? "(Cliente)" : ""
-    }
+          u.role === "titolare"
+            ? "(Titolare)"
+            : u.role === "dipendente"
+            ? "(Dipendente)"
+            : "(Cliente)"
+        }
       </div>
-      <div class="list-item-meta">${u.email}</div>
+      <div class="list-item-meta">${u.email} ${
+      u.phone ? " · " + u.phone : ""
+    }</div>
       <div>
         Stato: ${
           u.approved && u.active
@@ -1042,7 +964,7 @@ function renderAdminUsers() {
       </div>
       <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px;">
         ${
-          !u.approved
+          u.role !== "cliente" && !u.approved
             ? `<button class="btn-primary small" onclick="adminApproveUser('${u.id}')">Approva</button>`
             : ""
         }
@@ -1119,7 +1041,7 @@ function adminSaveProcedure() {
       id: uid(),
       category: cat,
       title,
-      body
+      body,
     });
   }
   saveJson(LS_PROCEDURES, procs);
@@ -1148,6 +1070,147 @@ function renderAdminProceduresList() {
       <div>${p.body}</div>
     `;
     box.appendChild(div);
+  });
+}
+
+/* ============================================
+   LOGIN – mostra/nascondi password
+   ============================================ */
+
+function togglePassword() {
+  const input = document.getElementById("login-password");
+  if (!input) return;
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+/* ============================================
+   APP INTERNA (HOME / ASSENZE)
+   ============================================ */
+
+function showAppScreen(which) {
+  const home = document.getElementById("screen-home");
+  const ass = document.getElementById("screen-assenze");
+  const btnHome = document.getElementById("nav-app-home");
+  const btnAss = document.getElementById("nav-app-assenze"); // non esiste, ma è ok
+
+  if (!home || !ass) return;
+
+  if (which === "assenze") {
+    home.classList.remove("app-screen-visible");
+    ass.classList.add("app-screen-visible");
+    if (btnHome) btnHome.classList.remove("app-nav-btn-active");
+    if (btnAss) btnAss.classList.add("app-nav-btn-active");
+  } else {
+    ass.classList.remove("app-screen-visible");
+    home.classList.add("app-screen-visible");
+    if (btnAss) btnAss.classList.remove("app-nav-btn-active");
+    if (btnHome) btnHome.classList.add("app-nav-btn-active");
+  }
+}
+
+// Salvataggio e lettura assenze "veloci"
+function loadAbsences() {
+  return loadJson(LS_ABSENCES, []);
+}
+
+function saveAbsences(list) {
+  saveJson(LS_ABSENCES, list);
+}
+
+// In questa versione tutte le assenze sono considerate "approvate"
+function submitAbsence() {
+  const user = loadJson(LS_ACTIVE, null);
+  if (!user) {
+    alert("Devi essere loggato per richiedere un'assenza.");
+    return;
+  }
+
+  const dateEl = document.getElementById("abs-date");
+  const reasonEl = document.getElementById("abs-reason");
+  if (!dateEl || !reasonEl) return;
+
+  const date = dateEl.value;
+  const reason = reasonEl.value.trim();
+
+  if (!date) {
+    alert("Seleziona la data.");
+    return;
+  }
+
+  let absences = loadAbsences();
+  absences.push({
+    id: "a-" + Date.now(),
+    userName: user.name,
+    date,
+    reason,
+    status: "approved",
+  });
+  saveAbsences(absences);
+
+  dateEl.value = "";
+  reasonEl.value = "";
+
+  renderApprovedAbsences();
+  alert("Richiesta assenza registrata (approvata e visibile a tutti).");
+}
+
+// Mostra SOLO assenze future approvate
+function renderApprovedAbsences() {
+  const container = document.getElementById("absence-list");
+  if (!container) return;
+
+  const activeUser = loadJson(LS_ACTIVE, null);
+  const isTitolare = activeUser && activeUser.role === "titolare";
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let absences = loadAbsences().filter((a) => a.status === "approved");
+
+  absences = absences.filter((a) => {
+    const d = new Date(a.date);
+    d.setHours(0, 0, 0, 0);
+    return d >= today;
+  });
+
+  absences.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  if (absences.length === 0) {
+    container.innerHTML =
+      "<p class='small-text'>Nessuna assenza futura registrata.</p>";
+    return;
+  }
+
+  container.innerHTML = "";
+  absences.forEach((a) => {
+    const d = new Date(a.date);
+    const formattedDate = d.toLocaleDateString("it-IT", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    const reason = a.reason || "";
+    const isFerie = reason.toLowerCase().includes("ferie");
+
+    let meta = formattedDate;
+    if (isTitolare) {
+      if (reason) meta += " · " + reason;
+    } else if (isFerie) {
+      meta += " · ferie";
+    }
+
+    const div = document.createElement("div");
+    div.className = "absence-pill";
+    div.innerHTML =
+      "<span><strong>" +
+      a.userName +
+      "</strong></span>" +
+      "<span class='absence-meta'>" +
+      meta +
+      "</span>";
+    container.appendChild(div);
   });
 }
 
