@@ -1,45 +1,40 @@
-/* ================================
-   RESET BASE
-   ================================ */
+/* ============================
+   RESET / VARIABILI
+   ============================ */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 :root {
   --fm-green: #0a7b43;
-  --fm-green-soft: #e7f4ec;
+  --fm-green-soft: #e6f6ee;
   --fm-green-dark: #064926;
-  --fm-blue: #1d4ed8;
-  --fm-blue-soft: #e0ecff;
   --fm-bg: #f3f4f6;
-  --fm-border: #d1d5db;
   --fm-text: #111827;
   --fm-muted: #6b7280;
-  --fm-radius-lg: 18px;
-  --fm-radius-md: 12px;
+  --fm-border: #d1d5db;
+  --fm-radius-lg: 20px;
+  --fm-radius-md: 14px;
   --fm-font: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
 }
 
 body {
+  margin: 0;
   font-family: var(--fm-font);
-  background: var(--fm-bg);
   color: var(--fm-text);
+  background: var(--fm-bg);
 }
-
-/* UTILI */
 
 .hidden {
   display: none !important;
 }
 
-/* ================================
+/* ============================
    LOGIN
-   ================================ */
+   ============================ */
 
 .auth-screen {
   min-height: 100vh;
@@ -51,29 +46,29 @@ body {
 
 .auth-card {
   width: 100%;
-  max-width: 430px;
+  max-width: 420px;
   background: #ffffff;
-  border-radius: 22px;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
   padding: 24px 26px 20px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
 }
 
 .auth-logo-only {
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .auth-logo-img {
-  width: 140px;
+  width: 150px;
   height: auto;
 }
 
 .login-title {
   text-align: center;
-  font-size: 21px;
+  font-size: 22px;
   font-weight: 650;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 label {
@@ -133,7 +128,7 @@ textarea {
   font-size: 14px;
 }
 
-/* Pulsanti generali */
+/* Pulsanti */
 
 button {
   font-family: var(--fm-font);
@@ -146,22 +141,22 @@ button {
   margin-top: 14px;
   padding: 9px 14px;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--fm-green), #16a34a);
+  background: linear-gradient(135deg, #0a7b43, #22c55e);
   color: #ffffff;
   font-weight: 600;
   font-size: 15px;
-  box-shadow: 0 12px 26px rgba(22, 163, 74, 0.35);
+  box-shadow: 0 12px 28px rgba(34, 197, 94, 0.45);
   transition: transform 0.08s, box-shadow 0.08s, opacity 0.08s;
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 34px rgba(22, 163, 74, 0.45);
+  box-shadow: 0 16px 32px rgba(34, 197, 94, 0.6);
 }
 
 .btn-primary:active {
   transform: translateY(0);
-  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.45);
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.6);
   opacity: 0.9;
 }
 
@@ -180,8 +175,8 @@ button {
 
 .small-text a {
   color: var(--fm-green-dark);
-  text-decoration: none;
   font-weight: 600;
+  text-decoration: none;
 }
 
 .small-text a:hover {
@@ -195,741 +190,344 @@ button {
   text-align: center;
 }
 
-/* ================================
-   PORTALE GENERALE
-   ================================ */
+/* ============================
+   APP GENERALE
+   ============================ */
 
-.portal {
+.app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* TOPBAR stile “barra alta” come bigliettino */
+/* Topbar stile app mobile */
 
-.topbar {
+.app-topbar {
   position: sticky;
   top: 0;
   z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 22px;
+  padding: 10px 18px;
   background: #ffffff;
   border-bottom: 1px solid rgba(209, 213, 219, 0.9);
 }
 
-.topbar-left {
+.app-topbar-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .topbar-logo-img {
-  width: 44px;
-  height: 44px;
-  object-fit: contain;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   background: #f3f4f6;
+  object-fit: contain;
   padding: 4px;
 }
 
 .topbar-title {
-  font-size: 18px;
-  font-weight: 650;
-}
-
-.topbar-subtitle {
-  font-size: 12px;
-  color: var(--fm-muted);
-}
-
-.topbar-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.user-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #f3f4f6;
-  font-size: 13px;
-}
-
-.role-badge {
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  font-size: 11px;
-  text-transform: uppercase;
-}
-
-.btn-outline {
-  padding: 7px 13px;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  font-size: 13px;
-}
-
-/* MAIN */
-
-.main {
-  flex: 1;
-  padding: 16px 24px 22px;
-}
-
-/* Sezioni */
-
-.section {
-  display: none;
-}
-
-.section.visible {
-  display: block;
-}
-
-/* Header sezione */
-
-.section-header {
-  margin-bottom: 10px;
-}
-
-.section-header h2 {
-  font-size: 22px;
-  font-weight: 650;
-}
-
-.subtitle {
-  font-size: 13px;
-  color: var(--fm-muted);
-  margin-top: 2px;
-}
-
-/* Card base */
-
-.card {
-  background: #ffffff;
-  border-radius: var(--fm-radius-lg);
-  border: 1px solid rgba(209, 213, 219, 0.8);
-  padding: 12px 14px;
-}
-
-.card-highlight {
-  background: #ffffff;
-}
-
-/* Tabelle */
-
-.table-wrapper {
-  max-height: 360px;
-  overflow: auto;
-}
-
-.table-simple {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-.table-simple th,
-.table-simple td {
-  padding: 5px 6px;
-  border-bottom: 1px solid #e5e7eb;
-  vertical-align: top;
-}
-
-.table-simple th {
-  text-align: left;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* Layout */
-
-.two-cols {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 14px;
-}
-
-.field-row {
-  display: flex;
-  gap: 10px;
-}
-
-.field-row > div {
-  flex: 1;
-}
-
-.card-actions-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 6px;
-  gap: 6px;
-}
-
-.saved-label {
-  font-size: 12px;
-  color: var(--fm-green-dark);
-}
-
-/* Liste */
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.list-item {
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  padding: 7px 9px;
-  background: #ffffff;
-}
-
-.list-item-title {
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-
-.list-item-meta {
-  font-size: 11px;
-  color: var(--fm-muted);
-  margin-bottom: 3px;
-}
-
-.bullet-list {
-  padding-left: 18px;
-  margin-top: 4px;
-  font-size: 14px;
-}
-
-/* ================================
-   HOME – STILE COME “SCHEDA” GRANDE
-   ================================ */
-
-.home-wrapper {
-  max-width: 1320px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-areas:
-    "top top"
-    "abs turni"
-    "app app";
-  grid-template-columns: 2.1fr 1.4fr;
-  gap: 14px;
-}
-
-/* Card assenze grande sinistra */
-
-.home-card-absences {
-  grid-area: abs;
-  background: #ffffff;
-  border-radius: 22px;
-  border: 1px solid rgba(209, 213, 219, 0.9);
-  padding: 14px 16px;
-}
-
-.home-card-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.home-tag {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: #0a7b43;
-  color: #ffffff;
-}
-
-.home-card-title {
   font-size: 16px;
   font-weight: 650;
 }
 
-.home-abs-list {
-  margin-top: 4px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  padding: 6px 8px;
-  max-height: 250px;
-  overflow: auto;
-}
-
-.home-abs-pill {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 6px 8px;
-  font-size: 13px;
-  margin-bottom: 5px;
-  border: 1px solid #e5e7eb;
-}
-
-/* Card turni grande destra */
-
-.home-card-turni {
-  grid-area: turni;
-  background: #ffffff;
-  border-radius: 22px;
-  border: 1px solid rgba(191, 219, 254, 0.9);
-  padding: 14px 16px;
-}
-
-.home-tag-blue {
-  background: #1d4ed8;
-}
-
-.home-turni-box {
-  margin-top: 4px;
-  border-radius: 16px;
-  border: 1px solid #d1d5db;
-  background: #f9fafb;
-  padding: 8px 10px;
-}
-
-.turni-home-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-
-.turni-home-tag {
+.topbar-subtitle {
   font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: #eff6ff;
-  color: #1d4ed8;
-}
-
-.turni-home-date {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.turni-home-main {
-  border-top: 1px solid #e5e7eb;
-  padding-top: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.turni-home-row {
-  display: grid;
-  grid-template-columns: 110px minmax(0, 1fr);
-  gap: 8px;
-}
-
-.turni-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   color: var(--fm-muted);
 }
 
-.turni-value {
-  font-size: 13px;
-}
-
-/* Card app come “pannello basso” */
-
-.home-card-app {
-  grid-area: app;
-  background: #ffffff;
-  border-radius: 22px;
-  border: 1px solid rgba(209, 213, 219, 0.9);
-  padding: 14px 16px 16px;
-}
-
-.app-grid-title-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.app-grid-title {
-  font-size: 15px;
-  font-weight: 650;
-}
-
-.app-grid-subtitle {
-  font-size: 13px;
-  color: var(--fm-muted);
-}
-
-/* Griglia icone in stile “touch portale interno” */
-
-.home-app-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.app-tile {
-  border-radius: 14px;
-  padding: 9px 9px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 80px;
-  color: #ffffff;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
-  text-align: left;
-}
-
-.app-tile-icon {
-  font-size: 19px;
-  margin-bottom: 4px;
-}
-
-.app-tile-text {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.app-tile-sub {
-  font-size: 11px;
-  opacity: 0.95;
-}
-
-/* Colori piastrelle */
-
-.app-tile-orange {
-  background: linear-gradient(135deg, #f97316, #fb923c);
-}
-
-.app-tile-green {
-  background: linear-gradient(135deg, #16a34a, #22c55e);
-}
-
-.app-tile-pink {
-  background: linear-gradient(135deg, #ec4899, #f97316);
-}
-
-.app-tile-blue {
-  background: linear-gradient(135deg, #2563eb, #38bdf8);
-}
-
-.app-tile-yellow {
-  background: linear-gradient(135deg, #facc15, #fde68a);
-  color: #1f2937;
-}
-
-.app-tile-purple {
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-}
-
-.app-tile-teal {
-  background: linear-gradient(135deg, #0f766e, #14b8a6);
-}
-
-.app-tile-grey {
-  background: linear-gradient(135deg, #4b5563, #9ca3af);
-}
-
-/* Assenze – sezione */
-
-.assenze-future-list {
-  max-height: 320px;
-  overflow: auto;
-  margin-top: 4px;
-}
-
-.assenza-pill {
-  background: #f9fafb;
-  border-radius: 10px;
-  padding: 6px 8px;
-  font-size: 13px;
-  margin-bottom: 5px;
-  border: 1px solid #e5e7eb;
-}
-
-.assenza-meta {
-  font-size: 12px;
-  color: var(--fm-muted);
-}
-
-/* ================================
-   SEZIONE TURNI FARMACIE (TABELLA)
-   ================================ */
-
-.turni-month-header-row td {
-  background: #f3f4f6;
-  font-weight: 600;
-  font-size: 13px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.turni-month-header {
-  padding: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #4b5563;
-}
-
-.small-turni-text {
-  font-size: 12px;
-  color: #4b5563;
-}
-
-/* ================================
-   PROCEDURE & ADMIN
-   ================================ */
-
-.proc-layout {
-  display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
-  gap: 14px;
-}
-
-.proc-categories.card {
-  padding: 10px;
-}
-
-.proc-cat-title {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--fm-muted);
-  margin-bottom: 6px;
-}
-
-.proc-category-btn {
-  width: 100%;
-  padding: 6px 9px;
-  border-radius: 999px;
-  border: none;
-  background: #f3f4f6;
-  font-size: 13px;
-  text-align: left;
-  margin-bottom: 4px;
-}
-
-.proc-category-btn.active {
-  background: #0a7b43;
-  color: #ffffff;
-}
-
-.admin-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-  gap: 14px;
-}
-
-/* ================================
-   AREA PERSONALE
-   ================================ */
-
-#personal-doc-list .list-item {
-  background: #f9fafb;
-}
-
-/* ================================
-   PORTALE CLIENTI
-   ================================ */
-
-#customer-wrapper {
-  max-width: 1120px;
-  margin: 0 auto;
-}
-
-.customer-header {
-  background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid rgba(209, 213, 219, 0.95);
-  padding: 14px 16px;
-  margin-bottom: 14px;
-}
-
-.customer-header-main {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.customer-header-title {
+.app-topbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.customer-logo-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: #0a7b43;
-  color: #ffffff;
+.topbar-user-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fm-muted);
+}
+
+/* Hamburger */
+
+.hamburger-btn {
+  width: 34px;
+  height: 30px;
+  border-radius: 999px;
+  background: #f3f4f6;
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  gap: 4px;
+  padding: 0;
 }
 
-.customer-header-title h1 {
-  font-size: 18px;
+.hamburger-btn span {
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: #111827;
 }
 
-.customer-header-title p {
-  font-size: 12px;
-  color: var(--fm-muted);
-}
+/* Layout principale */
 
-.customer-header-info {
-  font-size: 12px;
-  text-align: right;
-  color: var(--fm-muted);
-}
-
-.customer-main {
-  margin-top: 4px;
-}
-
-.customer-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 9px;
-}
-
-.customer-tile {
-  border-radius: 15px;
-  padding: 9px 9px;
-  color: #ffffff;
-  min-height: 90px;
+.app-layout {
+  flex: 1;
   display: flex;
-  flex-direction: column;
+  min-height: 0;
+}
+
+/* Menu laterale */
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -260px;
+  width: 240px;
+  height: 100vh;
+  background: #ffffff;
+  box-shadow: -10px 0 30px rgba(15, 23, 42, 0.25);
+  padding: 12px 14px;
+  transition: right 0.18s ease-out;
+  z-index: 30;
+}
+
+.side-menu.open {
+  right: 0;
+}
+
+.side-menu-header {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+  margin-bottom: 6px;
 }
 
-.customer-tile-icon {
-  font-size: 19px;
-}
-
-.customer-tile-text {
-  font-size: 14px;
+.side-menu-title {
+  font-size: 15px;
   font-weight: 650;
 }
 
-.customer-tile-sub {
+.side-menu-close {
+  background: transparent;
+  font-size: 18px;
+}
+
+.side-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.side-menu-list li {
+  margin-bottom: 6px;
+}
+
+.side-menu-list button {
+  width: 100%;
+  text-align: left;
+  padding: 7px 8px;
+  border-radius: 10px;
+  border: none;
+  background: #f3f4f6;
+  font-size: 13px;
+}
+
+.side-menu-list button:hover {
+  background: #e5e7eb;
+}
+
+.side-menu-separator {
+  border-top: 1px solid #e5e7eb;
+  margin: 8px 0;
+}
+
+/* Contenuto principale */
+
+.app-main {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ============================
+   HOME ICON GRID (MOBILE FIRST)
+   ============================ */
+
+.home-screen {
+  width: 100%;
+  max-width: 1080px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.icon-grid-wrapper {
+  background: #ffffff;
+  border-radius: var(--fm-radius-lg);
+  border: 1px solid rgba(209, 213, 219, 0.9);
+  padding: 18px 14px 16px;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.18);
+}
+
+/* Griglia 3x4 come nello screenshot */
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 8px;
+  justify-items: center;
+}
+
+.icon-tile {
+  background: transparent;
+  border: none;
+  text-align: center;
+  padding: 0;
+}
+
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin: 0 auto 4px;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.2);
+}
+
+/* Colori come app tipo */
+
+.icon-yellow {
+  background: #facc15;
+}
+
+.icon-teal {
+  background: #14b8a6;
+}
+
+.icon-orange {
+  background: #fb923c;
+}
+
+.icon-lightblue {
+  background: #38bdf8;
+}
+
+.icon-red {
+  background: #f97373;
+}
+
+.icon-blue {
+  background: #2563eb;
+}
+
+.icon-whatsapp {
+  background: #22c55e;
+}
+
+.icon-green {
+  background: #84cc16;
+}
+
+.icon-bordeaux {
+  background: #f97373;
+}
+
+.icon-cyan {
+  background: #06b6d4;
+}
+
+.icon-calendar {
+  background: #f97316;
+}
+
+.icon-navy {
+  background: #111827;
+  color: #fbbf24;
+}
+
+.icon-label {
   font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-/* colori */
-
-.customer-tile-green {
-  background: linear-gradient(135deg, #0d9488, #22c55e);
+.home-placeholder {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--fm-muted);
+  text-align: center;
 }
 
-.customer-tile-blue {
-  background: linear-gradient(135deg, #2563eb, #38bdf8);
+/* Pannello laterale per desktop */
+
+.home-desktop-panel {
+  display: none;
+  background: #ffffff;
+  border-radius: var(--fm-radius-lg);
+  border: 1px solid rgba(209, 213, 219, 0.9);
+  padding: 14px 14px 12px;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+  font-size: 13px;
 }
 
-.customer-tile-pink {
-  background: linear-gradient(135deg, #ec4899, #f97316);
+.home-desktop-panel h3 {
+  margin-top: 0;
+  margin-bottom: 6px;
+  font-size: 15px;
 }
 
-.customer-tile-orange {
-  background: linear-gradient(135deg, #f97316, #facc15);
-}
-
-.customer-tile-teal {
-  background: linear-gradient(135deg, #0f766e, #22c55e);
-}
-
-.customer-tile-purple {
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-}
-
-.customer-tile-grey {
-  background: linear-gradient(135deg, #4b5563, #9ca3af);
-}
-
-.customer-tile-dark {
-  background: linear-gradient(135deg, #111827, #4b5563);
-}
-
-.customer-note {
+.home-desktop-note {
   margin-top: 8px;
   font-size: 12px;
   color: var(--fm-muted);
 }
 
-/* ================================
+/* ============================
    RESPONSIVE
-   ================================ */
+   ============================ */
 
-@media (max-width: 1100px) {
-  .home-wrapper {
-    grid-template-areas:
-      "abs"
-      "turni"
-      "app";
-    grid-template-columns: minmax(0, 1fr);
+@media (min-width: 900px) {
+  .home-screen {
+    grid-template-columns: minmax(0, 1.2fr) 300px;
+    align-items: stretch;
   }
 
-  .home-app-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .home-desktop-panel {
+    display: block;
   }
 
-  .customer-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .icon-grid {
+    gap: 18px 14px;
   }
 
-  .proc-layout,
-  .two-cols,
-  .admin-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 720px) {
-  .main {
-    padding: 14px;
+  .icon-circle {
+    width: 70px;
+    height: 70px;
+    font-size: 30px;
   }
 
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-
-  .home-app-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .customer-grid {
-    grid-template-columns: minmax(0, 1fr);
+  .icon-label {
+    font-size: 12px;
   }
 }
 
-/* Ingrandisci leggermente tutto su PC grandi */
-
-@media (min-width: 1200px) {
-  body {
-    font-size: 16px;
+@media (max-width: 600px) {
+  .app-main {
+    padding: 12px;
   }
 
-  .auth-card {
-    transform: scale(1.03);
+  .icon-circle {
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
   }
 }
