@@ -27,16 +27,8 @@
           <h2 class="login-title">Portale Farmacia Montesano</h2>
 
           <p class="login-subtitle">
-            Accedi come <strong>Titolare</strong>, <strong>Dipendente</strong> o
-            <strong>Cliente</strong>.
+            Accedi al portale interno o all’area clienti.
           </p>
-
-          <label for="login-role">Tipo di accesso</label>
-          <select id="login-role">
-            <option value="dipendente">Dipendente</option>
-            <option value="admin">Titolare</option>
-            <option value="cliente">Cliente</option>
-          </select>
 
           <label for="login-email">Email</label>
           <input
@@ -65,16 +57,22 @@
           <button class="btn-primary" onclick="login()">Entra nel portale</button>
 
           <p class="small-text">
-            Sei un nuovo dipendente?
-            <a href="#" onclick="showRegister(event)">Richiedi l’accesso</a>
+            Sei un nuovo utente?
+            <a href="#" onclick="showRegister(event)">Richiedi registrazione</a>
           </p>
 
           <p id="auth-error" class="error hidden"></p>
         </div>
 
-        <!-- REGISTRAZIONE DIPENDENTI -->
+        <!-- REGISTRAZIONE DIPENDENTI / CLIENTI -->
         <div id="register-box" class="hidden">
           <h2 class="login-title">Richiesta registrazione</h2>
+
+          <label for="reg-role">Sono un</label>
+          <select id="reg-role">
+            <option value="dipendente">Dipendente</option>
+            <option value="cliente">Cliente</option>
+          </select>
 
           <label for="reg-name">Nome e Cognome</label>
           <input
@@ -83,7 +81,7 @@
             placeholder="Es. Daniela Andrisani"
           />
 
-          <label for="reg-email">Email aziendale</label>
+          <label for="reg-email">Email</label>
           <input
             type="email"
             id="reg-email"
@@ -94,12 +92,12 @@
           <input type="password" id="reg-password" placeholder="Password" />
 
           <button class="btn-primary" onclick="registerUser()">
-            Invia richiesta al titolare
+            Invia richiesta
           </button>
 
           <p class="small-text">
-            L’account dovrà essere approvato dal Titolare prima di poter
-            accedere.
+            I dipendenti verranno abilitati dal Titolare.
+            I clienti potranno accedere subito alla propria area.
           </p>
 
           <p class="small-text">
@@ -127,7 +125,7 @@
           <div>
             <div class="topbar-title">Farmacia Montesano</div>
             <div class="topbar-subtitle">
-              Portale interno & Area Clienti
+              Portale interno &amp; Area Clienti
             </div>
           </div>
         </div>
@@ -137,6 +135,10 @@
             <span id="user-name-display">Operatore</span>
             <span id="user-role-display" class="role-badge">Ruolo</span>
           </div>
+          <span
+            id="topbar-badge-assenze"
+            class="topbar-badge hidden-badge"
+          ></span>
           <button class="btn-outline" onclick="goHome()">Dashboard</button>
           <button class="btn-outline" onclick="logout()">Esci</button>
         </div>
@@ -148,8 +150,8 @@
           <!-- SIDEBAR -->
           <aside class="sidebar">
             <div class="sidebar-header">
-              <div class="sidebar-label">Area interna</div>
-              <div class="sidebar-sub">Titolare & Dipendenti</div>
+              <div class="sidebar-label">Portale interno</div>
+              <div class="sidebar-sub">Titolare &amp; Dipendenti</div>
             </div>
 
             <nav class="sidebar-nav">
@@ -166,7 +168,20 @@
                 onclick="showSection('section-assenze')"
                 data-section="section-assenze"
               >
-                <span>📒</span> <span>Assenze</span>
+                <span>📒</span>
+                <span>Assenze</span>
+                <span
+                  id="badge-sidebar-assenze"
+                  class="badge-circle hidden-badge"
+                ></span>
+              </button>
+
+              <button
+                class="sidebar-link"
+                onclick="showSection('section-turni')"
+                data-section="section-turni"
+              >
+                <span>🌙</span> <span>Turni farmacie</span>
               </button>
 
               <button
@@ -209,7 +224,7 @@
                 <span>🔐</span> <span>Area personale</span>
               </button>
 
-              <!-- Visibile solo se role === admin, gestito da JS -->
+              <!-- Solo titolare -->
               <button
                 class="sidebar-link sidebar-link-admin"
                 onclick="showSection('section-admin')"
@@ -233,7 +248,7 @@
 
             <div class="sidebar-footer">
               <div class="sidebar-foot-label">Versione portale</div>
-              <div class="sidebar-foot-sub">v2 – layout dashboard</div>
+              <div class="sidebar-foot-sub">v3 – dashboard completa</div>
             </div>
           </aside>
 
@@ -245,53 +260,52 @@
                 <div>
                   <h2>Dashboard interna</h2>
                   <p class="subtitle">
-                    Panoramica veloce su assenze, procedure e comunicazioni.
+                    Assenze, turni e strumenti principali sempre in primo piano.
                   </p>
                 </div>
                 <div class="today-pill" id="home-daytag"></div>
               </div>
 
+              <!-- Riga principale: assenze + turni -->
               <div class="grid-2">
-                <!-- Assenze prossimi giorni -->
+                <!-- Assenze -->
                 <div class="card card-hero">
                   <div class="card-hero-header">
                     <div>
                       <div class="chip-label">Assenze</div>
-                      <h3>Prossimi giorni in Farmacia</h3>
+                      <h3>Dipendenti assenti</h3>
                     </div>
+                    <span
+                      id="badge-home-assenze"
+                      class="badge-circle hidden-badge"
+                    ></span>
                   </div>
                   <div id="home-abs-summary" class="home-abs-list">
-                    <!-- riempito da JS -->
+                    <!-- JS -->
                   </div>
                 </div>
 
-                <!-- Comunicazioni / riepilogo -->
-                <div class="card">
-                  <div class="card-header-row">
-                    <h3>Comunicazioni recenti</h3>
-                    <button
-                      class="chip-link"
-                      type="button"
-                      onclick="showSection('section-comunicazioni')"
-                    >
-                      Vai alle comunicazioni →
-                    </button>
+                <!-- Turni farmacie -->
+                <div class="card card-hero card-hero-turni">
+                  <div class="card-hero-header">
+                    <div>
+                      <div class="chip-label">Turni</div>
+                      <h3>Farmacie di turno</h3>
+                    </div>
                   </div>
-                  <div id="home-messages-preview" class="home-msg-preview small-text">
-                    <p>
-                      Apri la sezione "Comunicazioni" per leggere le note del
-                      titolare e le ultime indicazioni interne.
-                    </p>
+                  <div id="home-turni-list" class="home-abs-list">
+                    <!-- JS -->
                   </div>
                 </div>
               </div>
 
+              <!-- Seconda riga: 3 tile tipo touch -->
               <div class="grid-3">
                 <div class="card mini-card">
                   <h3>Procedure rapide</h3>
                   <p class="small-text">
-                    Trovi tutto in <strong>Procedure operative</strong>:
-                    anticipi, POS, sotto cassa, magazzino.
+                    Anticipi, POS, sotto cassa, magazzino: tutto aggiornato in
+                    un’unica sezione.
                   </p>
                   <button
                     class="btn-primary small fullwidth"
@@ -305,8 +319,8 @@
                 <div class="card mini-card">
                   <h3>Area personale</h3>
                   <p class="small-text">
-                    Scrivi appunti privati, promemoria e documenti personali
-                    solo visibili a te.
+                    Appunti privati, note lunghe e documenti personali visibili
+                    solo a te.
                   </p>
                   <button
                     class="btn-primary small fullwidth"
@@ -318,17 +332,20 @@
                 </div>
 
                 <div class="card mini-card">
-                  <h3>Formazione</h3>
-                  <p class="small-text">
-                    Ripassa procedure importanti e tieni traccia dei tuoi
-                    appunti formativi.
-                  </p>
+                  <h3>Comunicazioni</h3>
+                  <div
+                    id="home-messages-preview"
+                    class="small-text"
+                    style="min-height: 32px; margin-bottom: 4px;"
+                  >
+                    <!-- preview JS -->
+                  </div>
                   <button
                     class="btn-primary small fullwidth"
                     type="button"
-                    onclick="showSection('section-formazione')"
+                    onclick="showSection('section-comunicazioni')"
                   >
-                    Apri formazione
+                    Apri comunicazioni
                   </button>
                 </div>
               </div>
@@ -352,7 +369,7 @@
                     <h3>Assenze già approvate</h3>
                   </div>
                   <div id="assenze-future-list" class="assenze-future-list">
-                    <!-- popolato via JS -->
+                    <!-- JS -->
                   </div>
                 </div>
 
@@ -384,19 +401,11 @@
                       <label for="leave-time-from"
                         >Dalle ore (solo permesso orario)</label
                       >
-                      <input
-                        type="time"
-                        id="leave-time-from"
-                        placeholder="Es. 09:00"
-                      />
+                      <input type="time" id="leave-time-from" />
                     </div>
                     <div>
                       <label for="leave-time-to">Alle ore</label>
-                      <input
-                        type="time"
-                        id="leave-time-to"
-                        placeholder="Es. 11:00"
-                      />
+                      <input type="time" id="leave-time-to" />
                     </div>
                   </div>
 
@@ -433,6 +442,25 @@
               </div>
             </section>
 
+            <!-- TURNI FARMACIE -->
+            <section id="section-turni" class="section">
+              <div class="page-header">
+                <div>
+                  <h2>Turni farmacie</h2>
+                  <p class="subtitle">
+                    Elenco turni di oggi e dei prossimi giorni.
+                  </p>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3>Turni in evidenza</h3>
+                <div id="turni-list" class="list">
+                  <!-- JS -->
+                </div>
+              </div>
+            </section>
+
             <!-- PROCEDURE -->
             <section id="section-procedure" class="section">
               <div class="page-header">
@@ -462,13 +490,13 @@
                 <div>
                   <h2>Comunicazioni interne</h2>
                   <p class="subtitle">
-                    Note dal titolare, promemorie giornalieri, avvisi importanti.
+                    Note dal titolare, promemoria quotidiani, avvisi importanti.
                   </p>
                 </div>
               </div>
 
               <div class="card" id="message-list">
-                <!-- riempito via JS -->
+                <!-- JS -->
               </div>
             </section>
 
@@ -725,7 +753,8 @@
                 <div>
                   <h2>Altre funzioni</h2>
                   <p class="subtitle">
-                    Spazio per idee future: scadenzario, e-commerce, report, ecc.
+                    Spazio per idee future: scadenzario, e-commerce, report,
+                    ecc.
                   </p>
                 </div>
               </div>
@@ -736,9 +765,11 @@
                 </p>
                 <ul class="bullet-list">
                   <li>Collegamento diretto al gestionale (solo lettura).</li>
-                  <li>Promemoria automatici via email per scadenze importanti.</li>
-                  <li>Link rapidi al sito e all’e-commerce della Farmacia.</li>
-                  <li>Dashboard con indici numerici per il titolare.</li>
+                  <li>
+                    Promemoria automatici via email per scadenze importanti.
+                  </li>
+                  <li>Link rapidi al sito e all’e-commerce.</li>
+                  <li>Dashboard numeriche personalizzate per il titolare.</li>
                 </ul>
               </div>
             </section>
@@ -816,7 +847,7 @@
               <div class="customer-icon">📁</div>
               <div class="customer-title">I miei documenti</div>
               <div class="customer-text">
-                In futuro: ricette salvate, promemoria terapie, autocertificazioni.
+                In futuro: ricette salvate, promemoria terapie, ecc.
               </div>
             </button>
 
