@@ -4,11 +4,6 @@
   <meta charset="UTF-8" />
   <title>Portale Professionale – Farmacia Montesano</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Icona pagina / scorciatoia -->
-  <link rel="icon" href="logo-farmacia-montesano.jpg" type="image/jpeg" />
-  <link rel="apple-touch-icon" href="logo-farmacia-montesano.jpg" />
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -24,7 +19,7 @@
 
       <!-- LOGIN -->
       <div id="login-box">
-        <h2 class="login-title">Accesso al portale</h2>
+        <h2 class="login-title">Accesso Dipendenti</h2>
 
         <label>Email</label>
         <input type="email" id="login-email" placeholder="nome@farmaciamontesano.it" />
@@ -32,8 +27,7 @@
         <label>Password</label>
         <div class="password-row">
           <input type="password" id="login-password" placeholder="Password" />
-          <button type="button"
-                  class="btn-eye"
+          <button type="button" class="btn-eye"
                   onclick="togglePassword()"
                   aria-label="Mostra / nascondi password">👁</button>
         </div>
@@ -51,22 +45,19 @@
         <h2 class="login-title">Registrazione</h2>
 
         <label>Nome e Cognome</label>
-        <input type="text" id="reg-name" placeholder="Es. Mario Rossi" />
+        <input type="text" id="reg-name" placeholder="Mario Rossi" />
 
         <label>Email</label>
-        <input type="email" id="reg-email" placeholder="nome@email.it" />
+        <input type="email" id="reg-email" placeholder="nome@farmaciamontesano.it" />
 
         <label>Password</label>
-        <input type="password" id="reg-password" placeholder="Crea una password" />
-
-        <label>Sei un:</label>
-        <select id="reg-role">
-          <option value="cliente">Cliente</option>
-          <option value="dipendente">Dipendente</option>
-          <option value="titolare">Titolare</option>
-        </select>
+        <input type="password" id="reg-password" placeholder="Password" />
 
         <button class="btn-primary" onclick="registerUser()">Crea account</button>
+
+        <p class="small-text">
+          L'account resterà in attesa finché l'Admin non lo approva.
+        </p>
 
         <p class="small-text">
           Hai già un account?
@@ -77,12 +68,12 @@
       <p id="auth-error" class="error hidden"></p>
 
       <p class="small-text muted-center">
-        L'utilizzo del portale è riservato al personale e ai clienti autorizzati della Farmacia Montesano.
+        L'utilizzo del portale è riservato al personale autorizzato della Farmacia Montesano.
       </p>
     </div>
   </div>
 
-  <!-- PORTALE DIPENDENTI / ADMIN -->
+  <!-- PORTALE INTERNO -->
   <div id="portal" class="portal hidden">
     <!-- TOPBAR -->
     <header class="topbar">
@@ -105,8 +96,9 @@
       </div>
     </header>
 
+    <!-- CONTENUTO -->
     <main class="main">
-      <!-- DASHBOARD DIPENDENTI -->
+      <!-- DASHBOARD -->
       <section id="home" class="section visible">
         <div class="home-app-wrapper">
           <div class="app-phone">
@@ -129,45 +121,53 @@
               <div id="screen-home" class="app-screen app-screen-visible">
                 <div class="app-grid">
                   <!-- RIGA 1 -->
-                  <button class="app-tile app-tile-orange" onclick="showAppScreen('assenze')">
+                  <button class="app-tile app-tile-orange"
+                          onclick="showAppScreen('assenze')">
                     <span class="app-tile-icon">🗓</span>
                     <span class="app-tile-text">Assenze</span>
                   </button>
 
-                  <button class="app-tile app-tile-green" onclick="showSection('procedures')">
+                  <button class="app-tile app-tile-green"
+                          onclick="showSection('procedures')">
                     <span class="app-tile-icon">📄</span>
                     <span class="app-tile-text">Procedure</span>
                   </button>
 
                   <!-- RIGA 2 -->
-                  <button class="app-tile app-tile-pink" onclick="showSection('messages')">
+                  <button class="app-tile app-tile-pink"
+                          onclick="showSection('messages')">
                     <span class="app-tile-icon">📣</span>
                     <span class="app-tile-text">Comunicazioni</span>
                   </button>
 
-                  <button class="app-tile app-tile-blue" onclick="showSection('training')">
+                  <button class="app-tile app-tile-blue"
+                          onclick="showSection('training')">
                     <span class="app-tile-icon">🎓</span>
                     <span class="app-tile-text">Formazione</span>
                   </button>
 
                   <!-- RIGA 3 -->
-                  <button class="app-tile app-tile-yellow" onclick="showSection('logistics')">
+                  <button class="app-tile app-tile-yellow"
+                          onclick="showSection('logistics')">
                     <span class="app-tile-icon">📦</span>
                     <span class="app-tile-text">Logistica</span>
                   </button>
 
-                  <button class="app-tile app-tile-purple" onclick="showSection('personal')">
+                  <button class="app-tile app-tile-purple"
+                          onclick="showSection('personal')">
                     <span class="app-tile-icon">🔐</span>
                     <span class="app-tile-text">Area personale</span>
                   </button>
 
-                  <!-- RIGA 4 -->
-                  <button class="app-tile app-tile-teal" onclick="showSection('admin')">
+                  <!-- RIGA 4 (Admin) -->
+                  <button class="app-tile app-tile-teal"
+                          onclick="showSection('admin')">
                     <span class="app-tile-icon">👑</span>
                     <span class="app-tile-text">Admin</span>
                   </button>
 
-                  <button class="app-tile app-tile-grey" onclick="alert('Spazio per future funzioni')">
+                  <button class="app-tile app-tile-grey"
+                          onclick="alert('Spazio per future funzioni')">
                     <span class="app-tile-icon">💊</span>
                     <span class="app-tile-text">Altre funzioni</span>
                   </button>
@@ -236,7 +236,8 @@
       <section id="messages" class="section">
         <h2>Comunicazioni interne</h2>
         <p class="subtitle">
-          Messaggi ufficiali dal titolare o dai responsabili. Le comunicazioni urgenti sono evidenziate.
+          Messaggi ufficiali dal titolare o dai responsabili.
+          Le comunicazioni urgenti sono evidenziate.
         </p>
         <div id="message-list" class="list"></div>
       </section>
@@ -314,10 +315,10 @@
             <textarea id="training-notes" rows="7"
               placeholder="Scrivi qui appunti su corsi, ECM, prodotti da studiare..."></textarea>
             <div class="card-actions-row">
-              <button class="btn-primary small" onclick="saveTrainingNotes()">
-                Salva appunti
-              </button>
-              <span id="training-saved" class="saved-label hidden">Salvato ✔</span>
+              <button class="btn-primary small"
+                      onclick="saveTrainingNotes()">Salva appunti</button>
+              <span id="training-saved"
+                    class="saved-label hidden">Salvato ✔</span>
             </div>
           </div>
         </div>
@@ -354,10 +355,10 @@
           <textarea id="personal-notes" rows="6"
             placeholder="Note personali, promemoria, obiettivi... visibili solo a te."></textarea>
           <div class="card-actions-row">
-            <button class="btn-primary small" onclick="savePersonalNotes()">
-              Salva note personali
-            </button>
-            <span id="personal-notes-saved" class="saved-label hidden">Salvato ✔</span>
+            <button class="btn-primary small"
+                    onclick="savePersonalNotes()">Salva note personali</button>
+            <span id="personal-notes-saved"
+                  class="saved-label hidden">Salvato ✔</span>
           </div>
         </div>
 
@@ -376,7 +377,7 @@
             <div class="field-flex">
               <label>Descrizione / posizione</label>
               <input type="text" id="personal-doc-desc"
-                     placeholder="Es. PDF in iCloud / cartellina verde in ufficio..." />
+                placeholder="Es. PDF in iCloud / cartellina verde in ufficio..." />
             </div>
           </div>
           <button class="btn-primary small" style="margin-top:8px;"
@@ -468,88 +469,6 @@
             Approva o rifiuta le richieste. Lo storico rimane visibile anche ai dipendenti.
           </p>
           <div id="admin-leave-list" class="list"></div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- PORTALE CLIENTI -->
-  <div id="portal-client" class="portal hidden">
-    <header class="topbar">
-      <div class="topbar-left">
-        <img src="logo-farmacia-montesano.jpg"
-             alt="Farmacia Montesano"
-             class="topbar-logo-img" />
-        <div>
-          <div class="topbar-title">Farmacia Montesano</div>
-          <div class="topbar-subtitle">Area clienti</div>
-        </div>
-      </div>
-      <div class="topbar-user">
-        <div class="user-pill">
-          <span id="client-name-display"></span>
-          <span class="role-badge">Cliente</span>
-        </div>
-        <button class="btn-outline" onclick="logout()">Logout</button>
-      </div>
-    </header>
-
-    <main class="main">
-      <section id="client-home" class="section visible">
-        <div class="client-wrapper">
-          <h2 class="client-title">
-            Benvenuto in Farmacia Montesano,
-            <span id="client-hello-name"></span>
-          </h2>
-          <p class="subtitle">
-            Da qui puoi prenotare i servizi, vedere gli orari occupati e tenere traccia dei tuoi appuntamenti.
-          </p>
-
-          <div class="two-cols">
-            <!-- COLONNA SINISTRA: PRENOTAZIONI -->
-            <div class="card">
-              <h3>Prenota un servizio</h3>
-
-              <label>Data</label>
-              <input type="date" id="book-date" onchange="onBookingDateChange()" />
-
-              <label>Fascia oraria disponibile</label>
-              <select id="book-slot">
-                <!-- riempito da script -->
-              </select>
-
-              <label>Nota (opzionale)</label>
-              <textarea id="book-note" rows="3"
-                placeholder="Es. controllo pressione, consulenza, prenotazione servizio..."></textarea>
-
-              <button class="btn-primary small" style="margin-top:10px;"
-                      onclick="clientSubmitBooking()">
-                Conferma prenotazione
-              </button>
-
-              <p class="small-text" id="book-hint">
-                Le fasce orarie già occupate non saranno selezionabili.
-              </p>
-            </div>
-
-            <!-- COLONNA DESTRA: APPUNTI / INFO -->
-            <div class="card">
-              <h3>I tuoi appunti cliente</h3>
-              <textarea id="client-notes" rows="7"
-                placeholder="Scrivi qui promemoria su terapie, appuntamenti, cose da chiedere in farmacia..."></textarea>
-              <div class="card-actions-row">
-                <button class="btn-primary small" onclick="saveClientNotes()">
-                  Salva appunti
-                </button>
-                <span id="client-notes-saved" class="saved-label hidden">Salvato ✔</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-top:18px;">
-            <h3>Le tue prenotazioni</h3>
-            <div id="client-bookings-list" class="list"></div>
-          </div>
         </div>
       </section>
     </main>
