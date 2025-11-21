@@ -123,7 +123,6 @@ const PHARMACIES = {
     phone: "0835 333911"
   }
 };
-
 /* Turni ufficiali Matera – novembre/dicembre 2025.
    Ogni riga: data ISO, farmacia di turno, eventuale appoggio. */
 
