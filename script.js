@@ -1,18 +1,19 @@
-// Apertura e chiusura del menu laterale
-
+// Riferimenti
 const sidebar = document.getElementById("sidebar");
 const hamburger = document.getElementById("hamburger");
 const closeSidebarBtn = document.getElementById("closeSidebar");
 
+// Apri sidebar
 hamburger.addEventListener("click", () => {
   sidebar.classList.add("open");
 });
 
+// Chiudi sidebar col bottone X
 closeSidebarBtn.addEventListener("click", () => {
   sidebar.classList.remove("open");
 });
 
-// Chiudi sidebar cliccando fuori (solo su schermi più grandi è comodo)
+// Chiudi sidebar cliccando fuori (desktop / tablet)
 document.addEventListener("click", (event) => {
   if (!sidebar.classList.contains("open")) return;
 
