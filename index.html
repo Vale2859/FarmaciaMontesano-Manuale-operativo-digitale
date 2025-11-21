@@ -8,7 +8,7 @@
 </head>
 <body>
 
-  <!-- SIDEBAR (MENU LATERALE) -->
+  <!-- MENU LATERALE -->
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2>Menu</h2>
@@ -22,7 +22,7 @@
     </ul>
   </aside>
 
-  <!-- PULSANTE HAMBURGER -->
+  <!-- HAMBURGER -->
   <button id="hamburger" aria-label="Apri menu">☰</button>
 
   <!-- HEADER -->
@@ -30,12 +30,13 @@
     <h1>FARMACIA</h1>
   </header>
 
-  <!-- CONTENUTO PRINCIPALE -->
+  <!-- DASHBOARD -->
   <main class="dashboard-wrapper">
     <section class="dashboard">
 
-      <!-- RIGA SUPERIORE: 3 CARD CON CONTENUTO -->
+      <!-- CARD 1: ASSENZE -->
       <article class="card card-green">
+        <span class="badge">2</span>
         <div class="card-header">
           <div class="card-icon-bubble">📅</div>
           <div class="card-title-block">
@@ -50,7 +51,9 @@
         </div>
       </article>
 
+      <!-- CARD 2: TURNI -->
       <article class="card card-teal">
+        <span class="badge">1</span>
         <div class="card-header">
           <div class="card-icon-bubble">🕒</div>
           <div class="card-title-block">
@@ -65,7 +68,9 @@
         </div>
       </article>
 
+      <!-- CARD 3: COMUNICAZIONI -->
       <article class="card card-pink">
+        <span class="badge">3</span>
         <div class="card-header">
           <div class="card-icon-bubble">📣</div>
           <div class="card-title-block">
@@ -80,37 +85,51 @@
         </div>
       </article>
 
-      <!-- RIGA INFERIORE: ICONE GRANDI -->
+      <!-- TILE GRID -->
       <section class="tile-grid">
+
+        <!-- PROCEDURE -->
         <div class="tile tile-procedure">
+          <span class="badge">1</span>
           <div class="tile-icon-bubble">📁</div>
           <h3>Procedure</h3>
         </div>
 
+        <!-- LOGISTICA -->
         <div class="tile tile-logistica">
+          <span class="badge">4</span>
           <div class="tile-icon-bubble">📦</div>
           <h3>Logistica</h3>
         </div>
 
+        <!-- MAGAZZINIERE -->
         <div class="tile tile-magazzino">
+          <span class="badge">2</span>
           <div class="tile-icon-bubble">📋</div>
           <h3>Magazziniera</h3>
         </div>
 
+        <!-- FORMAZIONE -->
         <div class="tile tile-formazione">
+          <span class="badge">5</span>
           <div class="tile-icon-bubble">🎓</div>
           <h3>Formazione</h3>
         </div>
 
+        <!-- AREA PERSONALE -->
         <div class="tile tile-area">
+          <span class="badge">1</span>
           <div class="tile-icon-bubble">👤</div>
           <h3>Area personale</h3>
         </div>
 
+        <!-- ADMIN -->
         <div class="tile tile-admin">
+          <span class="badge">1</span>
           <div class="tile-icon-bubble">🔧</div>
           <h3>Admin</h3>
         </div>
+
       </section>
 
     </section>
