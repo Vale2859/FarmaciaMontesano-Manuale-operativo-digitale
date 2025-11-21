@@ -1,19 +1,21 @@
 /* ============================================
    Portale Professionale – Farmacia Montesano
    Gestione front-end con localStorage
-   Ruoli: titolare, dipendente, cliente
+   Ruoli: admin, dipendente, cliente
+   Password hashate + "Ricordami" con token
    ============================================ */
 
-const LS_USERS      = "fm_users";
-const LS_ACTIVE     = "fm_activeUser";
-const LS_ABSENCES   = "fm_absences";        // assenze dipendenti
+const LS_USERS = "fm_users";
+const LS_ACTIVE = "fm_activeUser";
+const LS_ABSENCES = "fm_absences";
 const LS_PROCEDURES = "fm_procedures";
-const LS_MESSAGES   = "fm_messages";
-const LS_LEAVE      = "fm_leave";
-const LS_PERSONAL   = "fm_personal";
-const LS_QUICK      = "fm_quickNotes";
-const LS_TRAINING   = "fm_trainingNotes";
-const LS_BOOKINGS   = "fm_bookings";        // prenotazioni clienti
+const LS_MESSAGES = "fm_messages";
+const LS_LEAVE = "fm_leave";
+const LS_PERSONAL = "fm_personal";
+const LS_QUICK = "fm_quickNotes";
+const LS_TRAINING = "fm_trainingNotes";
+const LS_APPOINTMENTS = "fm_appointments";
+const LS_REMEMBER = "fm_rememberToken";
 
 /* ---------- Utility ---------- */
 
@@ -33,6 +35,16 @@ function saveJson(key, value) {
 
 function uid() {
   return "id-" + Math.random().toString(36).substring(2) + "-" + Date.now();
+}
+
+/* Hash password (SHA-256) */
+async function hashPassword(plain) {
+  const enc = new TextEncoder();
+  const data = enc.encode(plain);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 /* ============================================
@@ -67,8 +79,6 @@ function showLogin(ev) {
   document.getElementById("login-box").classList.remove("hidden");
 }
 
-/* USERS */
-
 function loadUsers() {
   return loadJson(LS_USERS, []);
 }
@@ -77,91 +87,108 @@ function saveUsers(users) {
   saveJson(LS_USERS, users);
 }
 
-/* Admin/titolare di default se non esistono utenti – o ripristino */
-function seedAdminIfNeeded() {
+/* Admin di default se non esistono utenti – o ripristino */
+async function seedAdminIfNeeded() {
   let users = loadUsers();
 
   const adminEmail = "admin@farmaciamontesano.it";
   const adminPassword = "admin123";
 
   let admin = users.find(
-    (u) => u.email.toLowerCase() === adminEmail.toLowerCase()
+    (u) => u.email && u.email.toLowerCase() === adminEmail.toLowerCase()
   );
+
+  const passwordHash = await hashPassword(adminPassword);
 
   if (!admin) {
     admin = {
       id: uid(),
       name: "Valerio Montesano",
-      phone: "",
       email: adminEmail,
-      password: adminPassword,
-      role: "titolare",
+      passwordHash,
+      role: "admin",
       active: true,
       approved: true,
       createdAt: new Date().toISOString(),
     };
     users.push(admin);
   } else {
-    admin.password = adminPassword;
-    admin.role = "titolare";
+    admin.role = "admin";
     admin.active = true;
     admin.approved = true;
+    if (!admin.passwordHash) {
+      admin.passwordHash = passwordHash;
+    }
   }
 
   saveUsers(users);
 }
 
-/* Registrazione: cliente immediato, altri in attesa di approvazione */
-
-function registerUser() {
-  const name  = document.getElementById("reg-name").value.trim();
+/* Registrazione: account cliente o dipendente */
+async function registerUser() {
+  const name = document.getElementById("reg-name").value.trim();
   const phone = document.getElementById("reg-phone").value.trim();
   const email = document.getElementById("reg-email").value.trim();
-  const pass  = document.getElementById("reg-password").value;
-  const role  = document.getElementById("reg-role").value;
+  const pass = document.getElementById("reg-password").value;
+  let role = document.getElementById("reg-role").value || "cliente";
 
   if (!name || !email || !pass) {
-    showError("Compila almeno nome, email e password.");
+    showError("Compila tutti i campi obbligatori.");
     return;
   }
 
   let users = loadUsers();
-  if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
+  if (users.find((u) => u.email && u.email.toLowerCase() === email.toLowerCase())) {
     showError("Esiste già un utente con questa email.");
     return;
   }
 
-  const isClient = role === "cliente";
+  // Non permetto di creare nuovi admin in autonomia:
+  // se scelgono "titolare", lo tratto come cliente.
+  if (role === "titolare") {
+    role = "cliente";
+  }
+
+  const passwordHash = await hashPassword(pass);
+
+  let active = true;
+  let approved = true;
+
+  if (role === "dipendente") {
+    active = false;
+    approved = false;
+  }
 
   users.push({
     id: uid(),
     name,
     phone,
     email,
-    password: pass,
+    passwordHash,
     role,
-    active: isClient,          // cliente subito attivo
-    approved: isClient,        // cliente subito approvato
+    active,
+    approved,
     createdAt: new Date().toISOString(),
   });
 
   saveUsers(users);
 
-  if (isClient) {
-    alert("Account cliente creato! Ora puoi accedere con le tue credenziali.");
-  } else {
+  if (role === "dipendente") {
     alert(
-      "Richiesta inviata! L'account dovrà essere approvato dal Titolare prima di poter accedere."
+      "Registrazione inviata! L'account dipendente dovrà essere approvato dall'Admin prima di poter accedere."
     );
+  } else {
+    alert("Registrazione completata! Puoi accedere con le tue credenziali.");
   }
+
   showLogin();
 }
 
 /* Login */
-
-function login() {
+async function login() {
   const email = document.getElementById("login-email").value.trim();
-  const pass  = document.getElementById("login-password").value;
+  const pass = document.getElementById("login-password").value;
+  const remember = document.getElementById("login-remember").checked;
 
   if (!email || !pass) {
     showError("Inserisci email e password.");
@@ -169,8 +196,16 @@ function login() {
   }
 
   const users = loadUsers();
-  const user = users.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
+  const passHash = await hashPassword(pass);
+
+  let user = users.find(
+    (u) =>
+      u.email &&
+      u.email.toLowerCase() === email.toLowerCase() &&
+      (
+        (u.passwordHash && u.passwordHash === passHash) ||
+        (!u.passwordHash && u.password === pass) // compat vecchia versione
+      )
   );
 
   if (!user) {
@@ -183,99 +218,142 @@ function login() {
     return;
   }
 
+  // upgrade: se aveva solo password, salvo anche hash
+  if (!user.passwordHash) {
+    user.passwordHash = passHash;
+    delete user.password;
+    saveUsers(users);
+  }
+
+  // gestisci token "Ricordami"
+  let token = null;
+  if (remember) {
+    token = uid();
+    const idx = users.findIndex((u) => u.id === user.id);
+    if (idx !== -1) {
+      users[idx].rememberToken = token;
+      saveUsers(users);
+      saveJson(LS_REMEMBER, { userId: user.id, token });
+    }
+  } else {
+    localStorage.removeItem(LS_REMEMBER);
+  }
+
   saveJson(LS_ACTIVE, user);
+  clearError();
   openPortal(user);
 }
 
 /* Logout */
-
 function logout() {
-  localStorage.removeItem(LS_ACTIVE);
-  // nascondi entrambi i portali
-  const portalDip = document.getElementById("portal");
-  const portalCli = document.getElementById("portal-client");
-  if (portalDip) portalDip.classList.add("hidden");
-  if (portalCli) portalCli.classList.add("hidden");
+  const active = loadJson(LS_ACTIVE, null);
+  if (active) {
+    let users = loadUsers();
+    const idx = users.findIndex((u) => u.id === active.id);
+    if (idx !== -1) {
+      delete users[idx].rememberToken;
+      saveUsers(users);
+    }
+  }
 
+  localStorage.removeItem(LS_ACTIVE);
+  localStorage.removeItem(LS_REMEMBER);
+  document.getElementById("portal").classList.add("hidden");
   document.getElementById("auth").classList.remove("hidden");
   showLogin();
 }
 
+/* Auto-login da token "Ricordami" */
+function autoLoginFromRemember() {
+  const rem = loadJson(LS_REMEMBER, null);
+  if (!rem) return null;
+
+  const users = loadUsers();
+  const u = users.find(
+    (x) => x.id === rem.userId && x.rememberToken === rem.token
+  );
+  if (!u || !u.approved || !u.active) return null;
+
+  saveJson(LS_ACTIVE, u);
+  return u;
+}
+
 /* ============================================
-   ROUTING PORTALE (DIPENDENTI / CLIENTI)
+   PORTALE & NAVIGAZIONE
    ============================================ */
 
 function openPortal(user) {
   document.getElementById("auth").classList.add("hidden");
+  document.getElementById("portal").classList.remove("hidden");
+
+  const nameEl = document.getElementById("user-name-display");
+  const roleEl = document.getElementById("user-role-display");
+  const titleEl = document.getElementById("topbar-title");
+  const subEl = document.getElementById("topbar-subtitle");
+
+  if (nameEl) nameEl.textContent = user.name || "";
+  if (roleEl) {
+    if (user.role === "admin") roleEl.textContent = "Titolare";
+    else if (user.role === "dipendente") roleEl.textContent = "Dipendente";
+    else roleEl.textContent = "Cliente";
+  }
+
+  const mainStaff = document.getElementById("main-staff");
+  const mainClient = document.getElementById("main-client");
 
   if (user.role === "cliente") {
+    if (titleEl) titleEl.textContent = "Farmacia Montesano";
+    if (subEl) subEl.textContent = "Area clienti";
+
+    if (mainStaff) mainStaff.classList.add("hidden");
+    if (mainClient) mainClient.classList.remove("hidden");
+
     initClientPortal(user);
   } else {
-    initDipPortal(user);
+    if (titleEl) titleEl.textContent = "Farmacia Montesano";
+    if (subEl) subEl.textContent = "Portale professionale interno";
+
+    if (mainClient) mainClient.classList.add("hidden");
+    if (mainStaff) mainStaff.classList.remove("hidden");
+
+    initStaffPortal(user);
   }
 }
 
-/* ---- PORTALE DIPENDENTI/TITOLARE ---- */
-
-function initDipPortal(user) {
-  const portalDip = document.getElementById("portal");
-  const portalCli = document.getElementById("portal-client");
-  if (portalCli) portalCli.classList.add("hidden");
-  portalDip.classList.remove("hidden");
-
-  document.getElementById("user-name-display").textContent = user.name;
-  document.getElementById("user-role-display").textContent =
-    user.role === "titolare" ? "Titolare" : "Dipendente";
-  const subtitle = document.getElementById("portal-subtitle");
-  if (subtitle) subtitle.textContent =
-    user.role === "titolare"
-      ? "Portale professionale – Titolare"
-      : "Portale professionale interno";
-
-  // inizializza varie sezioni
+/* Inizializza portale Staff (dipendenti/admin) */
+function initStaffPortal(user) {
   initHome(user);
   renderProcedures();
   renderMessages(user);
   renderLogistics();
   loadPersonalData(user);
   renderLeaveTable(user);
-  if (user.role === "titolare") {
+  renderTraining(user);
+  if (user.role === "admin") {
     renderAdminUsers();
     renderAdminProceduresList();
     renderAdminLeaveList();
     populateMessageTargets();
   }
 
-  // schermata iniziale
   showSection("home");
   showAppScreen("home");
   renderApprovedAbsences();
 }
 
-/* ---- PORTALE CLIENTI ---- */
-
-function initClientPortal(user) {
-  const portalDip = document.getElementById("portal");
-  const portalCli = document.getElementById("portal-client");
-  if (portalDip) portalDip.classList.add("hidden");
-  portalCli.classList.remove("hidden");
-
-  const nameSpan = document.getElementById("client-user-name");
-  const hName    = document.getElementById("client-header-name");
-  if (nameSpan) nameSpan.textContent = user.name;
-  if (hName) hName.textContent = user.name;
-
-  showClientScreen("home");
-  renderClientBookings(user);
-}
-
-/* Pulsante Home globale (solo per dipendenti/titolare) */
+/* Pulsante Home globale */
 function goHome() {
-  showSection("home");
-  showAppScreen("home");
+  const active = loadJson(LS_ACTIVE, null);
+  if (!active) return;
+  if (active.role === "cliente") {
+    showClientSection("client-home");
+  } else {
+    showSection("home");
+    showAppScreen("home");
+  }
 }
 
-/* Cambio sezione (solo portale dipendenti/titolare) */
+/* Cambio sezione Staff */
 function showSection(id, btn) {
   const sections = document.querySelectorAll(".section");
   sections.forEach((s) => s.classList.remove("visible"));
@@ -289,7 +367,7 @@ function showSection(id, btn) {
 }
 
 /* ============================================
-   DASHBOARD / HOME (DIPENDENTI)
+   DASHBOARD / HOME STAFF
    ============================================ */
 
 function todayLabel() {
@@ -342,7 +420,7 @@ function initHome(user) {
 }
 
 function openProcedureFromHome(cat, title) {
-  showSection("procedures", document.getElementById("nav-proc"));
+  showSection("procedures");
   selectProcedureCategory(cat);
   scrollToProcedure(title);
 }
@@ -598,9 +676,9 @@ function renderMessages(user) {
 }
 
 function adminSendMessage() {
-  const title   = document.getElementById("admin-msg-title").value.trim();
-  const body    = document.getElementById("admin-msg-body").value.trim();
-  const target  = document.getElementById("admin-msg-target").value;
+  const title = document.getElementById("admin-msg-title").value.trim();
+  const body = document.getElementById("admin-msg-body").value.trim();
+  const target = document.getElementById("admin-msg-target").value;
   const priority = document.getElementById("admin-msg-priority").value;
 
   if (!title || !body) {
@@ -623,7 +701,7 @@ function adminSendMessage() {
   document.getElementById("admin-msg-body").value = "";
 
   const active = loadJson(LS_ACTIVE, null);
-  if (active && active.role !== "cliente") {
+  if (active) {
     renderMessages(active);
     renderHomeLastMessages(active);
   }
@@ -634,7 +712,7 @@ function adminSendMessage() {
 function populateMessageTargets() {
   const sel = document.getElementById("admin-msg-target");
   if (!sel) return;
-  const users = loadUsers().filter((u) => u.approved && u.active && u.role !== "cliente");
+  const users = loadUsers().filter((u) => u.approved && u.active);
   sel.innerHTML = `<option value="all">Tutti i dipendenti</option>`;
   users.forEach((u) => {
     const opt = document.createElement("option");
@@ -645,7 +723,7 @@ function populateMessageTargets() {
 }
 
 /* ============================================
-   FERIE & PERMESSI (DIPENDENTI)
+   FERIE & PERMESSI
    ============================================ */
 
 function formatLeaveType(t) {
@@ -670,10 +748,10 @@ function formatLeaveStatus(s) {
 }
 
 function sendLeaveRequest() {
-  const type  = document.getElementById("leave-type").value;
+  const type = document.getElementById("leave-type").value;
   const start = document.getElementById("leave-start").value;
-  const end   = document.getElementById("leave-end").value;
-  const note  = document.getElementById("leave-note").value.trim();
+  const end = document.getElementById("leave-end").value;
+  const note = document.getElementById("leave-note").value.trim();
 
   if (!start) {
     alert("Inserisci almeno la data di inizio.");
@@ -681,7 +759,7 @@ function sendLeaveRequest() {
   }
 
   const user = loadJson(LS_ACTIVE, null);
-  if (!user || user.role === "cliente") return;
+  if (!user) return;
 
   let all = loadJson(LS_LEAVE, []);
   all.push({
@@ -699,13 +777,12 @@ function sendLeaveRequest() {
 
   document.getElementById("leave-note").value = "";
   renderLeaveTable(user);
-  if (user.role === "titolare") renderAdminLeaveList();
+  if (user.role === "admin") renderAdminLeaveList();
 
   alert("Richiesta inviata.");
 }
 
 function renderLeaveTable(user) {
-  if (!user || user.role === "cliente") return;
   const tbody = document
     .getElementById("leave-table")
     ?.querySelector("tbody");
@@ -787,9 +864,9 @@ function adminSetLeaveStatus(id, status) {
   saveJson(LS_LEAVE, all);
 
   const active = loadJson(LS_ACTIVE, null);
-  if (active && active.role !== "cliente") {
+  if (active) {
     renderLeaveTable(active);
-    if (active.role === "titolare") renderAdminLeaveList();
+    if (active.role === "admin") renderAdminLeaveList();
     renderHomeLeaveSummary(active);
   }
 }
@@ -799,7 +876,6 @@ function adminSetLeaveStatus(id, status) {
    ============================================ */
 
 function renderTraining(user) {
-  if (!user || user.role === "cliente") return;
   const list = document.getElementById("training-list");
   if (list) {
     list.innerHTML = `
@@ -817,7 +893,7 @@ function renderTraining(user) {
 
 function saveTrainingNotes() {
   const user = loadJson(LS_ACTIVE, null);
-  if (!user || user.role === "cliente") return;
+  if (!user) return;
   const ta = document.getElementById("training-notes");
   if (!ta) return;
   localStorage.setItem(LS_TRAINING + "_" + user.id, ta.value);
@@ -834,7 +910,7 @@ function saveTrainingNotes() {
 
 function renderLogistics() {
   const cour = document.getElementById("logistics-couriers");
-  const exp  = document.getElementById("logistics-expiry");
+  const exp = document.getElementById("logistics-expiry");
   if (cour) {
     cour.innerHTML = `
       <li>Corriere principale: ritiro ore 16:00.</li>
@@ -850,12 +926,12 @@ function renderLogistics() {
 }
 
 /* ============================================
-   AREA PERSONALE / APPUNTI (DIPENDENTI)
+   AREA PERSONALE / APPUNTI
    ============================================ */
 
 function saveQuickNotes() {
   const user = loadJson(LS_ACTIVE, null);
-  if (!user || user.role === "cliente") return;
+  if (!user) return;
   const ta = document.getElementById("quick-notes");
   if (!ta) return;
   localStorage.setItem(LS_QUICK + "_" + user.id, ta.value);
@@ -867,7 +943,6 @@ function saveQuickNotes() {
 }
 
 function loadPersonalData(user) {
-  if (!user || user.role === "cliente") return;
   const quick = localStorage.getItem(LS_QUICK + "_" + user.id);
   if (quick && document.getElementById("quick-notes")) {
     document.getElementById("quick-notes").value = quick;
@@ -883,7 +958,7 @@ function loadPersonalData(user) {
 
 function savePersonalNotes() {
   const user = loadJson(LS_ACTIVE, null);
-  if (!user || user.role === "cliente") return;
+  if (!user) return;
   const ta = document.getElementById("personal-notes");
   if (!ta) return;
 
@@ -901,12 +976,12 @@ function savePersonalNotes() {
 
 function addPersonalDoc() {
   const user = loadJson(LS_ACTIVE, null);
-  if (!user || user.role === "cliente") return;
+  if (!user) return;
 
   const titleEl = document.getElementById("personal-doc-title");
-  const descEl  = document.getElementById("personal-doc-desc");
-  const title   = titleEl.value.trim();
-  const desc    = descEl.value.trim();
+  const descEl = document.getElementById("personal-doc-desc");
+  const title = titleEl.value.trim();
+  const desc = descEl.value.trim();
   if (!title) {
     alert("Inserisci un titolo per il documento.");
     return;
@@ -971,11 +1046,17 @@ function renderAdminUsers() {
     div.className = "list-item";
     div.innerHTML = `
       <div class="list-item-title">
-        ${u.name} ${u.role === "titolare" ? "(Titolare)" : u.role === "dipendente" ? "(Dipendente)" : "(Cliente)"}
+        ${u.name} ${
+      u.role === "admin"
+        ? "(Admin)"
+        : u.role === "dipendente"
+        ? "(Dipendente)"
+        : "(Cliente)"
+    }
       </div>
-      <div class="list-item-meta">${u.email}</div>
+      <div class="list-item-meta">${u.email || ""}</div>
       <div>
-        Ruolo: ${u.role} – Stato: ${
+        Stato: ${
           u.approved && u.active
             ? "Attivo"
             : u.approved && !u.active
@@ -985,12 +1066,12 @@ function renderAdminUsers() {
       </div>
       <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px;">
         ${
-          !u.approved && u.role !== "cliente"
+          !u.approved
             ? `<button class="btn-primary small" onclick="adminApproveUser('${u.id}')">Approva</button>`
             : ""
         }
         ${
-          u.approved && u.role !== "cliente"
+          u.approved
             ? `<button class="btn-primary small" onclick="adminToggleActive('${u.id}')">${
                 u.active ? "Disattiva" : "Riattiva"
               }</button>`
@@ -1024,15 +1105,16 @@ function adminToggleActive(id) {
   renderAdminUsers();
 }
 
-function adminResetPassword(id) {
+async function adminResetPassword(id) {
   let users = loadUsers();
   const u = users.find((x) => x.id === id);
   if (!u) return;
   const newPass = prompt(
-    "Nuova password per " + u.name + " (" + u.email + "):"
+    "Nuova password per " + u.name + " (" + (u.email || "") + "):"
   );
   if (!newPass) return;
-  u.password = newPass;
+  u.passwordHash = await hashPassword(newPass);
+  delete u.password;
   saveUsers(users);
   alert("Password aggiornata.");
 }
@@ -1040,9 +1122,9 @@ function adminResetPassword(id) {
 /* Admin – Procedure */
 
 function adminSaveProcedure() {
-  const cat   = document.getElementById("admin-proc-cat").value.trim();
+  const cat = document.getElementById("admin-proc-cat").value.trim();
   const title = document.getElementById("admin-proc-title").value.trim();
-  const body  = document.getElementById("admin-proc-body").value.trim();
+  const body = document.getElementById("admin-proc-body").value.trim();
 
   if (!cat || !title || !body) {
     alert("Compila tutti i campi della procedura.");
@@ -1105,14 +1187,14 @@ function togglePassword() {
 }
 
 /* ============================================
-   APP INTERNA (HOME / ASSENZE) – DIPENDENTI
+   APP INTERNA (HOME / ASSENZE STAFF)
    ============================================ */
 
 function showAppScreen(which) {
-  const home    = document.getElementById("screen-home");
-  const ass     = document.getElementById("screen-assenze");
+  const home = document.getElementById("screen-home");
+  const ass = document.getElementById("screen-assenze");
   const btnHome = document.getElementById("nav-app-home");
-  const btnAss  = document.getElementById("nav-app-assenze");
+  const btnAss = document.getElementById("nav-app-assenze");
 
   if (!home || !ass) return;
 
@@ -1120,17 +1202,16 @@ function showAppScreen(which) {
     home.classList.remove("app-screen-visible");
     ass.classList.add("app-screen-visible");
     if (btnHome) btnHome.classList.remove("app-nav-btn-active");
-    if (btnAss)  btnAss.classList.add("app-nav-btn-active");
+    if (btnAss) btnAss.classList.add("app-nav-btn-active");
   } else {
     ass.classList.remove("app-screen-visible");
     home.classList.add("app-screen-visible");
-    if (btnAss)  btnAss.classList.remove("app-nav-btn-active");
+    if (btnAss) btnAss.classList.remove("app-nav-btn-active");
     if (btnHome) btnHome.classList.add("app-nav-btn-active");
   }
 }
 
-/* Assenze dipendenti */
-
+// Salvataggio e lettura assenze
 function loadAbsences() {
   return loadJson(LS_ABSENCES, []);
 }
@@ -1139,19 +1220,19 @@ function saveAbsences(list) {
   saveJson(LS_ABSENCES, list);
 }
 
-// Tutte le assenze sono considerate "approvate"
+// In questa versione tutte le assenze sono considerate "approvate"
 function submitAbsence() {
   const user = loadJson(LS_ACTIVE, null);
-  if (!user || user.role === "cliente") {
-    alert("Devi essere loggato come dipendente per richiedere un'assenza.");
+  if (!user) {
+    alert("Devi essere loggato per richiedere un'assenza.");
     return;
   }
 
-  const dateEl   = document.getElementById("abs-date");
+  const dateEl = document.getElementById("abs-date");
   const reasonEl = document.getElementById("abs-reason");
   if (!dateEl || !reasonEl) return;
 
-  const date   = dateEl.value;
+  const date = dateEl.value;
   const reason = reasonEl.value.trim();
 
   if (!date) {
@@ -1182,7 +1263,7 @@ function renderApprovedAbsences() {
   if (!container) return;
 
   const activeUser = loadJson(LS_ACTIVE, null);
-  const isAdmin    = activeUser && activeUser.role === "titolare";
+  const isAdmin = activeUser && activeUser.role === "admin";
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -1237,107 +1318,114 @@ function renderApprovedAbsences() {
 }
 
 /* ============================================
-   PORTALE CLIENTI – PRENOTAZIONI
+   AREA CLIENTI – PROMO + PRENOTAZIONI
    ============================================ */
 
-function loadBookings() {
-  return loadJson(LS_BOOKINGS, []);
-}
-
-function saveBookings(list) {
-  saveJson(LS_BOOKINGS, list);
-}
-
-const BOOKING_SLOTS = [
-  "09:00", "09:30", "10:00", "10:30",
-  "11:00", "11:30", "16:00", "16:30",
-  "17:00", "17:30", "18:00", "18:30"
+const AVAILABLE_TIMES = [
+  "09:00",
+  "09:30",
+  "10:00",
+  "10:30",
+  "11:00",
+  "11:30",
+  "16:00",
+  "16:30",
+  "17:00",
+  "17:30",
+  "18:00",
+  "18:30",
 ];
 
-function showClientScreen(which) {
-  const home    = document.getElementById("client-screen-home");
-  const book    = document.getElementById("client-screen-book");
-  const btnHome = document.getElementById("client-nav-home");
-  const btnBook = document.getElementById("client-nav-book");
+function getAppointments() {
+  return loadJson(LS_APPOINTMENTS, []);
+}
 
-  if (!home || !book) return;
+function saveAppointments(list) {
+  saveJson(LS_APPOINTMENTS, list);
+}
 
-  if (which === "book") {
-    home.classList.remove("app-screen-visible");
-    book.classList.add("app-screen-visible");
-    if (btnHome) btnHome.classList.remove("app-nav-btn-active");
-    if (btnBook) btnBook.classList.add("app-nav-btn-active");
-  } else {
-    book.classList.remove("app-screen-visible");
-    home.classList.add("app-screen-visible");
-    if (btnBook) btnBook.classList.remove("app-nav-btn-active");
-    if (btnHome) btnHome.classList.add("app-nav-btn-active");
+function initClientPortal(user) {
+  // mostra home cliente
+  showClientSection("client-home");
+  renderClientNextAppointment(user);
+  renderClientMyAppointments(user);
+
+  // inizializza selettore orari
+  const dateInput = document.getElementById("book-date");
+  if (dateInput && !dateInput._listenerAttached) {
+    dateInput.addEventListener("change", () => refreshTimeSlots());
+    dateInput._listenerAttached = true;
   }
 }
 
-function updateBookingTimeOptions() {
-  const user = loadJson(LS_ACTIVE, null);
-  if (!user || user.role !== "cliente") return;
+/* Cambio sezione cliente */
+function showClientSection(id) {
+  const secs = document.querySelectorAll(".client-section");
+  secs.forEach((s) => s.classList.add("hidden"));
+  const target = document.getElementById(id);
+  if (target) target.classList.remove("hidden");
+}
 
-  const dateEl = document.getElementById("book-date");
-  const timeEl = document.getElementById("book-time");
-  if (!dateEl || !timeEl) return;
+/* Orari disponibili in base alle prenotazioni esistenti */
+function refreshTimeSlots() {
+  const dateInput = document.getElementById("book-date");
+  const timeSelect = document.getElementById("book-time");
+  if (!dateInput || !timeSelect) return;
 
-  const date = dateEl.value;
-  timeEl.innerHTML = "";
-
+  const date = dateInput.value;
   if (!date) {
-    const opt = document.createElement("option");
-    opt.value = "";
-    opt.textContent = "Seleziona una data prima";
-    timeEl.appendChild(opt);
+    timeSelect.innerHTML =
+      '<option value="">Seleziona prima una data</option>';
     return;
   }
 
-  const all = loadBookings();
-  const dayBookings = all.filter((b) => b.date === date);
+  const all = getAppointments();
+  const booked = all
+    .filter((a) => a.date === date)
+    .map((a) => a.time);
 
-  BOOKING_SLOTS.forEach((slot) => {
-    const already = dayBookings.find((b) => b.time === slot);
+  timeSelect.innerHTML = "";
+
+  AVAILABLE_TIMES.forEach((t) => {
     const opt = document.createElement("option");
-    opt.value = slot;
-    if (already) {
-      opt.textContent = `${slot} – occupato`;
+    opt.value = t;
+    if (booked.includes(t)) {
       opt.disabled = true;
+      opt.textContent = `${t} (occupato)`;
     } else {
-      opt.textContent = slot;
+      opt.textContent = t;
     }
-    timeEl.appendChild(opt);
+    timeSelect.appendChild(opt);
   });
 }
 
-function submitClientBooking() {
+/* Prenotazione appuntamento cliente */
+function bookAppointment() {
   const user = loadJson(LS_ACTIVE, null);
   if (!user || user.role !== "cliente") {
-    alert("Devi essere loggato come cliente.");
+    alert("Devi essere loggato come cliente per prenotare.");
     return;
   }
 
-  const dateEl = document.getElementById("book-date");
-  const timeEl = document.getElementById("book-time");
-  const noteEl = document.getElementById("book-note");
+  const dateInput = document.getElementById("book-date");
+  const timeSelect = document.getElementById("book-time");
+  const serviceSelect = document.getElementById("book-service");
 
-  if (!dateEl || !timeEl) return;
+  if (!dateInput || !timeSelect || !serviceSelect) return;
 
-  const date = dateEl.value;
-  const time = timeEl.value;
-  const note = noteEl.value.trim();
+  const date = dateInput.value;
+  const time = timeSelect.value;
+  const service = serviceSelect.value;
 
-  if (!date || !time) {
-    alert("Seleziona data e orario.");
+  if (!date || !time || !service) {
+    alert("Seleziona data, orario e servizio.");
     return;
   }
 
-  let all = loadBookings();
-  const exists = all.find((b) => b.date === date && b.time === time);
-  if (exists) {
-    alert("L'orario scelto è già occupato. Scegli un'altra fascia.");
-    updateBookingTimeOptions();
+  let all = getAppointments();
+  if (all.find((a) => a.date === date && a.time === time)) {
+    alert("Questo orario è appena stato prenotato. Scegli un altro orario.");
+    refreshTimeSlots();
     return;
   }
 
@@ -1347,73 +1435,126 @@ function submitClientBooking() {
     userName: user.name,
     date,
     time,
-    note,
+    service,
     createdAt: new Date().toISOString(),
   });
-  saveBookings(all);
+  saveAppointments(all);
 
-  noteEl.value = "";
-  renderClientBookings(user);
-  updateBookingTimeOptions();
-  alert("Prenotazione registrata.");
+  alert("Prenotazione confermata!");
+  refreshTimeSlots();
+  renderClientMyAppointments(user);
+  renderClientNextAppointment(user);
 }
 
-function renderClientBookings(user) {
-  if (!user || user.role !== "cliente") return;
-  const box = document.getElementById("client-booking-list");
+/* Prossimo appuntamento cliente (home) */
+function renderClientNextAppointment(user) {
+  const box = document.getElementById("client-next-appointment");
   if (!box) return;
 
-  const all = loadBookings()
-    .filter((b) => b.userId === user.id)
-    .sort((a, b) => {
-      const da = new Date(a.date + "T" + a.time);
-      const db = new Date(b.date + "T" + b.time);
-      return da - db;
-    });
-
+  const all = getAppointments().filter((a) => a.userId === user.id);
   if (all.length === 0) {
     box.innerHTML =
-      "<div class='list-item'>Nessuna prenotazione futura.</div>";
+      '<div class="list-item">Nessuna prenotazione attiva.</div>';
     return;
   }
 
+  all.sort((a, b) => {
+    const da = new Date(a.date + "T" + a.time);
+    const db = new Date(b.date + "T" + b.time);
+    return da - db;
+  });
+
+  const next = all[0];
+  const when = new Date(next.date + "T" + next.time);
+  const label = when.toLocaleString("it-IT", {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const serviceLabel = translateService(next.service);
+
+  box.innerHTML = `
+    <div class="list-item">
+      <div class="list-item-title">Prossimo appuntamento</div>
+      <div class="list-item-meta">${label}</div>
+      <div>Servizio: ${serviceLabel}</div>
+    </div>
+  `;
+}
+
+/* Elenco prenotazioni cliente */
+function renderClientMyAppointments(user) {
+  const box = document.getElementById("client-mybook-list");
+  if (!box) return;
+
+  const all = getAppointments().filter((a) => a.userId === user.id);
+  if (all.length === 0) {
+    box.innerHTML =
+      '<div class="list-item">Nessuna prenotazione inserita.</div>';
+    return;
+  }
+
+  all.sort((a, b) => {
+    const da = new Date(a.date + "T" + a.time);
+    const db = new Date(b.date + "T" + b.time);
+    return da - db;
+  });
+
   box.innerHTML = "";
-  all.forEach((b) => {
-    const d = new Date(b.date + "T" + b.time);
-    const label = d.toLocaleString("it-IT", {
+  all.forEach((a) => {
+    const when = new Date(a.date + "T" + a.time);
+    const label = when.toLocaleString("it-IT", {
       weekday: "short",
       day: "2-digit",
       month: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
     });
-
     const div = document.createElement("div");
     div.className = "list-item";
     div.innerHTML = `
       <div class="list-item-title">${label}</div>
-      <div class="list-item-meta">Appuntamento in farmacia</div>
-      <div>${b.note || ""}</div>
+      <div class="list-item-meta">${translateService(a.service)}</div>
     `;
     box.appendChild(div);
   });
+}
+
+function translateService(code) {
+  switch (code) {
+    case "consulenza_farmaceutica":
+      return "Consulenza farmaceutica";
+    case "misurazione_pressione":
+      return "Misurazione pressione";
+    case "autoanalisi":
+      return "Autoanalisi";
+    case "consulenza_dermocosmesi":
+      return "Consulenza dermocosmesi";
+    default:
+      return code;
+  }
 }
 
 /* ============================================
    AVVIO PAGINA
    ============================================ */
 
-document.addEventListener("DOMContentLoaded", () => {
-  seedAdminIfNeeded();
+document.addEventListener("DOMContentLoaded", async () => {
+  await seedAdminIfNeeded();
   ensureDemoProcedures();
   ensureDemoMessages();
 
-  // event per aggiornare gli orari disponibili cliente
-  const bd = document.getElementById("book-date");
-  if (bd) {
-    bd.addEventListener("change", updateBookingTimeOptions);
+  // se c'è token "Ricordami"
+  const remembered = autoLoginFromRemember();
+  if (remembered) {
+    openPortal(remembered);
+    return;
   }
 
+  // se c'è utente attivo in memoria
   const active = loadJson(LS_ACTIVE, null);
   if (active) {
     openPortal(active);
