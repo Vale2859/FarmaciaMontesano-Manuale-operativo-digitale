@@ -1,6 +1,6 @@
 /* ============================================
    Portale – Farmacia Montesano
-   Login + home a icone tonde
+   Login + home a icone
    ============================================ */
 
 const LS_USERS = "fm_users";
@@ -27,7 +27,7 @@ function uid() {
 }
 
 /* ============================================
-   UTENTI / SEED TITOLARE
+   UTENTI / TITOLARE DI DEFAULT
    ============================================ */
 
 function loadUsers() {
@@ -227,7 +227,7 @@ function goHomeFromMenu() {
 function placeholderAlert(label) {
   const placeholder = document.getElementById("home-placeholder");
   if (placeholder) {
-    placeholder.textContent = "Funzione \"" + label + "\" in arrivo.";
+    placeholder.textContent = 'Funzione "' + label + '" in arrivo.';
   }
 }
 
