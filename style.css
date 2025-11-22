@@ -57,7 +57,19 @@ body {
   font-weight: 700;
   margin-bottom: 6px;
 }
+/* LOGO PAGINA LOGIN */
+.auth-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
 
+.auth-logo {
+  max-width: 150px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.5));
+}
 .auth-intro {
   font-size: 13px;
   opacity: 0.9;
