@@ -2,19 +2,19 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <title>Portale Interno</title>
+  <title>Portale Farmacia Montesano</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <script src="script.js" defer></script>
 </head>
 <body>
 
-  <!-- ===== LOGIN & REGISTRAZIONE ===== -->
+  <!-- ================== LOGIN ================== -->
   <div id="authContainer" class="auth-container">
     <div class="auth-card">
 
       <div class="auth-logo-wrap">
-        <!-- usa logo.jpg -->
+        <!-- Assicurati che il file si chiami logo.jpg nel repo -->
         <img src="logo.jpg" alt="Farmacia Montesano" class="auth-logo" />
       </div>
 
@@ -46,16 +46,17 @@
           <button type="submit" class="btn-primary wide">Entra</button>
         </div>
         <p id="loginError" class="auth-error hidden">
-          Credenziali non valide. Riprova.
+          Inserisci username e password.
         </p>
       </form>
+
     </div>
   </div>
 
-  <!-- ===== APP / DASHBOARD ===== -->
+  <!-- ================== APP / DASHBOARD ================== -->
   <main id="appContainer" class="hidden">
 
-    <!-- SIDEBAR (MENU LATERALE) -->
+    <!-- SIDEBAR MENU LATERALE -->
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
         <h2>Menu</h2>
@@ -68,12 +69,10 @@
       </ul>
     </aside>
 
-    <!-- PULSANTE HAMBURGER -->
-    <button id="hamburger" class="hamburger" aria-label="Apri menu">
-      ☰
-    </button>
+    <!-- BOTTONE HAMBURGER -->
+    <button id="hamburger" class="hamburger" aria-label="Apri menu">☰</button>
 
-    <!-- CONTENUTO PRINCIPALE -->
+    <!-- CONTENUTO APP -->
     <section class="app">
 
       <!-- HEADER CON LOGO -->
@@ -81,8 +80,8 @@
         <div class="app-logo-group">
           <img src="logo.jpg" alt="Farmacia Montesano" class="app-logo-main" />
           <div class="app-title-text">
-            
-            <p class="access-info"></p>
+            <h1>FARMACIA MONTESANO</h1>
+            <p class="access-info">Portale interno</p>
           </div>
         </div>
         <div class="app-user-info">
@@ -92,7 +91,7 @@
         </div>
       </header>
 
-      <!-- DASHBOARD PRINCIPALE -->
+      <!-- ========== DASHBOARD PRINCIPALE ========== -->
       <section id="dashboard" class="dashboard">
 
         <div class="cards-grid">
@@ -237,7 +236,7 @@
         </div>
       </section>
 
-      <!-- PAGINA INTERNA: ASSENZE DEL PERSONALE -->
+      <!-- ========== PAGINA INTERNA: ASSENZE DEL PERSONALE ========== -->
       <section id="assenzePage" class="page page-assenze hidden">
 
         <header class="page-header">
@@ -253,7 +252,7 @@
           </div>
         </header>
 
-        <!-- MINI CARD PERSONALI -->
+        <!-- MINI CARDS IN ALTO -->
         <div class="assenze-top-cards">
           <article class="mini-card">
             <h3>Le tue prossime assenze</h3>
@@ -510,5 +509,6 @@
 
     </section> <!-- .app -->
   </main>
+
 </body>
 </html>
