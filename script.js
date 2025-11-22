@@ -4,216 +4,182 @@ document.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
 
   const loginForm = document.getElementById("loginForm");
-  const loginRoleLabel = document.getElementById("loginRoleLabel");
   const loginFeedback = document.getElementById("loginFeedback");
-  const roleChip = document.getElementById("roleChip");
+  const loginRoleLabel = document.getElementById("loginRoleLabel");
+  const currentRoleChip = document.getElementById("currentRoleChip");
 
   const authTabs = document.querySelectorAll(".auth-tab");
   let currentRole = "farmacia";
 
-  // Cambia ruolo quando clicchi sui tab
   authTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       authTabs.forEach((t) => t.classList.remove("active"));
       tab.classList.add("active");
       currentRole = tab.dataset.role;
-      const label =
-        currentRole === "farmacia"
-          ? "Farmacia"
-          : currentRole === "titolare"
-          ? "Titolare"
-          : "Dipendente";
-      loginRoleLabel.textContent = label;
+
+      if (currentRole === "farmacia") {
+        loginRoleLabel.textContent = "Farmacia";
+      } else if (currentRole === "titolare") {
+        loginRoleLabel.textContent = "Titolare";
+      } else {
+        loginRoleLabel.textContent = "Dipendente";
+      }
     });
   });
 
-  // Login "finto" (per ora)
   loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
+
+    // Demo: accetta qualsiasi cosa non vuota
+    if (!user || !pass) {
+      loginFeedback.textContent = "⚠️ Inserisci username e password.";
+      loginFeedback.classList.remove("hidden");
+      return;
+    }
+
+    loginFeedback.classList.add("hidden");
     authContainer.classList.add("hidden");
     app.classList.remove("hidden");
 
-    // Aggiorna chip in alto
+    // Aggiorna chip ruolo
+    let label = "";
     if (currentRole === "farmacia") {
-      roleChip.textContent = "Farmacia (accesso generico)";
+      label = "Farmacia (accesso generico)";
     } else if (currentRole === "titolare") {
-      roleChip.textContent = "Titolare – controllo completo";
+      label = "Titolare";
     } else {
-      roleChip.textContent = "Dipendente – area personale condivisa";
+      label = "Dipendente";
     }
-
-    loginFeedback.classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-
-  // ================== SIDEBAR E LOGOUT ==================
-  const sidebar = document.getElementById("sidebar");
-  const sidebarOverlay = document.getElementById("sidebarOverlay");
-  const hamburger = document.getElementById("hamburger");
-  const closeSidebar = document.getElementById("closeSidebar");
-  const logoutItems = document.querySelectorAll(".sidebar-item.logout");
-
-  function openSidebar() {
-    sidebar.classList.add("open");
-    sidebarOverlay.classList.add("open");
-  }
-
-  function hideSidebar() {
-    sidebar.classList.remove("open");
-    sidebarOverlay.classList.remove("open");
-  }
-
-  hamburger.addEventListener("click", openSidebar);
-  closeSidebar.addEventListener("click", hideSidebar);
-  sidebarOverlay.addEventListener("click", hideSidebar);
-
-  logoutItems.forEach((item) => {
-    item.addEventListener("click", () => {
-      hideSidebar();
-      // Torna al login
-      app.classList.add("hidden");
-      authContainer.classList.remove("hidden");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    currentRoleChip.textContent = label;
   });
 
   // ================== NAVIGAZIONE PAGINE ==================
   const dashboardSection = document.getElementById("dashboard");
   const assenzePage = document.getElementById("assenzePage");
-  const comunicazioniPage = document.getElementById("comunicazioniPage");
+  const turniPage = document.getElementById("turniPage");
+  const commsPage = document.getElementById("comunicazioniPage");
 
-  const openAssenzeBtn = document.getElementById("openAssenze");
-  const openComunicazioniBtn = document.getElementById("openComunicazioni");
-  const backButtons = document.querySelectorAll(".back-button");
-
-  function showSection(sectionId) {
-    // Nascondi tutte
-    dashboardSection.classList.add("hidden");
-    assenzePage.classList.add("hidden");
-    comunicazioniPage.classList.add("hidden");
-
-    if (sectionId === "dashboard") {
-      dashboardSection.classList.remove("hidden");
-    } else if (sectionId === "assenze") {
-      assenzePage.classList.remove("hidden");
-    } else if (sectionId === "comunicazioni") {
-      comunicazioniPage.classList.remove("hidden");
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  function showPage(sectionId) {
+    [dashboardSection, assenzePage, turniPage, commsPage].forEach((sec) => {
+      if (!sec) return;
+      if (sec.id === sectionId) {
+        sec.classList.remove("hidden");
+        sec.classList.add("active-page");
+      } else {
+        sec.classList.add("hidden");
+        sec.classList.remove("active-page");
+      }
+    });
+    // chiudi sidebar su mobile
+    sidebar.classList.remove("open");
   }
+
+  // Pulsanti card
+  const openAssenzeBtn = document.getElementById("openAssenze");
+  const openTurniBtn = document.getElementById("openTurni");
+  const openCommsBtn = document.getElementById("openComunicazioni");
 
   if (openAssenzeBtn) {
-    openAssenzeBtn.addEventListener("click", () => showSection("assenze"));
+    openAssenzeBtn.addEventListener("click", () => showPage("assenzePage"));
   }
-  if (openComunicazioniBtn) {
-    openComunicazioniBtn.addEventListener("click", () =>
-      showSection("comunicazioni")
-    );
+  if (openTurniBtn) {
+    openTurniBtn.addEventListener("click", () => showPage("turniPage"));
+  }
+  if (openCommsBtn) {
+    openCommsBtn.addEventListener("click", () => showPage("comunicazioniPage"));
   }
 
-  backButtons.forEach((btn) => {
+  // Pulsanti back dashboard
+  document.querySelectorAll(".back-button").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const target = btn.dataset.go || "dashboard";
-      showSection(target);
+      const dest = btn.dataset.back || "dashboard";
+      showPage(dest);
     });
   });
 
-  // ================== FORM ASSENZE (DEMO) ==================
-  const assenzeForm = document.getElementById("assenzeForm");
+  // Sidebar click voci
+  const sidebar = document.getElementById("sidebar");
+  sidebar.querySelectorAll("li[data-nav]").forEach((item) => {
+    item.addEventListener("click", () => {
+      const target = item.getAttribute("data-nav");
+      showPage(target);
+    });
+  });
+
+  // ================== SIDEBAR / HAMBURGER ==================
+  const hamburger = document.getElementById("hamburger");
+  const closeSidebarButton = document.getElementById("closeSidebar");
+
+  hamburger.addEventListener("click", () => {
+    sidebar.classList.add("open");
+  });
+
+  closeSidebarButton.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+  });
+
+  // Chiudi sidebar cliccando fuori
+  document.addEventListener("click", (e) => {
+    if (
+      sidebar.classList.contains("open") &&
+      !sidebar.contains(e.target) &&
+      !hamburger.contains(e.target)
+    ) {
+      sidebar.classList.remove("open");
+    }
+  });
+
+  // ================== LOGOUT ==================
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      // Torna al login
+      app.classList.add("hidden");
+      authContainer.classList.remove("hidden");
+
+      // reset semplice campi login
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      loginFeedback.classList.add("hidden");
+
+      // torna alla dashboard al prossimo login
+      showPage("dashboard");
+      sidebar.classList.remove("open");
+    });
+  }
+
+  // ================== FORM ASSENZE ==================
+  const assenzeForm = document.querySelector(".assenze-form");
   const assenzeFeedback = document.getElementById("assenzeFeedback");
 
-  if (assenzeForm) {
+  if (assenzeForm && assenzeFeedback) {
     assenzeForm.addEventListener("submit", (e) => {
       e.preventDefault();
       assenzeFeedback.classList.remove("hidden");
+      assenzeFeedback.textContent =
+        "✅ Richiesta inviata correttamente. (Demo – non ancora salvata sul server)";
       setTimeout(() => {
         assenzeFeedback.classList.add("hidden");
-      }, 4000);
+      }, 3000);
       assenzeForm.reset();
     });
   }
 
-  // ================== FORM COMUNICAZIONI (DEMO) ==================
+  // ================== FORM COMUNICAZIONI ==================
   const commsForm = document.getElementById("commsForm");
   const commsFeedback = document.getElementById("commsFeedback");
-  const commsList = document.getElementById("commsList");
 
-  if (commsForm && commsList) {
+  if (commsForm && commsFeedback) {
     commsForm.addEventListener("submit", (e) => {
       e.preventDefault();
-
-      const titolo = document.getElementById("commsTitolo").value.trim();
-      const categoria = document.getElementById("commsCategoria").value;
-      const testo = document.getElementById("commsTesto").value.trim();
-      const destinatari =
-        document.getElementById("commsDestinatari").value || "Tutto il personale";
-
-      if (!titolo || !testo) {
-        commsFeedback.textContent = "Compila almeno titolo e testo.";
-        commsFeedback.classList.remove("hidden");
-        commsFeedback.style.color = "#ffd1d1";
-        return;
-      }
-
-      // Crea nuova comunicazione (solo in memoria)
-      const li = document.createElement("li");
-      li.className = "comms-item unread";
-
-      const titleRow = document.createElement("div");
-      titleRow.className = "comms-title-row";
-
-      const tag = document.createElement("span");
-      tag.className = "comms-tag";
-      if (categoria === "procedura") {
-        tag.classList.add("comms-tag-procedura");
-        tag.textContent = "Procedura";
-      } else if (categoria === "sicurezza") {
-        tag.classList.add("comms-tag-sicurezza");
-        tag.textContent = "Sicurezza";
-      } else if (categoria === "formazione") {
-        tag.classList.add("comms-tag-info");
-        tag.textContent = "Formazione";
-      } else {
-        tag.classList.add("comms-tag-info");
-        tag.textContent = "Info";
-      }
-
-      const dateSpan = document.createElement("span");
-      dateSpan.className = "comms-date";
-      dateSpan.textContent = "Adesso · demo";
-
-      titleRow.appendChild(tag);
-      titleRow.appendChild(dateSpan);
-
-      const h3 = document.createElement("h3");
-      h3.textContent = titolo;
-
-      const pText = document.createElement("p");
-      pText.className = "small-text";
-      pText.textContent = testo;
-
-      const pMeta = document.createElement("p");
-      pMeta.className = "comms-meta";
-      pMeta.innerHTML =
-        "Inviato da <strong>Utente demo</strong> · Destinatari: " + destinatari;
-
-      li.appendChild(titleRow);
-      li.appendChild(h3);
-      li.appendChild(pText);
-      li.appendChild(pMeta);
-
-      // Aggiungi in cima alla lista
-      commsList.insertBefore(li, commsList.firstChild);
-
-      commsFeedback.textContent =
-        "✅ Comunicazione aggiunta alla lista (demo, non ancora salvata su server).";
-      commsFeedback.style.color = "#a8ffb3";
       commsFeedback.classList.remove("hidden");
-
+      commsFeedback.textContent =
+        "✅ Comunicazione inviata (demo). Quando avremo il server verrà salvata davvero.";
       setTimeout(() => {
         commsFeedback.classList.add("hidden");
-      }, 4000);
-
+      }, 3000);
       commsForm.reset();
     });
   }
