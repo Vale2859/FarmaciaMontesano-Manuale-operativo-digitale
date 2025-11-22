@@ -1,164 +1,135 @@
-// Script principale Portale Farmacia Montesano
 document.addEventListener("DOMContentLoaded", () => {
-  // Riferimenti base
   const authContainer = document.getElementById("authContainer");
-  const app = document.getElementById("app");
+  const appContainer = document.getElementById("appContainer");
   const loginForm = document.getElementById("loginForm");
   const loginRoleLabel = document.getElementById("loginRoleLabel");
+  const currentRoleLabel = document.getElementById("currentRoleLabel");
+  const assenzeCardTitle = document.getElementById("assenzeCardTitle");
+
+  let activeRole = "farmacia";
+
+  // ====== TABS RUOLO LOGIN ======
   const roleTabs = document.querySelectorAll(".auth-tab");
-  const currentRolePill = document.getElementById("currentRolePill");
-
-  const sidebar = document.getElementById("sidebar");
-  const hamburger = document.getElementById("hamburger");
-  const closeSidebarBtn = document.getElementById("closeSidebar");
-  const sidebarLinks = document.querySelectorAll(".sidebar-link");
-  const logoutLinks = document.querySelectorAll(".logout-link");
-
-  const dashboardSection = document.getElementById("dashboard");
-  const assenzePage = document.getElementById("assenzePage");
-  const turniPage = document.getElementById("turniPage");
-  const comunicazioniPage = document.getElementById("comunicazioniPage");
-  const procedurePage = document.getElementById("procedurePage");
-
-  let currentRole = "farmacia";
-
-  // -------- LOGIN --------
-
   roleTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       roleTabs.forEach((t) => t.classList.remove("active"));
       tab.classList.add("active");
-      currentRole = tab.dataset.role;
-      let labelText = "Farmacia";
-      if (currentRole === "titolare") labelText = "Titolare";
-      if (currentRole === "dipendente") labelText = "Dipendente";
-      loginRoleLabel.textContent = labelText;
-      currentRolePill.textContent =
-        labelText === "Farmacia"
-          ? "Farmacia (accesso generico)"
-          : labelText;
+      activeRole = tab.dataset.role;
+      loginRoleLabel.textContent = tab.textContent;
     });
   });
 
+  function updateRoleUI() {
+    const map = {
+      farmacia: "Farmacia (accesso generico)",
+      titolare: "Titolare",
+      dipendente: "Dipendente",
+    };
+    currentRoleLabel.textContent = map[activeRole] || "Farmacia";
+
+    if (activeRole === "dipendente") {
+      assenzeCardTitle.textContent = "Le mie assenze";
+    } else {
+      assenzeCardTitle.textContent = "Assenze del personale";
+    }
+  }
+
+  // ====== LOGIN (semplice, senza controllo password per ora) ======
   loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    // Demo: accetto sempre, basta che ci sia qualcosa
     authContainer.classList.add("hidden");
-    app.classList.remove("hidden");
-    showSection("dashboard");
+    appContainer.classList.remove("hidden");
+    showPage("dashboard");
+    updateRoleUI();
   });
 
-  // -------- NAVIGAZIONE SEZIONI --------
+  // ====== SIDEBAR / HAMBURGER ======
+  const sidebar = document.getElementById("sidebar");
+  const hamburger = document.getElementById("hamburger");
+  const closeSidebar = document.getElementById("closeSidebar");
+  const logoutLink = document.getElementById("logoutLink");
 
-  function hideAllSections() {
-    dashboardSection.classList.add("hidden");
-    assenzePage.classList.add("hidden");
-    turniPage.classList.add("hidden");
-    comunicazioniPage.classList.add("hidden");
-    procedurePage.classList.add("hidden");
-  }
-
-  function showSection(id) {
-    hideAllSections();
-    if (id === "dashboard") dashboardSection.classList.remove("hidden");
-    if (id === "assenzePage") assenzePage.classList.remove("hidden");
-    if (id === "turniPage") turniPage.classList.remove("hidden");
-    if (id === "comunicazioniPage")
-      comunicazioniPage.classList.remove("hidden");
-    if (id === "procedurePage") procedurePage.classList.remove("hidden");
-    sidebar.classList.remove("open");
+  function openSidebar() {
+    sidebar.classList.add("sidebar-open");
   }
 
-  // Bottoni card -> pagine
-  const openAssenzeBtn = document.getElementById("openAssenze");
-  const openTurniBtn = document.getElementById("openTurni");
-  const openComunicazioniBtn = document.getElementById("openComunicazioni");
-  const openProcedureBtn = document.getElementById("openProcedure");
-
-  if (openAssenzeBtn) {
-    openAssenzeBtn.addEventListener("click", () =>
-      showSection("assenzePage")
-    );
-  }
-  if (openTurniBtn) {
-    openTurniBtn.addEventListener("click", () => showSection("turniPage"));
-  }
-  if (openComunicazioniBtn) {
-    openComunicazioniBtn.addEventListener("click", () =>
-      showSection("comunicazioniPage")
-    );
-  }
-  if (openProcedureBtn) {
-    openProcedureBtn.addEventListener("click", () =>
-      showSection("procedurePage")
-    );
+  function closeSidebarFn() {
+    sidebar.classList.remove("sidebar-open");
   }
 
-  // Bottoni Dashboard nelle pagine
-  const backFromAssenze = document.getElementById("backFromAssenze");
-  const backFromTurni = document.getElementById("backFromTurni");
-  const backFromComunicazioni =
-    document.getElementById("backFromComunicazioni");
-  const backFromProcedure = document.getElementById("backFromProcedure");
+  hamburger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openSidebar();
+  });
 
-  if (backFromAssenze) {
-    backFromAssenze.addEventListener("click", () => showSection("dashboard"));
-  }
-  if (backFromTurni) {
-    backFromTurni.addEventListener("click", () => showSection("dashboard"));
-  }
-  if (backFromComunicazioni) {
-    backFromComunicazioni.addEventListener("click", () =>
-      showSection("dashboard")
-    );
-  }
-  if (backFromProcedure) {
-    backFromProcedure.addEventListener("click", () =>
-      showSection("dashboard")
-    );
-  }
+  closeSidebar.addEventListener("click", () => {
+    closeSidebarFn();
+  });
 
-  // Sidebar
-  if (hamburger) {
-    hamburger.addEventListener("click", () => {
-      sidebar.classList.toggle("open");
-    });
-  }
-
-  if (closeSidebarBtn) {
-    closeSidebarBtn.addEventListener("click", () => {
-      sidebar.classList.remove("open");
-    });
-  }
-
-  sidebarLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      const target = link.dataset.target;
-      if (target === "dashboard") {
-        showSection("dashboard");
-      }
-    });
+  document.addEventListener("click", (e) => {
+    if (
+      sidebar.classList.contains("sidebar-open") &&
+      !sidebar.contains(e.target) &&
+      e.target !== hamburger
+    ) {
+      closeSidebarFn();
+    }
   });
 
   // Logout
-  logoutLinks.forEach((l) => {
-    l.addEventListener("click", () => {
-      app.classList.add("hidden");
-      authContainer.classList.remove("hidden");
-      loginForm.reset();
-      // reset ruolo
-      currentRole = "farmacia";
-      loginRoleLabel.textContent = "Farmacia";
-      currentRolePill.textContent = "Farmacia (accesso generico)";
-      roleTabs.forEach((t) => t.classList.remove("active"));
-      roleTabs[0].classList.add("active");
-      hideAllSections();
-      dashboardSection.classList.remove("hidden");
-      sidebar.classList.remove("open");
-    });
+  logoutLink.addEventListener("click", () => {
+    appContainer.classList.add("hidden");
+    authContainer.classList.remove("hidden");
+    loginForm.reset();
+    activeRole = "farmacia";
+    roleTabs.forEach((t) => t.classList.remove("active"));
+    roleTabs[0].classList.add("active");
+    loginRoleLabel.textContent = "Farmacia";
+    closeSidebarFn();
   });
 
-  // -------- FORM DEMO: ASSENZE --------
+  // ====== NAVIGAZIONE PAGINE ======
+  const pages = document.querySelectorAll(".page");
+
+  function showPage(id) {
+    pages.forEach((page) => {
+      if (page.id === id) {
+        page.classList.remove("hidden");
+      } else {
+        page.classList.add("hidden");
+      }
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Bottoni dalla dashboard
+  const btnOpenAssenze = document.getElementById("btnOpenAssenze");
+  const btnOpenFarmacie = document.getElementById("btnOpenFarmacie");
+  const btnOpenProcedure = document.getElementById("btnOpenProcedure");
+  const btnOpenComunicazioni = document.getElementById("btnOpenComunicazioni");
+
+  if (btnOpenAssenze) {
+    btnOpenAssenze.addEventListener("click", () => showPage("assenzePage"));
+  }
+  if (btnOpenFarmacie) {
+    btnOpenFarmacie.addEventListener("click", () => showPage("farmaciePage"));
+  }
+  if (btnOpenProcedure) {
+    btnOpenProcedure.addEventListener("click", () => showPage("procedurePage"));
+  }
+  if (btnOpenComunicazioni) {
+    // per ora non abbiamo una pagina dedicata, in futuro potremo aggiungerla
+    alert(
+      "Qui in futuro potrai aprire la pagina dettagliata delle comunicazioni interne."
+    );
+  }
+
+  // Pulsanti "← Dashboard" nelle pagine interne
+  document.querySelectorAll(".btn-back-dashboard").forEach((btn) => {
+    btn.addEventListener("click", () => showPage("dashboard"));
+  });
+
+  // ====== FORM ASSENZE (solo messaggio grafico) ======
   const assenzeForm = document.getElementById("assenzeForm");
   const assenzeFeedback = document.getElementById("assenzeFeedback");
 
@@ -166,29 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
     assenzeForm.addEventListener("submit", (e) => {
       e.preventDefault();
       assenzeFeedback.classList.remove("hidden");
-      setTimeout(() => {
-        assenzeFeedback.classList.add("hidden");
-      }, 2500);
-      assenzeForm.reset();
     });
   }
 
-  // -------- FORM DEMO: COMUNICAZIONI --------
-  const comForm = document.getElementById("comForm");
-  const comFeedback = document.getElementById("comFeedback");
-
-  if (comForm && comFeedback) {
-    comForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      comFeedback.classList.remove("hidden");
-      setTimeout(() => {
-        comFeedback.classList.add("hidden");
-      }, 2500);
-      comForm.reset();
-    });
-  }
-
-  // -------- FORM DEMO: PROCEDURE --------
+  // ====== FORM PROCEDURE (solo messaggio grafico) ======
   const procedureForm = document.getElementById("procedureForm");
   const procedureFeedback = document.getElementById("procedureFeedback");
 
@@ -196,10 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
     procedureForm.addEventListener("submit", (e) => {
       e.preventDefault();
       procedureFeedback.classList.remove("hidden");
-      setTimeout(() => {
-        procedureFeedback.classList.add("hidden");
-      }, 2500);
-      procedureForm.reset();
     });
   }
 });
