@@ -1,353 +1,220 @@
-// ====== DATI DI BASE (TURNI FARMACIE) ======
-const turniFarmacie = [
-  {
-    data: "2025-12-17",
-    orario: "00:00 – 24:00",
-    principale: "Farmacia Montesano",
-    appoggio: "Farmacia Centrale",
-    telefono: "0835 000000",
-    note: "Turno completo",
-    tipoRange: "oggi",
-    mese: 12
-  },
-  {
-    data: "2025-12-18",
-    orario: "08:00 – 20:00",
-    principale: "Farmacia Centrale",
-    appoggio: "Farmacia Montesano",
-    telefono: "0835 111111",
-    note: "Diurno",
-    tipoRange: "settimana",
-    mese: 12
-  },
-  {
-    data: "2025-12-19",
-    orario: "20:00 – 08:00",
-    principale: "Farmacia Madonna delle Grazie",
-    appoggio: "Farmacia Montesano",
-    telefono: "0835 222222",
-    note: "Notturno",
-    tipoRange: "settimana",
-    mese: 12
-  },
-  {
-    data: "2025-12-24",
-    orario: "00:00 – 24:00",
-    principale: "Farmacia Montesano",
-    appoggio: "Farmacia Centrale",
-    telefono: "0835 000000",
-    note: "Vigilia di Natale",
-    tipoRange: "mese",
-    mese: 12
-  },
-  {
-    data: "2026-01-02",
-    orario: "08:00 – 20:00",
-    principale: "Farmacia Centrale",
-    appoggio: "Farmacia Madonna delle Grazie",
-    telefono: "0835 111111",
-    note: "Inizio anno",
-    tipoRange: "mese",
-    mese: 1
-  }
-];
-
-// ====== STATO CORRENTE ======
-let currentRole = "farmacia"; // farmacia | titolare | dipendente
-let currentTurniView = "oggi"; // oggi | settimana | mese
-
+// ================== LOGIN & RUOLI ==================
 document.addEventListener("DOMContentLoaded", () => {
-  // Elementi principali
   const authContainer = document.getElementById("authContainer");
   const app = document.getElementById("app");
 
-  // Login
-  const authTabs = document.querySelectorAll(".auth-tab");
-  const loginRoleLabel = document.getElementById("loginRoleLabel");
   const loginForm = document.getElementById("loginForm");
+  const loginRoleLabel = document.getElementById("loginRoleLabel");
+  const loginFeedback = document.getElementById("loginFeedback");
+  const roleChip = document.getElementById("roleChip");
 
-  // Layout
-  const sidebar = document.getElementById("sidebar");
-  const hamburger = document.getElementById("hamburger");
-  const closeSidebar = document.getElementById("closeSidebar");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const rolePill = document.getElementById("currentRolePill");
-  const assenzeTitle = document.getElementById("assenzeTitle");
+  const authTabs = document.querySelectorAll(".auth-tab");
+  let currentRole = "farmacia";
 
-  // Sezioni
-  const dashboardSection = document.getElementById("dashboard");
-  const assenzePage = document.getElementById("assenzePage");
-  const turniPage = document.getElementById("turniPage");
-
-  // Pulsanti navigazione interni
-  const openAssenzeBtn = document.getElementById("openAssenze");
-  const backFromAssenzeBtn = document.getElementById("backFromAssenze");
-  const openTurniBtn = document.getElementById("openTurni");
-  const backFromTurniBtn = document.getElementById("backFromTurni");
-
-  // Turni elementi
-  const turnoOggiNome = document.getElementById("turnoOggiNome");
-  const turnoOggiIndirizzo = document.getElementById("turnoOggiIndirizzo");
-  const turnoOggiTelefono = document.getElementById("turnoOggiTelefono");
-  const turnoOggiOrario = document.getElementById("turnoOggiOrario");
-  const turnoOggiAppoggioNome = document.getElementById("turnoOggiAppoggioNome");
-  const turnoOggiAppoggioDettagli = document.getElementById("turnoOggiAppoggioDettagli");
-
-  const turnoOrarioChip = document.getElementById("turnoOrarioChip");
-  const turnoNome = document.getElementById("turnoNome");
-  const turnoIndirizzo = document.getElementById("turnoIndirizzo");
-  const turnoAppoggio = document.getElementById("turnoAppoggio");
-
-  const turniTabs = document.querySelectorAll(".turni-tab");
-  const turniRowsContainer = document.getElementById("turniRows");
-  const turniMeseSelect = document.getElementById("turniMeseSelect");
-  const turniFarmaciaSelect = document.getElementById("turniFarmaciaSelect");
-
-  // ====== FUNZIONI DI SUPPORTO ======
-
-  function setRole(role) {
-    currentRole = role;
-
-    // Aggiorna pillola in alto
-    if (role === "farmacia") {
-      rolePill.textContent = "Farmacia (accesso generico)";
-      assenzeTitle.textContent = "Assenze del personale";
-    } else if (role === "titolare") {
-      rolePill.textContent = "Titolare";
-      assenzeTitle.textContent = "Assenze del personale";
-    } else if (role === "dipendente") {
-      rolePill.textContent = "Dipendente";
-      assenzeTitle.textContent = "Le mie assenze";
-    }
-  }
-
-  function showSection(section) {
-    // Nasconde tutte le sezioni principali
-    dashboardSection.classList.add("hidden");
-    assenzePage.classList.add("hidden");
-    turniPage.classList.add("hidden");
-
-    section.classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }
-
-  function openSidebarMenu() {
-    sidebar.classList.add("open");
-  }
-
-  function closeSidebarMenu() {
-    sidebar.classList.remove("open");
-  }
-
-  // ====== LOGIN ======
+  // Cambia ruolo quando clicchi sui tab
   authTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       authTabs.forEach((t) => t.classList.remove("active"));
       tab.classList.add("active");
-
-      const role = tab.getAttribute("data-role");
-      if (role === "farmacia") {
-        loginRoleLabel.textContent = "Farmacia";
-      } else if (role === "titolare") {
-        loginRoleLabel.textContent = "Titolare";
-      } else {
-        loginRoleLabel.textContent = "Dipendente";
-      }
+      currentRole = tab.dataset.role;
+      const label =
+        currentRole === "farmacia"
+          ? "Farmacia"
+          : currentRole === "titolare"
+          ? "Titolare"
+          : "Dipendente";
+      loginRoleLabel.textContent = label;
     });
   });
 
+  // Login "finto" (per ora)
   loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
-    const activeTab = document.querySelector(".auth-tab.active");
-    const role = activeTab.getAttribute("data-role");
-
-    setRole(role);
-
-    // Mostra app e nasconde login
     authContainer.classList.add("hidden");
     app.classList.remove("hidden");
 
-    showSection(dashboardSection);
-  });
-
-  // ====== HAMBURGER / SIDEBAR ======
-  hamburger.addEventListener("click", openSidebarMenu);
-  closeSidebar.addEventListener("click", closeSidebarMenu);
-
-  document.addEventListener("click", (e) => {
-    if (
-      sidebar.classList.contains("open") &&
-      !sidebar.contains(e.target) &&
-      e.target !== hamburger
-    ) {
-      closeSidebarMenu();
+    // Aggiorna chip in alto
+    if (currentRole === "farmacia") {
+      roleChip.textContent = "Farmacia (accesso generico)";
+    } else if (currentRole === "titolare") {
+      roleChip.textContent = "Titolare – controllo completo";
+    } else {
+      roleChip.textContent = "Dipendente – area personale condivisa";
     }
+
+    loginFeedback.classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // Navigazione dal menu laterale
-  sidebar.querySelectorAll("li[data-nav]").forEach((item) => {
+  // ================== SIDEBAR E LOGOUT ==================
+  const sidebar = document.getElementById("sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+  const hamburger = document.getElementById("hamburger");
+  const closeSidebar = document.getElementById("closeSidebar");
+  const logoutItems = document.querySelectorAll(".sidebar-item.logout");
+
+  function openSidebar() {
+    sidebar.classList.add("open");
+    sidebarOverlay.classList.add("open");
+  }
+
+  function hideSidebar() {
+    sidebar.classList.remove("open");
+    sidebarOverlay.classList.remove("open");
+  }
+
+  hamburger.addEventListener("click", openSidebar);
+  closeSidebar.addEventListener("click", hideSidebar);
+  sidebarOverlay.addEventListener("click", hideSidebar);
+
+  logoutItems.forEach((item) => {
     item.addEventListener("click", () => {
-      const target = item.getAttribute("data-nav");
-
-      if (target === "dashboard") {
-        showSection(dashboardSection);
-      } else if (target === "assenzePage") {
-        showSection(assenzePage);
-      } else if (target === "turniPage") {
-        showSection(turniPage);
-        renderTurniTable();
-      }
-
-      closeSidebarMenu();
+      hideSidebar();
+      // Torna al login
+      app.classList.add("hidden");
+      authContainer.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
 
-  // ====== LOGOUT ======
-  logoutBtn.addEventListener("click", () => {
-    app.classList.add("hidden");
-    authContainer.classList.remove("hidden");
+  // ================== NAVIGAZIONE PAGINE ==================
+  const dashboardSection = document.getElementById("dashboard");
+  const assenzePage = document.getElementById("assenzePage");
+  const comunicazioniPage = document.getElementById("comunicazioniPage");
 
-    // Reset campi login
-    loginForm.reset();
-    authTabs.forEach((t) => t.classList.remove("active"));
-    authTabs[0].classList.add("active");
-    loginRoleLabel.textContent = "Farmacia";
-    setRole("farmacia");
+  const openAssenzeBtn = document.getElementById("openAssenze");
+  const openComunicazioniBtn = document.getElementById("openComunicazioni");
+  const backButtons = document.querySelectorAll(".back-button");
 
-    closeSidebarMenu();
-  });
+  function showSection(sectionId) {
+    // Nascondi tutte
+    dashboardSection.classList.add("hidden");
+    assenzePage.classList.add("hidden");
+    comunicazioniPage.classList.add("hidden");
 
-  // ====== NAVIGAZIONE INTERNA ======
+    if (sectionId === "dashboard") {
+      dashboardSection.classList.remove("hidden");
+    } else if (sectionId === "assenze") {
+      assenzePage.classList.remove("hidden");
+    } else if (sectionId === "comunicazioni") {
+      comunicazioniPage.classList.remove("hidden");
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   if (openAssenzeBtn) {
-    openAssenzeBtn.addEventListener("click", () => {
-      showSection(assenzePage);
-    });
+    openAssenzeBtn.addEventListener("click", () => showSection("assenze"));
+  }
+  if (openComunicazioniBtn) {
+    openComunicazioniBtn.addEventListener("click", () =>
+      showSection("comunicazioni")
+    );
   }
 
-  if (backFromAssenzeBtn) {
-    backFromAssenzeBtn.addEventListener("click", () => {
-      showSection(dashboardSection);
-    });
-  }
-
-  if (openTurniBtn) {
-    openTurniBtn.addEventListener("click", () => {
-      showSection(turniPage);
-      renderTurniTable();
-    });
-  }
-
-  if (backFromTurniBtn) {
-    backFromTurniBtn.addEventListener("click", () => {
-      showSection(dashboardSection);
-    });
-  }
-
-  // ====== TURNI: POPOLAMENTO DATI ======
-
-  function initTurnoOggi() {
-    const oggi = turniFarmacie.find((t) => t.tipoRange === "oggi");
-    if (!oggi) return;
-
-    // Dashboard card
-    turnoOrarioChip.textContent = oggi.orario;
-    turnoNome.textContent = oggi.principale;
-    turnoIndirizzo.innerHTML = `Via Esempio 12, Matera<br />Tel: ${oggi.telefono}`;
-    turnoAppoggio.textContent = `${oggi.appoggio}`;
-
-    // Pagina turni
-    turnoOggiNome.textContent = oggi.principale;
-    turnoOggiIndirizzo.textContent = "Via Esempio 12, Matera";
-    turnoOggiTelefono.textContent = `Tel: ${oggi.telefono}`;
-    turnoOggiOrario.textContent = oggi.orario;
-    turnoOggiAppoggioNome.textContent = oggi.appoggio;
-    turnoOggiAppoggioDettagli.textContent = "Via Dante 8, Matera – Tel: 0835 111111";
-  }
-
-  function renderTurniTable() {
-    if (!turniRowsContainer) return;
-
-    const meseFilter = turniMeseSelect.value;
-    const farmaciaFilter = turniFarmaciaSelect.value;
-
-    let filtered = turniFarmacie.filter((t) => t.tipoRange === currentTurniView);
-
-    if (meseFilter !== "all") {
-      const m = Number(meseFilter);
-      filtered = filtered.filter((t) => t.mese === m);
-    }
-
-    if (farmaciaFilter !== "all") {
-      filtered = filtered.filter((t) => t.principale === farmaciaFilter);
-    }
-
-    turniRowsContainer.innerHTML = "";
-
-    if (filtered.length === 0) {
-      const emptyRow = document.createElement("div");
-      emptyRow.className = "turni-row";
-      emptyRow.innerHTML =
-        "<span colspan='6'>Nessun turno trovato per i filtri selezionati.</span>";
-      turniRowsContainer.appendChild(emptyRow);
-      return;
-    }
-
-    filtered.forEach((t) => {
-      const row = document.createElement("div");
-      row.className = "turni-row";
-
-      let tipoPillClass = "normale";
-      if (t.note.toLowerCase().includes("festivo") || t.note.toLowerCase().includes("vigilia")) {
-        tipoPillClass = "festivo";
-      }
-      if (t.note.toLowerCase().includes("notturno")) {
-        tipoPillClass = "notturno";
-      }
-
-      row.innerHTML = `
-        <span>${formatDateIT(t.data)}</span>
-        <span>${t.orario}</span>
-        <span>${t.principale}</span>
-        <span>${t.appoggio}</span>
-        <span>${t.telefono}</span>
-        <span><span class="turno-type-pill ${tipoPillClass}">${t.note}</span></span>
-      `;
-      turniRowsContainer.appendChild(row);
-    });
-  }
-
-  function formatDateIT(isoDate) {
-    const [y, m, d] = isoDate.split("-");
-    return `${d}/${m}/${y}`;
-  }
-
-  // Cambia tab (oggi / settimana / mese)
-  turniTabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      turniTabs.forEach((t) => t.classList.remove("active"));
-      tab.classList.add("active");
-      currentTurniView = tab.getAttribute("data-view");
-      renderTurniTable();
+  backButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.go || "dashboard";
+      showSection(target);
     });
   });
 
-  // Filtri
-  turniMeseSelect.addEventListener("change", renderTurniTable);
-  turniFarmaciaSelect.addEventListener("change", renderTurniTable);
-
-  // ====== FORM ASSENZE (solo feedback) ======
-  const assenzeForm = document.querySelector(".assenze-form");
+  // ================== FORM ASSENZE (DEMO) ==================
+  const assenzeForm = document.getElementById("assenzeForm");
   const assenzeFeedback = document.getElementById("assenzeFeedback");
 
-  if (assenzeForm && assenzeFeedback) {
+  if (assenzeForm) {
     assenzeForm.addEventListener("submit", (e) => {
       e.preventDefault();
       assenzeFeedback.classList.remove("hidden");
-      assenzeFeedback.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => {
+        assenzeFeedback.classList.add("hidden");
+      }, 4000);
+      assenzeForm.reset();
     });
   }
 
-  // Inizializza dati
-  initTurnoOggi();
+  // ================== FORM COMUNICAZIONI (DEMO) ==================
+  const commsForm = document.getElementById("commsForm");
+  const commsFeedback = document.getElementById("commsFeedback");
+  const commsList = document.getElementById("commsList");
+
+  if (commsForm && commsList) {
+    commsForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const titolo = document.getElementById("commsTitolo").value.trim();
+      const categoria = document.getElementById("commsCategoria").value;
+      const testo = document.getElementById("commsTesto").value.trim();
+      const destinatari =
+        document.getElementById("commsDestinatari").value || "Tutto il personale";
+
+      if (!titolo || !testo) {
+        commsFeedback.textContent = "Compila almeno titolo e testo.";
+        commsFeedback.classList.remove("hidden");
+        commsFeedback.style.color = "#ffd1d1";
+        return;
+      }
+
+      // Crea nuova comunicazione (solo in memoria)
+      const li = document.createElement("li");
+      li.className = "comms-item unread";
+
+      const titleRow = document.createElement("div");
+      titleRow.className = "comms-title-row";
+
+      const tag = document.createElement("span");
+      tag.className = "comms-tag";
+      if (categoria === "procedura") {
+        tag.classList.add("comms-tag-procedura");
+        tag.textContent = "Procedura";
+      } else if (categoria === "sicurezza") {
+        tag.classList.add("comms-tag-sicurezza");
+        tag.textContent = "Sicurezza";
+      } else if (categoria === "formazione") {
+        tag.classList.add("comms-tag-info");
+        tag.textContent = "Formazione";
+      } else {
+        tag.classList.add("comms-tag-info");
+        tag.textContent = "Info";
+      }
+
+      const dateSpan = document.createElement("span");
+      dateSpan.className = "comms-date";
+      dateSpan.textContent = "Adesso · demo";
+
+      titleRow.appendChild(tag);
+      titleRow.appendChild(dateSpan);
+
+      const h3 = document.createElement("h3");
+      h3.textContent = titolo;
+
+      const pText = document.createElement("p");
+      pText.className = "small-text";
+      pText.textContent = testo;
+
+      const pMeta = document.createElement("p");
+      pMeta.className = "comms-meta";
+      pMeta.innerHTML =
+        "Inviato da <strong>Utente demo</strong> · Destinatari: " + destinatari;
+
+      li.appendChild(titleRow);
+      li.appendChild(h3);
+      li.appendChild(pText);
+      li.appendChild(pMeta);
+
+      // Aggiungi in cima alla lista
+      commsList.insertBefore(li, commsList.firstChild);
+
+      commsFeedback.textContent =
+        "✅ Comunicazione aggiunta alla lista (demo, non ancora salvata su server).";
+      commsFeedback.style.color = "#a8ffb3";
+      commsFeedback.classList.remove("hidden");
+
+      setTimeout(() => {
+        commsFeedback.classList.add("hidden");
+      }, 4000);
+
+      commsForm.reset();
+    });
+  }
 });
