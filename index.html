@@ -17,6 +17,8 @@
     <ul class="sidebar-list">
       <li>Profilo</li>
       <li>Formazione</li>
+      <li>Area personale</li>
+      <li>Admin</li>
       <li>Impostazioni</li>
       <li class="logout">Logout</li>
     </ul>
@@ -27,16 +29,19 @@
 
   <!-- HEADER -->
   <header class="topbar">
-    <h1>FARMACIA</h1>
+    <div class="topbar-inner">
+      <h1>FARMACIA</h1>
+    </div>
   </header>
 
-  <!-- DASHBOARD -->
-  <main class="dashboard-wrapper">
-    <section class="dashboard">
+  <!-- CONTENITORE CENTRALE -->
+  <main class="dashboard-shell">
+    <section class="cards-grid">
 
-      <!-- CARD 1: ASSENZE -->
-      <article class="card card-green">
+      <!-- CARD 1: ASSENZE DEL PERSONALE -->
+      <article class="card card-green card-assenze">
         <span class="badge">2</span>
+
         <div class="card-header">
           <div class="card-icon-bubble">📅</div>
           <div class="card-title-block">
@@ -44,88 +49,85 @@
             <span class="card-tag">Oggi</span>
           </div>
         </div>
+
         <div class="card-content">
-          <p class="accent">2 richieste in attesa</p>
-          <p>Oggi: Mario G., Anna S.</p>
-          <p>Ferie: Luca B.</p>
+          <p class="accent-large">2 richieste in attesa</p>
+
+          <div class="info-row">
+            <span class="label">Assenti oggi:</span>
+            <span class="value">Mario G., Anna S.</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">In ferie:</span>
+            <span class="value">Luca B.</span>
+          </div>
         </div>
       </article>
 
-      <!-- CARD 2: TURNI -->
-      <article class="card card-teal teal-with-line">
+      <!-- CARD 2: FARMACIA DI TURNO -->
+      <article class="card card-teal card-turni">
         <span class="badge">1</span>
+
         <div class="card-header">
           <div class="card-icon-bubble">🕒</div>
           <div class="card-title-block">
-            <h2>Turni delle farmacie</h2>
-            <span class="card-tag">Turno attivo</span>
+            <h2>Farmacia di turno</h2>
+            <span class="card-tag">00:00 – 24:00</span>
           </div>
         </div>
+
         <div class="card-content">
-          <p class="accent">00:00 – 24:00</p>
-          <p>Reperibilità attiva</p>
-          <p>Farmacia di turno: Montesano</p>
+          <p class="accent-large main-pharmacy">Farmacia Montesano</p>
+          <p class="subtext">Via Esempio 12, Matera</p>
+          <p class="subtext">Tel: 0835 000000</p>
+
+          <div class="separator-line"></div>
+
+          <p class="support-label">Farmacia di appoggio</p>
+          <p class="support-name">Farmacia Centrale – Via Dante 8, Matera – Tel: 0835 111111</p>
         </div>
       </article>
 
       <!-- CARD 3: COMUNICAZIONI -->
-      <article class="card card-pink">
+      <article class="card card-pink card-comunicazioni">
         <span class="badge">3</span>
+
         <div class="card-header">
           <div class="card-icon-bubble">📣</div>
           <div class="card-title-block">
             <h2>Comunicazioni</h2>
-            <span class="card-tag tag-alert">3 nuove</span>
           </div>
         </div>
-        <div class="card-content">
-          <p>Nuova procedura disponibile</p>
-          <p>Aggiornare il registro sicurezza</p>
-          <p>Incontro all’orario di chiusura</p>
+
+        <div class="card-content communications">
+          <div class="comm-item">Nuova procedura disponibile</div>
+          <div class="comm-item">Aggiornare il registro sicurezza</div>
+          <div class="comm-item">Incontro all’orario di chiusura</div>
         </div>
       </article>
 
-      <!-- TILE GRID -->
-      <section class="tile-grid">
+    </section>
 
-        <div class="tile tile-procedure">
-          <span class="badge">1</span>
-          <div class="tile-icon-bubble">📁</div>
-          <h3>Procedure</h3>
-        </div>
+    <!-- ICONE GRANDI SOTTO (SENZA AREA PERSONALE / ADMIN) -->
+    <section class="tile-grid">
+      <div class="tile tile-procedure">
+        <span class="badge">1</span>
+        <div class="tile-icon-bubble">📁</div>
+        <h3>Procedure</h3>
+      </div>
 
-        <div class="tile tile-logistica">
-          <span class="badge">4</span>
-          <div class="tile-icon-bubble">📦</div>
-          <h3>Logistica</h3>
-        </div>
+      <div class="tile tile-logistica">
+        <span class="badge">4</span>
+        <div class="tile-icon-bubble">📦</div>
+        <h3>Logistica</h3>
+      </div>
 
-        <div class="tile tile-magazzino">
-          <span class="badge">2</span>
-          <div class="tile-icon-bubble">📋</div>
-          <h3>Magazziniera</h3>
-        </div>
-
-        <div class="tile tile-formazione">
-          <span class="badge">5</span>
-          <div class="tile-icon-bubble">🎓</div>
-          <h3>Formazione</h3>
-        </div>
-
-        <div class="tile tile-area">
-          <span class="badge">1</span>
-          <div class="tile-icon-bubble">👤</div>
-          <h3>Area personale</h3>
-        </div>
-
-        <div class="tile tile-admin">
-          <span class="badge">1</span>
-          <div class="tile-icon-bubble">🔧</div>
-          <h3>Admin</h3>
-        </div>
-
-      </section>
-
+      <div class="tile tile-magazzino">
+        <span class="badge">2</span>
+        <div class="tile-icon-bubble">📋</div>
+        <h3>Magazziniera</h3>
+      </div>
     </section>
   </main>
 
