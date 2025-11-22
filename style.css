@@ -392,3 +392,59 @@ body {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* BOTTONI AZIONE NELLE CARD */
+.card-btn {
+  margin-top: auto;                 /* sta in basso nella card */
+  align-self: flex-start;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.card-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* BOTTONI SOTTO LE TILE (Procedure / Logistica / Magazziniera) */
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.tile-btn {
+  margin-top: auto;
+  margin-top: 14px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.20);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.tile-btn:hover {
+  background: rgba(255, 255, 255, 0.30);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.65);
+}
