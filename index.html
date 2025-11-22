@@ -9,13 +9,12 @@
 </head>
 <body>
 
-  <!-- ================= LOGIN ================= -->
+  <!-- ============ LOGIN ============ -->
   <div id="authContainer" class="auth-container">
     <div class="auth-card">
       <div class="auth-logo-wrap">
         <img src="logo.jpg" alt="Farmacia Montesano" class="auth-logo" />
       </div>
-
       <h1>Portale Farmacia Montesano</h1>
       <p class="auth-intro">
         Seleziona il tipo di accesso e inserisci le credenziali.
@@ -33,62 +32,66 @@
 
       <form id="loginForm" class="auth-form">
         <div class="form-row">
-          <label for="username">Username</label>
-          <input id="username" type="text" autocomplete="off" />
+          <label for="loginUsername">Username</label>
+          <input id="loginUsername" type="text" placeholder="Inserisci username" />
         </div>
         <div class="form-row">
-          <label for="password">Password</label>
-          <input id="password" type="password" />
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" placeholder="Inserisci password" />
         </div>
-        <button type="submit" class="btn-primary large">Entra</button>
-        <p id="loginError" class="form-error hidden">
-          Credenziali non valide. Riprova.
+        <button type="submit" class="btn-primary wide">Entra</button>
+        <p class="login-hint">
+          Demo: per ora puoi inserire qualsiasi username e password.
         </p>
       </form>
     </div>
   </div>
 
-  <!-- ================= APP ================= -->
-  <div id="app" class="app hidden">
+  <!-- ============ APP PRINCIPALE ============ -->
+  <main id="app" class="app hidden">
 
     <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
-        <h2>Menu</h2>
+        <div class="sidebar-logo-row">
+          <img src="logo.jpg" alt="Farmacia Montesano" class="sidebar-logo" />
+          <span class="sidebar-title">Portale interno</span>
+        </div>
         <button id="closeSidebar" class="icon-button" aria-label="Chiudi menu">✕</button>
       </div>
+
       <ul class="sidebar-list">
         <li data-nav="dashboard">Dashboard</li>
-        <li data-nav="procedurePage">Procedure</li>
-        <li data-nav="logisticaPage" class="disabled">Logistica (in arrivo)</li>
-        <li data-nav="magazzinieraPage" class="disabled">Magazziniera (in arrivo)</li>
-        <li class="divider"></li>
-        <li data-nav="areaPersonalePage" class="disabled">Area personale (in arrivo)</li>
-        <li data-nav="adminPage" class="disabled">Admin (in arrivo)</li>
-        <li class="logout">Logout</li>
+        <li data-nav="assenzePage">Assenze</li>
+        <li data-nav="turniPage">Farmacie di turno</li>
+        <li data-nav="comunicazioniPage">Comunicazioni</li>
+        <li class="divider-label">Sezioni dedicate</li>
+        <li data-nav="areaPersonale">Area personale</li>
+        <li data-nav="areaAdmin">Admin</li>
+        <li id="logoutBtn" class="logout">Logout</li>
       </ul>
     </aside>
 
-    <!-- PULSANTE HAMBURGER -->
+    <!-- HAMBURGER -->
     <button id="hamburger" class="hamburger" aria-label="Apri menu">
       ☰
     </button>
 
-    <!-- SHELL DELL'APP -->
-    <div class="app-shell">
-      <!-- HEADER LOGO + RUOLO -->
+    <!-- ============ DASHBOARD ============ -->
+    <section id="dashboard" class="dashboard">
+
       <header class="dashboard-header">
-        <div class="brand-block">
-          <img src="logo.jpg" alt="Farmacia Montesano" class="brand-logo" />
-          <div class="brand-text">
-            <h1>FARMACIA MONTESANO</h1>
-            <span id="currentRolePill" class="role-pill">Farmacia (accesso generico)</span>
-          </div>
+        <div class="dashboard-logo-block">
+          <img src="logo.jpg" alt="Farmacia Montesano" class="dash-logo" />
+        </div>
+        <div class="dashboard-header-text">
+          <h1>Farmacia Montesano</h1>
+          <p class="header-subtitle">Portale interno</p>
+          <span id="currentRolePill" class="role-pill">Farmacia (accesso generico)</span>
         </div>
       </header>
 
-      <!-- ========== DASHBOARD ========== -->
-      <section id="dashboard" class="section visible">
+      <div class="dashboard-content">
         <div class="cards-grid">
 
           <!-- ASSENZE -->
@@ -122,19 +125,21 @@
               <div class="card-icon">⏰</div>
               <div class="card-title-group">
                 <h2>Farmacia di turno</h2>
-                <span class="chip chip-turno">00:00 – 24:00</span>
+                <span class="chip chip-turno" id="turnoOrarioChip">00:00 – 24:00</span>
               </div>
             </div>
             <div class="card-body">
-              <p><strong>Farmacia Montesano</strong></p>
-              <p class="small-text">
+              <p><strong id="turnoNome">Farmacia Montesano</strong></p>
+              <p class="small-text" id="turnoIndirizzo">
                 Via Esempio 12, Matera<br />
                 Tel: 0835 000000
               </p>
               <div class="divider"></div>
               <p class="small-text">
                 <strong>Farmacia di appoggio</strong><br />
-                Farmacia Centrale – Via Dante 8, Matera – Tel: 0835 111111
+                <span id="turnoAppoggio">
+                  Farmacia Centrale – Via Dante 8, Matera – Tel: 0835 111111
+                </span>
               </p>
             </div>
             <div class="card-footer">
@@ -154,12 +159,21 @@
               </div>
             </div>
             <div class="card-body card-body-list">
-              <div class="list-item">Nuova procedura disponibile</div>
-              <div class="list-item">Aggiornare il registro sicurezza</div>
-              <div class="list-item">Incontro all'orario di chiusura</div>
+              <div class="list-item">
+                <span class="list-title">Nuova procedura notturni</span>
+                <span class="list-meta">Oggi · Urgente</span>
+              </div>
+              <div class="list-item">
+                <span class="list-title">Verifica armadietto stupefacenti</span>
+                <span class="list-meta">Ieri · Importante</span>
+              </div>
+              <div class="list-item">
+                <span class="list-title">Aggiornamento promo vetrina</span>
+                <span class="list-meta">2 giorni fa · Informativa</span>
+              </div>
             </div>
             <div class="card-footer">
-              <button class="btn-primary" id="openComunicazioni">
+              <button id="openComunicazioni" class="btn-primary">
                 Comunica o modifica la comunicazione
               </button>
             </div>
@@ -169,7 +183,7 @@
           <article class="card card-procedure">
             <span class="card-badge">1</span>
             <div class="card-header">
-              <div class="card-icon">📁</div>
+              <div class="card-icon">🗂️</div>
               <div class="card-title-group">
                 <h2>Procedure</h2>
               </div>
@@ -180,7 +194,7 @@
               </p>
             </div>
             <div class="card-footer">
-              <button class="btn-secondary" id="openProcedure">
+              <button class="btn-secondary">
                 Modifica o aggiungi procedura
               </button>
             </div>
@@ -201,7 +215,7 @@
               </p>
             </div>
             <div class="card-footer">
-              <button class="btn-secondary" onclick="alert('Sezione Logistica in arrivo')">
+              <button class="btn-secondary">
                 Modifica o inserisci nuova logistica
               </button>
             </div>
@@ -222,223 +236,520 @@
               </p>
             </div>
             <div class="card-footer">
-              <button class="btn-secondary" onclick="alert('Sezione Magazziniera in arrivo')">
+              <button class="btn-secondary">
                 Modifica
               </button>
             </div>
           </article>
 
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ========== PAGINA ASSENZE ========== -->
-      <section id="assenzePage" class="section hidden">
-        <header class="page-header">
-          <button class="back-button" data-back="dashboard">← Dashboard</button>
+    <!-- ============ PAGINA ASSENZE ============ -->
+    <section id="assenzePage" class="page hidden">
+      <header class="page-header">
+        <button id="backFromAssenze" class="back-button">← Dashboard</button>
+        <div class="page-title-block">
           <h1>Assenze del personale</h1>
-          <p>Consulta le assenze, le richieste e invia una nuova richiesta direttamente dal portale.</p>
-        </header>
-
-        <div class="assenze-layout">
-          <article class="card mini-card">
-            <h3>Le tue prossime assenze</h3>
-            <p class="big-number">2 giorni</p>
-            <p class="small-text">20/12 – 21/12 · Ferie approvate</p>
-          </article>
-          <article class="card mini-card">
-            <h3>Richieste in attesa</h3>
-            <p class="big-number">1</p>
-            <p class="small-text">10/01 · Permesso pomeriggio · In attesa</p>
-          </article>
-          <article class="card mini-card">
-            <h3>Storico ultimi 3 mesi</h3>
-            <p class="big-number">6 giorni</p>
-            <p class="small-text">Ferie: 5 · Permessi: 1</p>
-          </article>
+          <p>Consulta le tue assenze, verifica chi è assente oggi e invia una nuova richiesta.</p>
         </div>
+        <div class="summary-badges">
+          <span class="badge badge-pending">2 in attesa</span>
+          <span class="badge badge-approved">5 approvate</span>
+          <span class="badge badge-rejected">1 rifiutata</span>
+        </div>
+      </header>
 
-        <article class="card wide-card">
-          <h2>Richiedi una nuova assenza</h2>
+      <div class="assenze-top-cards">
+        <article class="mini-card">
+          <h3>Le tue prossime assenze</h3>
+          <p class="big-number">2 giorni</p>
           <p class="small-text">
-            Compila il modulo per inviare la richiesta al titolare.
+            20/12 – 21/12 · Ferie approvate
           </p>
-          <form id="assenzeForm" class="assenze-form">
-            <div class="form-row">
-              <label for="tipoAssenza">Tipo di assenza</label>
-              <select id="tipoAssenza" name="tipoAssenza">
-                <option>Ferie</option>
-                <option>Permesso</option>
-                <option>Malattia</option>
-                <option>Corso / Formazione</option>
-                <option>Altro</option>
+        </article>
+
+        <article class="mini-card">
+          <h3>Richieste in attesa</h3>
+          <p class="big-number">1</p>
+          <p class="small-text">
+            10/01 · Permesso pomeriggio · In attesa
+          </p>
+        </article>
+
+        <article class="mini-card">
+          <h3>Storico ultimi 3 mesi</h3>
+          <p class="big-number">6 giorni</p>
+          <p class="small-text">
+            Ferie: 5 · Permessi: 1
+          </p>
+        </article>
+      </div>
+
+      <div class="assenze-layout">
+        <!-- CALENDARIO -->
+        <article class="card calendar-card">
+          <div class="calendar-header">
+            <div>
+              <h2>Calendario assenze</h2>
+              <p class="small-text">Panoramica mensile delle assenze in farmacia.</p>
+            </div>
+            <div class="calendar-controls">
+              <select>
+                <option>Dicembre 2025</option>
+                <option>Gennaio 2026</option>
+                <option>Febbraio 2026</option>
               </select>
-            </div>
-            <div class="form-row two-cols">
-              <div>
-                <label for="dalGiorno">Dal giorno</label>
-                <input type="date" id="dalGiorno" name="dalGiorno" />
-              </div>
-              <div>
-                <label for="alGiorno">Al giorno</label>
-                <input type="date" id="alGiorno" name="alGiorno" />
-              </div>
-            </div>
-            <div class="form-row">
-              <label class="checkbox-inline">
-                <input type="checkbox" id="mezzaGiornata" />
-                <span>Solo mezza giornata</span>
+              <label class="filter-check">
+                <input type="checkbox" checked />
+                <span>Mostra solo le mie assenze</span>
               </label>
             </div>
-            <div class="form-row">
-              <label for="noteAssenza">Motivo / note per il titolare</label>
-              <textarea id="noteAssenza" rows="3"
-                placeholder="Es. permesso per visita medica, ferie programmate, corso di aggiornamento..."></textarea>
+          </div>
+
+          <div class="calendar-grid">
+            <div class="calendar-row calendar-header-row">
+              <span>Lun</span><span>Mar</span><span>Mer</span>
+              <span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
             </div>
-            <div class="form-actions">
-              <button type="submit" class="btn-primary">Invia richiesta di assenza</button>
+
+            <div class="calendar-row">
+              <span class="empty"></span>
+              <span class="day">1</span>
+              <span class="day">2</span>
+              <span class="day">3</span>
+              <span class="day">4</span>
+              <span class="day">5</span>
+              <span class="day">6</span>
             </div>
-            <p id="assenzeFeedback" class="form-feedback hidden">
-              ✅ Richiesta inviata correttamente (demo grafica, senza invio reale).
-            </p>
-          </form>
+            <div class="calendar-row">
+              <span class="day">7</span>
+              <span class="day">8</span>
+              <span class="day day-holiday">
+                9
+                <span class="dot dot-ferie" title="Luca · Ferie"></span>
+              </span>
+              <span class="day">10</span>
+              <span class="day">11</span>
+              <span class="day">12</span>
+              <span class="day">13</span>
+            </div>
+            <div class="calendar-row">
+              <span class="day">14</span>
+              <span class="day">15</span>
+              <span class="day">16</span>
+              <span class="day today">
+                17
+                <span class="dot dot-oggi" title="Assenti: Mario, Anna"></span>
+              </span>
+              <span class="day">18</span>
+              <span class="day">19</span>
+              <span class="day">20</span>
+            </div>
+            <div class="calendar-row">
+              <span class="day">
+                21
+                <span class="dot dot-ferie" title="Tu · Ferie"></span>
+              </span>
+              <span class="day">22</span>
+              <span class="day">23</span>
+              <span class="day">24</span>
+              <span class="day">25</span>
+              <span class="day">26</span>
+              <span class="day">27</span>
+            </div>
+            <div class="calendar-row">
+              <span class="day">28</span>
+              <span class="day">29</span>
+              <span class="day">30</span>
+              <span class="day">31</span>
+              <span class="empty"></span>
+              <span class="empty"></span>
+              <span class="empty"></span>
+            </div>
+          </div>
+
+          <div class="calendar-legend">
+            <span><span class="legend-dot ferie"></span> Ferie</span>
+            <span><span class="legend-dot permesso"></span> Permesso</span>
+            <span><span class="legend-dot oggi"></span> Oggi</span>
+          </div>
         </article>
-      </section>
 
-      <!-- ========== PAGINA FARMACIE DI TURNO ========== -->
-      <section id="turniPage" class="section hidden">
-        <header class="page-header">
-          <button class="back-button" data-back="dashboard">← Dashboard</button>
-          <h1>Farmacie di turno</h1>
-          <p>Elenco dimostrativo delle farmacie di turno e di appoggio.</p>
-        </header>
-
-        <article class="card wide-card">
-          <h2>Turno di oggi</h2>
+        <!-- OGGI IN FARMACIA -->
+        <article class="card oggi-card">
+          <h2>Oggi in assenza</h2>
           <p class="small-text">
-            Orario continuato 00:00 – 24:00.
+            Situazione del personale nella giornata odierna.
           </p>
-          <ul class="pharmacy-list">
+          <ul class="assenze-list">
             <li>
-              <span class="name">Farmacia Montesano</span>
-              <span class="details">Via Esempio 12, Matera · Tel: 0835 000000</span>
+              <span class="name">Mario G.</span>
+              <span class="tag tag-ferie">Ferie</span>
             </li>
             <li>
-              <span class="name">Farmacia Centrale (appoggio)</span>
-              <span class="details">Via Dante 8, Matera · Tel: 0835 111111</span>
+              <span class="name">Anna S.</span>
+              <span class="tag tag-permesso">Permesso</span>
+            </li>
+            <li>
+              <span class="name">Luca B.</span>
+              <span class="tag tag-malattia">Malattia</span>
+            </li>
+          </ul>
+
+          <div class="divider"></div>
+
+          <h3>Prossimi 3 giorni</h3>
+          <ul class="assenze-list small">
+            <li>
+              <span class="name">Marco R.</span>
+              <span class="details">18/12 · Ferie</span>
+            </li>
+            <li>
+              <span class="name">Giulia P.</span>
+              <span class="details">19/12 · Corso</span>
+            </li>
+            <li>
+              <span class="name">Anna S.</span>
+              <span class="details">20/12 · Permesso mattina</span>
             </li>
           </ul>
         </article>
+      </div>
 
-        <article class="card wide-card">
-          <h2>Prossimi turni (esempio)</h2>
-          <ul class="pharmacy-list">
-            <li>
-              <span class="name">Farmacia San Pietro</span>
-              <span class="details">18/12 · Turno notturno</span>
-            </li>
-            <li>
-              <span class="name">Farmacia Madonna della Bruna</span>
-              <span class="details">19/12 · Turno diurno</span>
-            </li>
-            <li>
-              <span class="name">Farmacia Centrale</span>
-              <span class="details">20/12 · Turno completo</span>
-            </li>
-          </ul>
-        </article>
-      </section>
-
-      <!-- ========== PAGINA PROCEDURE ========== -->
-      <section id="procedurePage" class="section hidden">
-        <header class="page-header">
-          <button class="back-button" data-back="dashboard">← Dashboard</button>
-          <h1>Procedure operative</h1>
-          <p>Consulta, modifica o inserisci le procedure interne della farmacia.</p>
-        </header>
-
-        <div class="procedure-cards">
-          <article class="card mini-card">
-            <h3>Procedure totali</h3>
-            <p class="big-number">18</p>
-            <p class="small-text">Procedure registrate.</p>
-          </article>
-          <article class="card mini-card">
-            <h3>Ultimo aggiornamento</h3>
-            <p class="big-number">10</p>
-            <p class="small-text">Procedure aggiornate negli ultimi 30 giorni.</p>
-          </article>
-          <article class="card mini-card">
-            <h3>In revisione</h3>
-            <p class="big-number">3</p>
-            <p class="small-text">Bozze da approvare dal titolare.</p>
-          </article>
+      <article class="card requests-card">
+        <div class="requests-header">
+          <h2>Le tue richieste di assenza</h2>
+          <p class="small-text">Vedi lo stato delle richieste che hai inviato.</p>
         </div>
+        <div class="requests-table">
+          <div class="requests-row header">
+            <span>Dal</span>
+            <span>Al</span>
+            <span>Tipo</span>
+            <span>Stato</span>
+            <span>Azioni</span>
+          </div>
+          <div class="requests-row">
+            <span>20/12/2025</span>
+            <span>21/12/2025</span>
+            <span>Ferie</span>
+            <span><span class="status status-approved">Approvata</span></span>
+            <span class="actions">—</span>
+          </div>
+          <div class="requests-row">
+            <span>10/01/2026</span>
+            <span>10/01/2026</span>
+            <span>Permesso</span>
+            <span><span class="status status-pending">In attesa</span></span>
+            <span class="actions">
+              <button class="link-button">Modifica</button>
+              <button class="link-button danger">Annulla</button>
+            </span>
+          </div>
+          <div class="requests-row">
+            <span>05/11/2025</span>
+            <span>05/11/2025</span>
+            <span>Malattia</span>
+            <span><span class="status status-rejected">Rifiutata</span></span>
+            <span class="actions">—</span>
+          </div>
+        </div>
+      </article>
 
-        <article class="card wide-card">
-          <h2>Elenco procedure (esempio)</h2>
-          <p class="small-text">Esempio di categorie e procedure interne.</p>
+      <article class="card form-card">
+        <h2>Richiedi una nuova assenza</h2>
+        <p class="small-text">
+          Compila il modulo per inviare la tua richiesta al titolare.
+        </p>
+        <form class="assenze-form">
+          <div class="form-row">
+            <label for="tipoAssenza">Tipo di assenza</label>
+            <select id="tipoAssenza" name="tipoAssenza">
+              <option>Ferie</option>
+              <option>Permesso</option>
+              <option>Malattia</option>
+              <option>Corso / Formazione</option>
+              <option>Altro</option>
+            </select>
+          </div>
 
-          <h3>Banco &amp; Vendita</h3>
-          <ul class="bullet-list">
-            <li>Gestione scontrino errato / annullamento</li>
-            <li>Procedura reso merce al cliente</li>
-            <li>Gestione anticipi con ricetta SSR</li>
-          </ul>
+          <div class="form-row two-cols">
+            <div>
+              <label for="dalGiorno">Dal giorno</label>
+              <input type="date" id="dalGiorno" name="dalGiorno" />
+            </div>
+            <div>
+              <label for="alGiorno">Al giorno</label>
+              <input type="date" id="alGiorno" name="alGiorno" />
+            </div>
+          </div>
 
-          <h3>Magazzino &amp; Scadenze</h3>
-          <ul class="bullet-list">
-            <li>Controllo scadenze mensile</li>
-            <li>Gestione farmaci da smaltire</li>
-            <li>Ricezione merci da grossista</li>
-          </ul>
+          <div class="form-row">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="mezzaGiornata" name="mezzaGiornata" />
+              <span>Solo mezza giornata</span>
+            </label>
+          </div>
 
-          <h3>Servizi &amp; Cup</h3>
-          <ul class="bullet-list">
-            <li>Prenotazione servizi interni (PA, autoanalisi, ecc.)</li>
-            <li>Identificazione paziente e consenso</li>
-          </ul>
+          <div class="form-row">
+            <label for="noteAssenza">Motivo / note per il titolare</label>
+            <textarea id="noteAssenza" name="noteAssenza" rows="3"
+              placeholder="Es. permesso per visita medica, ferie programmata, corso di aggiornamento..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              Invia richiesta di assenza
+            </button>
+          </div>
+
+          <p id="assenzeFeedback" class="form-feedback hidden">
+            ✅ Richiesta inviata correttamente. (demo)
+          </p>
+        </form>
+      </article>
+    </section>
+
+    <!-- ============ PAGINA FARMACIE DI TURNO ============ -->
+    <section id="turniPage" class="page hidden">
+      <header class="page-header">
+        <button id="backFromTurni" class="back-button">← Dashboard</button>
+        <div class="page-title-block">
+          <h1>Farmacie di turno</h1>
+          <p>Consulta le farmacie in turno oggi, nei prossimi giorni e per il mese corrente.</p>
+        </div>
+        <div class="summary-badges">
+          <span class="badge badge-today">Oggi</span>
+          <span class="badge badge-week">Prossimi 7 giorni</span>
+          <span class="badge badge-month">Mese corrente</span>
+        </div>
+      </header>
+
+      <div class="turni-tabs">
+        <button class="turni-tab active" data-view="oggi">Oggi</button>
+        <button class="turni-tab" data-view="settimana">Settimana</button>
+        <button class="turni-tab" data-view="mese">Mese</button>
+      </div>
+
+      <div class="turni-layout">
+
+        <article class="card turni-oggi-card">
+          <h2>Turno di oggi</h2>
+          <p class="small-text">Farmacia principale e farmacia di appoggio per la giornata odierna.</p>
+
+          <div class="turno-main">
+            <h3 id="turnoOggiNome">Farmacia Montesano</h3>
+            <p id="turnoOggiIndirizzo" class="small-text">
+              Via Esempio 12, Matera
+            </p>
+            <p id="turnoOggiTelefono" class="small-text">
+              Tel: 0835 000000
+            </p>
+            <span id="turnoOggiOrario" class="chip chip-turno">00:00 – 24:00</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="turno-appoggio">
+            <p class="small-text label">Farmacia di appoggio</p>
+            <h3 id="turnoOggiAppoggioNome">Farmacia Centrale</h3>
+            <p id="turnoOggiAppoggioDettagli" class="small-text">
+              Via Dante 8, Matera – Tel: 0835 111111
+            </p>
+          </div>
+
+          <div class="turni-actions">
+            <a href="https://maps.google.com/?q=Farmacia+Montesano+Matera"
+               target="_blank"
+               class="btn-secondary small">
+              📍 Apri in Maps
+            </a>
+            <button class="btn-secondary small">
+              📄 Stampa / Esponi turno
+            </button>
+          </div>
         </article>
 
-        <article class="card wide-card">
-          <h2>Nuova / modifica procedura</h2>
-          <p class="small-text">
-            Compila i campi per aggiungere o aggiornare una procedura interna.
-          </p>
-          <form id="procedureForm" class="procedure-form">
-            <div class="form-row">
-              <label for="categoriaProcedura">Categoria</label>
-              <select id="categoriaProcedura">
-                <option>Banco &amp; Vendita</option>
-                <option>Magazzino &amp; Scadenze</option>
-                <option>Servizi &amp; Cup</option>
-                <option>Amministrazione</option>
-                <option>Altro</option>
+        <article class="card turni-table-card">
+          <div class="turni-table-header">
+            <div>
+              <h2>Elenco turni</h2>
+              <p class="small-text">
+                Visualizza i turni in base al periodo selezionato.
+              </p>
+            </div>
+            <div class="turni-filters">
+              <select id="turniMeseSelect">
+                <option value="all">Tutti i mesi</option>
+                <option value="12">Dicembre</option>
+                <option value="1">Gennaio</option>
+                <option value="2">Febbraio</option>
+              </select>
+              <select id="turniFarmaciaSelect">
+                <option value="all">Tutte le farmacie</option>
+                <option value="Farmacia Montesano">Farmacia Montesano</option>
+                <option value="Farmacia Centrale">Farmacia Centrale</option>
+                <option value="Farmacia Madonna delle Grazie">Farmacia Madonna delle Grazie</option>
               </select>
             </div>
-            <div class="form-row">
-              <label for="titoloProcedura">Titolo procedura</label>
-              <input id="titoloProcedura" type="text"
-                placeholder="Es. Gestione scontrino contanti vs POS" />
+          </div>
+
+          <div class="turni-table">
+            <div class="turni-row header">
+              <span>Data</span>
+              <span>Orario</span>
+              <span>Farmacia principale</span>
+              <span>Farmacia di appoggio</span>
+              <span>Telefono</span>
+              <span>Note</span>
             </div>
+            <div id="turniRows"></div>
+          </div>
+
+          <div class="turni-footer-actions">
+            <button class="btn-secondary small">📥 Esporta elenco in PDF</button>
+            <button class="btn-secondary small">🔄 Aggiorna turni</button>
+            <p class="small-text note">
+              I dati dei turni sono indicativi. Demo grafica, non collegata a gestionali.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ PAGINA COMUNICAZIONI ============ -->
+    <section id="comunicazioniPage" class="page hidden">
+      <header class="page-header">
+        <button id="backFromComunicazioni" class="back-button">← Dashboard</button>
+        <div class="page-title-block">
+          <h1>Comunicazioni interne</h1>
+          <p>Avvisi, note operative e messaggi tra titolare e dipendenti.</p>
+        </div>
+        <div class="summary-badges">
+          <span class="badge badge-today" id="badgeTotComunicazioni">Totali: 0</span>
+          <span class="badge badge-week" id="badgeNonLette">Non lette: 0</span>
+          <span class="badge badge-month" id="badgeUrgenti">Urgenti: 0</span>
+        </div>
+      </header>
+
+      <div class="comunicazioni-layout">
+        <!-- COLONNA SINISTRA: ELENCO -->
+        <article class="card comunicazioni-list-card">
+          <div class="comunicazioni-list-header">
+            <h2>Ultime comunicazioni</h2>
+            <p class="small-text">
+              In ordine dalla più recente. Demo statica per ora.
+            </p>
+          </div>
+
+          <div id="comunicazioniList" class="comunicazioni-list">
+            <!-- riempito da JS -->
+          </div>
+        </article>
+
+        <!-- COLONNA DESTRA: FILTRI + NUOVA COMUNICAZIONE -->
+        <article class="card comunicazioni-side-card">
+          <h2>Filtra e nuova comunicazione</h2>
+
+          <div class="form-row">
+            <label for="filtroCategoria">Filtra per categoria</label>
+            <select id="filtroCategoria">
+              <option value="tutte">Tutte</option>
+              <option value="urgente">Urgente</option>
+              <option value="importante">Importante</option>
+              <option value="informativa">Informativa</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="filtroSoloNonLette" />
+              <span>Mostra solo non lette</span>
+            </label>
+          </div>
+
+          <div class="divider"></div>
+
+          <h3>Invia nuova comunicazione (demo)</h3>
+          <p class="small-text">
+            Questo modulo è dimostrativo. In futuro invierà davvero al server.
+          </p>
+
+          <form id="comunicazioneForm" class="comunicazione-form">
             <div class="form-row">
-              <label for="descrizioneProcedura">Descrizione / passaggi</label>
-              <textarea id="descrizioneProcedura" rows="4"
-                placeholder="Scrivi qui i passaggi operativi passo-passo..."></textarea>
+              <label for="comTitolo">Titolo</label>
+              <input type="text" id="comTitolo" placeholder="Es. Aggiornamento procedure notturne" />
             </div>
+
+            <div class="form-row">
+              <label for="comCategoria">Categoria</label>
+              <select id="comCategoria">
+                <option value="urgente">Urgente</option>
+                <option value="importante">Importante</option>
+                <option value="informativa">Informativa</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="comTesto">Testo breve</label>
+              <textarea id="comTesto" rows="3"
+                placeholder="Scrivi qui una breve comunicazione..."></textarea>
+            </div>
+
             <div class="form-actions">
-              <button type="submit" class="btn-primary">
-                Salva procedura (grafica)
-              </button>
+              <button type="submit" class="btn-primary">Invia comunicazione (demo)</button>
             </div>
-            <p id="procedureFeedback" class="form-feedback hidden">
-              ✅ Procedura salvata (solo grafica, senza database).
+
+            <p id="comunicazioneFeedback" class="form-feedback hidden">
+              ✅ Comunicazione registrata (demo). In futuro sarà salvata su server.
             </p>
           </form>
         </article>
-      </section>
+      </div>
 
-    </div> <!-- fine app-shell -->
-  </div> <!-- fine app -->
+      <!-- STORICO SOTTO -->
+      <article class="card comunicazioni-storico-card">
+        <div class="requests-header">
+          <h2>Storico comunicazioni (demo)</h2>
+          <p class="small-text">
+            Tabella puramente grafica per mostrare come apparirà uno storico.
+          </p>
+        </div>
+        <div class="requests-table">
+          <div class="requests-row header">
+            <span>Data</span>
+            <span>Titolo</span>
+            <span>Categoria</span>
+            <span>Autore</span>
+            <span>Stato</span>
+          </div>
+          <div class="requests-row">
+            <span>15/12/2025</span>
+            <span>Inventario magazzino</span>
+            <span>Importante</span>
+            <span>Titolare</span>
+            <span><span class="status status-approved">Letta</span></span>
+          </div>
+          <div class="requests-row">
+            <span>12/12/2025</span>
+            <span>Corso aggiornamento ECM</span>
+            <span>Informativa</span>
+            <span>Titolare</span>
+            <span><span class="status status-approved">Letta</span></span>
+          </div>
+          <div class="requests-row">
+            <span>10/12/2025</span>
+            <span>Nuove regole chiusura cassa</span>
+            <span>Urgente</span>
+            <span>Admin</span>
+            <span><span class="status status-pending">Da rileggere</span></span>
+          </div>
+        </div>
+      </article>
+    </section>
 
+  </main>
 </body>
 </html>
