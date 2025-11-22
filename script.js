@@ -13,7 +13,7 @@ closeSidebarBtn.addEventListener("click", () => {
   sidebar.classList.remove("open");
 });
 
-// Chiudi sidebar cliccando fuori (desktop / tablet)
+// Chiudi sidebar cliccando fuori
 document.addEventListener("click", (event) => {
   if (!sidebar.classList.contains("open")) return;
 
