@@ -1,429 +1,268 @@
-/* RESET BASE */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-:root {
-  --radius-big: 24px;
-  --glass-bg: rgba(255, 255, 255, 0.10);
-  --glass-strong: rgba(255, 255, 255, 0.18);
-  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.55);
-  --text-main: #f9fafb;
-}
-
-/* SFONDO GENERALE */
-body {
+/* ---------- RESET ---------- */
+* {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Helvetica Neue", Arial, sans-serif;
-  background:
-    radial-gradient(circle at 0% 0%, #00ffd5 0, transparent 55%),
-    radial-gradient(circle at 100% 100%, #0084ff 0, transparent 55%),
-    radial-gradient(circle at 50% 0%, #00c78c 0, #003845 55%, #00141a 100%);
-  background-attachment: fixed;
-  color: var(--text-main);
-  overflow-x: hidden;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", system-ui, sans-serif;
 }
 
-/* HAMBURGER – SEMPRE VISIBILE */
-#hamburger {
-  position: fixed;
-  top: 18px;
-  left: 18px;
-  padding: 10px 14px;
-  font-size: 22px;
-  border-radius: 999px;
-  border: none;
-  background: rgba(0, 0, 0, 0.55);
-  color: #f9fafb;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.65);
-  cursor: pointer;
-  z-index: 1001;
+body {
+  background: linear-gradient(135deg, #043b4d, #066f68, #013440);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
 }
 
-#hamburger:hover {
-  background: rgba(0, 0, 0, 0.8);
-}
-
-/* SIDEBAR NASCOSTA DI DEFAULT */
+/* ---------- SIDEBAR ---------- */
 #sidebar {
   position: fixed;
+  left: -260px;
   top: 0;
-  left: 0;
   width: 260px;
-  height: 100%;
-  padding: 18px 18px 24px;
-  background: rgba(5, 22, 30, 0.96);
-  backdrop-filter: blur(20px);
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-  z-index: 900;
-  box-shadow: 10px 0 35px rgba(0, 0, 0, 0.7);
-  color: #e5e7eb;
+  height: 100vh;
+  background: rgba(0, 25, 36, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 25px;
+  transition: 0.4s ease;
+  z-index: 999;
+  border-right: 2px solid rgba(255,255,255,0.06);
 }
 
 #sidebar.open {
-  transform: translateX(0);
+  left: 0;
 }
 
 .sidebar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
-}
-
-.sidebar-header h2 {
-  margin: 0;
-  font-size: 18px;
+  margin-bottom: 25px;
 }
 
 #closeSidebar {
+  background: none;
   border: none;
-  background: transparent;
+  color: white;
   font-size: 26px;
-  color: #e5e7eb;
   cursor: pointer;
 }
 
 .sidebar-list {
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin-top: 20px;
 }
 
 .sidebar-list li {
-  padding: 10px 6px;
-  border-radius: 10px;
+  padding: 14px 0;
+  font-size: 18px;
   cursor: pointer;
-  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.sidebar-list li:hover {
-  background: rgba(248, 250, 252, 0.1);
+.sidebar-list li.logout {
+  margin-top: 20px;
+  color: #ff8888;
 }
 
-.sidebar-list .logout {
-  margin-top: 12px;
-  color: #fecaca;
+/* ---------- HAMBURGER ---------- */
+#hamburger {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  padding: 10px 14px;
+  font-size: 26px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 900;
+  backdrop-filter: blur(8px);
 }
 
-/* HEADER IN ALTO */
+/* ---------- HEADER ---------- */
 .topbar {
-  padding: 30px 32px 12px 88px; /* spazio per l'hamburger */
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-/* WRAPPER PER CENTRARE LA DASHBOARD */
-.dashboard-wrapper {
-  padding: 0 24px 40px;
-  display: flex;
-  justify-content: center;
-}
-
-/* CONTENITORE DEL PANNELLO */
-.dashboard {
   width: 100%;
-  max-width: 1280px;
-  padding: 18px 22px 32px;
-  border-radius: 28px;
-  background: radial-gradient(circle at top left,
-              rgba(255, 255, 255, 0.16),
-              rgba(15, 23, 42, 0.85));
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(22px);
+  text-align: left;
+  padding: 35px 100px;
+  font-size: 38px;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+/* ---------- DASHBOARD GRID ---------- */
+.dashboard-wrapper {
+  width: 100%;
+  padding: 0 100px;
+  margin-top: 20px;
+}
+
+.dashboard {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-  position: relative;
-  overflow: hidden;
+  gap: 35px;
 }
 
-/* leggero bagliore interno */
-.dashboard::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 15% 0%, rgba(255, 255, 255, 0.18), transparent 55%),
-    radial-gradient(circle at 85% 100%, rgba(0, 255, 200, 0.22), transparent 60%);
-  opacity: 0.9;
-  pointer-events: none;
-}
-
-/* CARD GRANDI (ASSENZE / TURNI / COMUNICAZIONI) */
+/* ---------- CARD GRANDI (Assenze - Turni - Comunicazioni) ---------- */
 .card {
+  background: rgba(255,255,255,0.08);
+  padding: 28px;
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.14);
   position: relative;
-  padding: 22px 22px 20px;
-  border-radius: var(--radius-big);
-  background: var(--glass-bg);
-  backdrop-filter: blur(26px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow:
-    0 16px 38px rgba(0, 0, 0, 0.6),
-    0 0 14px rgba(255, 255, 255, 0.22) inset;
-  transition: transform .2s ease, box-shadow .2s ease;
-  overflow: hidden;
-}
-
-/* luce morbida interna */
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 20% -10%, rgba(255, 255, 255, 0.4), transparent 55%);
-  opacity: 0.7;
-  mix-blend-mode: screen;
-  pointer-events: none;
+  transition: 0.3s ease;
+  min-height: 220px;
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow:
-    0 22px 46px rgba(0, 0, 0, 0.75),
-    0 0 18px rgba(255, 255, 255, 0.26) inset;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.32);
 }
+
+/* Colori */
+.card-green  { background: rgba(0, 255, 128, 0.15); }
+.card-teal   { background: rgba(0, 180, 255, 0.16); }
+.card-pink   { background: rgba(255, 45, 144, 0.18); }
 
 .card-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
 }
 
+/* ICONA GRANDE BOLLA */
 .card-icon-bubble {
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.25);
+  width: 55px;
+  height: 55px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.18);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 26px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+  margin-right: 18px;
 }
 
 .card-title-block h2 {
-  margin: 0;
-  font-size: 18px;
+  font-size: 24px;
+  margin-bottom: 6px;
 }
 
 .card-tag {
-  display: inline-block;
-  margin-top: 3px;
-  padding: 3px 8px;
-  font-size: 11px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(255,255,255,0.15);
+  padding: 4px 12px;
+  font-size: 13px;
+  border-radius: 10px;
 }
 
 .tag-alert {
-  background: rgba(248, 113, 113, 0.9);
-  color: #111827;
+  background: rgba(255, 77, 129, 0.35) !important;
 }
 
-.card-content {
-  margin-top: 6px;
+.card-content p {
+  font-size: 17px;
+  margin-bottom: 6px;
 }
 
-.card p {
-  margin: 2px 0;
-  font-size: 13px;
-}
-
-.card p.accent {
+.card-content .accent {
   font-weight: 600;
+  color: #eaffff;
 }
 
-/* COLORI CARDS CON GLI STESSI GRADIENTI DEL MOCKUP */
-.card-green {
-  background: linear-gradient(135deg, #32d59c, #0aa072);
-}
-.card-teal {
-  background: linear-gradient(135deg, #00b3d6, #0077a7);
-}
-.card-pink {
-  background: linear-gradient(135deg, #e93e96, #b5166a);
-}
-
-/* GRIGLIA ICONE SOTTO */
-.tile-grid {
-  grid-column: span 3;
-  margin-top: 8px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-}
-
-/* TILE GRANDI 3D */
-.tile {
-  position: relative;
-  padding: 20px 18px 22px;
-  border-radius: var(--radius-big);
-  background: var(--glass-strong);
-  backdrop-filter: blur(22px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 14px 30px rgba(0, 0, 0, 0.55),
-    0 0 12px rgba(255, 255, 255, 0.12) inset;
-  text-align: left;
-  cursor: pointer;
-  transition: transform .18s ease, box-shadow .2s ease;
-  overflow: hidden;
-}
-
-/* highlight luce */
-.tile::before {
-  content: "";
+/* ---------- BADGE 🔴 ---------- */
+.badge {
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 15% -10%, rgba(255, 255, 255, 0.45), transparent 60%);
-  opacity: 0.8;
-  mix-blend-mode: screen;
-  pointer-events: none;
+  top: 14px;
+  right: 14px;
+  background: #ff3b3b;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* ---------- TILE (icone grandi sotto) ---------- */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 25px;
+  gap: 30px;
+}
+
+.tile {
+  background: rgba(255,255,255,0.08);
+  padding: 28px;
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+  transition: 0.3s;
+  min-height: 150px;
+  position: relative;
 }
 
 .tile:hover {
-  transform: translateY(-6px);
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.7),
-    0 0 18px rgba(255, 255, 255, 0.18) inset;
+  transform: translateY(-5px);
 }
 
+/* Icona bolla */
 .tile-icon-bubble {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.32);
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.18);
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 22px;
-  margin-bottom: 10px;
-  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.6);
+  align-items: center;
+  font-size: 28px;
 }
 
 .tile h3 {
-  margin: 0;
-  font-size: 16px;
+  font-size: 20px;
 }
 
-/* COLORI TILE (come nel mockup) */
-.tile-procedure {
-  background: linear-gradient(135deg, #00cfa0, #009e78);
-}
-.tile-logistica {
-  background: linear-gradient(135deg, #ffcf4d, #e8a300);
-}
-.tile-magazzino {
-  background: linear-gradient(135deg, #1e8bfd, #0666c6);
-}
-.tile-formazione {
-  background: linear-gradient(135deg, #7a5cff, #4f3cc9);
-}
-.tile-area {
-  background: linear-gradient(135deg, #2fc7e3, #0f8fa7);
-}
-.tile-admin {
-  background: linear-gradient(135deg, #38d996, #129654);
-}
-
-/* BADGE DI NOTIFICA 🔴 */
-.badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #ff2b2b;
-  color: white;
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 999px;
-  padding: 4px 7px;
-  min-width: 20px;
-  text-align: center;
-  box-shadow: 0 0 12px rgba(255, 0, 0, 0.55);
-}
-
-/* ====== RESPONSIVE: TABLET & MOBILE ====== */
-
-/* fino a 1024px: 2 colonne */
-@media (max-width: 1024px) {
-  .topbar {
-    padding: 24px 20px 8px 80px;
-    font-size: 24px;
-  }
-
-  .dashboard {
-    padding: 16px 18px 26px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .tile-grid {
-    grid-column: span 2;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* fino a 720px: layout compatto per cellulare */
-@media (max-width: 720px) {
-
-  #hamburger {
-    top: 10px;
-    left: 10px;
-    padding: 8px 11px;
-    font-size: 20px;
-  }
+/* ---------- RESPONSIVE MOBILE ---------- */
+@media (max-width: 900px) {
 
   .topbar {
-    padding: 16px 14px 4px 60px;
-    font-size: 20px;
+    padding: 25px 70px;
+    font-size: 32px;
   }
 
   .dashboard-wrapper {
-    padding: 4px 10px 24px;
-  }
-
-  .dashboard {
-    padding: 12px 12px 20px;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-  }
-
-  .card {
-    padding: 18px 14px 18px;
-  }
-
-  .card-title-block h2 {
-    font-size: 16px;
-  }
-
-  .card p {
-    font-size: 12px;
+    padding: 0 25px;
   }
 
   .tile-grid {
-    grid-column: span 1;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .tile {
-    padding: 14px 10px 16px;
+  #hamburger {
+    left: 20px;
+    top: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .topbar {
+    padding-left: 80px;
+    font-size: 28px;
   }
 
-  .tile-icon-bubble {
-    width: 30px;
-    height: 30px;
-    font-size: 18px;
+  .card {
+    min-height: 180px;
   }
 
-  .tile h3 {
-    font-size: 13px;
+  .card-header {
+    margin-bottom: 18px;
+  }
+
+  .tile-grid {
+    grid-template-columns: 1fr;
   }
 }
