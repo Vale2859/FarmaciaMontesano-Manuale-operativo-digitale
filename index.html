@@ -9,28 +9,37 @@
 </head>
 <body>
 
-  <!-- ================= LOGIN ================= -->
+  <!-- ================== LOGIN ================== -->
   <div id="authContainer" class="auth-container">
     <div class="auth-card">
       <div class="auth-logo-wrap">
+        <!-- Logo login -->
         <img src="logo.jpg" alt="Farmacia Montesano" class="auth-logo" />
       </div>
 
-      <h1>Portale Farmacia Montesano</h1>
+      <p class="auth-subtitle">Portale interno</p>
       <p class="auth-intro">
         Seleziona il tipo di accesso e inserisci le credenziali.
       </p>
 
+      <!-- Selettore ruolo -->
       <div class="auth-tabs">
-        <button class="auth-tab active" data-role="farmacia">Farmacia</button>
-        <button class="auth-tab" data-role="titolare">Titolare</button>
-        <button class="auth-tab" data-role="dipendente">Dipendente</button>
+        <button class="auth-tab active" data-role="farmacia" data-role-label="Farmacia">
+          Farmacia
+        </button>
+        <button class="auth-tab" data-role="titolare" data-role-label="Titolare">
+          Titolare
+        </button>
+        <button class="auth-tab" data-role="dipendente" data-role-label="Dipendente">
+          Dipendente
+        </button>
       </div>
 
-      <p class="auth-subtitle">
-        Accesso come: <span id="loginRoleLabel">Farmacia (accesso generico)</span>
+      <p class="auth-access-label">
+        Accesso come: <span id="loginRoleLabel">Farmacia</span>
       </p>
 
+      <!-- Form login (demo) -->
       <form id="loginForm" class="auth-form">
         <div class="form-row">
           <label for="username">Username</label>
@@ -40,585 +49,642 @@
           <label for="password">Password</label>
           <input id="password" name="password" type="password" />
         </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-primary wide">Entra</button>
-        </div>
+        <button type="submit" class="btn-primary full-width">
+          Entra
+        </button>
+        <p class="login-hint">
+          Demo: qualsiasi username e password ti fanno entrare.
+        </p>
       </form>
-
-      <p class="auth-hint">
-        Demo: qualsiasi username/password permette l’accesso.
-      </p>
     </div>
   </div>
 
-  <!-- ================= APP ================= -->
+  <!-- ================== APP ================== -->
   <main id="app" class="app hidden">
 
     <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
         <span class="sidebar-title">Menu</span>
-        <button id="closeSidebar" class="icon-button" aria-label="Chiudi menu">✕</button>
+        <button id="closeSidebar" class="icon-button" aria-label="Chiudi menu">
+          ✕
+        </button>
       </div>
       <ul class="sidebar-list">
-        <li>Area personale</li>
-        <li>Admin</li>
-        <li id="logoutBtn" class="logout">Logout</li>
+        <li class="sidebar-item" data-nav="dashboard">Dashboard</li>
+        <li class="sidebar-item">Area personale</li>
+        <li class="sidebar-item">Admin</li>
+        <li class="sidebar-item logout-link">Logout</li>
       </ul>
     </aside>
 
     <!-- HAMBURGER -->
-    <button id="hamburger" class="hamburger" aria-label="Apri menu">☰</button>
+    <button id="hamburger" class="hamburger" aria-label="Apri menu">
+      ☰
+    </button>
 
-    <!-- ============ DASHBOARD ============ -->
+    <!-- ======= DASHBOARD PRINCIPALE ======= -->
     <section id="dashboard" class="dashboard">
+      <div class="dashboard-inner">
 
-      <header class="dashboard-header">
-        <div class="dashboard-logo-wrap">
-          <img src="logo.jpg" alt="Farmacia Montesano" class="dashboard-logo" />
+        <!-- Logo grande in alto -->
+        <div class="dashboard-hero">
+          <div class="hero-logo-wrap">
+            <img src="logo.jpg" alt="Farmacia Montesano" class="hero-logo" />
+          </div>
+          <div class="hero-text">
+            <span id="currentRoleChip" class="role-chip">Farmacia (accesso generico)</span>
+          </div>
         </div>
-        <div class="dashboard-title-block">
-          <h1>Farmacia Montesano</h1>
-          <p class="dashboard-subtitle">Portale interno</p>
-          <span id="currentRolePill" class="role-pill">
-            Farmacia (accesso generico)
-          </span>
+
+        <!-- Titolo portale -->
+        <header class="app-header">
+          <h1>FARMACIA MONTESANO</h1>
+          <p class="app-subtitle">Portale interno</p>
+        </header>
+
+        <!-- CARDS GRID -->
+        <div class="cards-grid">
+
+          <!-- ASSENZE DEL PERSONALE -->
+          <article class="card card-assenze">
+            <span class="card-badge">2</span>
+            <div class="card-header">
+              <div class="card-icon">📅</div>
+              <div class="card-title-group">
+                <h2>Assenze del personale</h2>
+                <span class="chip chip-today">Oggi</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="caption">2 richieste in attesa</p>
+              <p class="small-text">
+                Assenti oggi: <strong>Mario G., Anna S.</strong><br />
+                In ferie: <strong>Luca B.</strong>
+              </p>
+            </div>
+            <div class="card-footer">
+              <button id="openAssenze" class="btn-primary">
+                Richiedi la tua assenza
+              </button>
+            </div>
+          </article>
+
+          <!-- FARMACIA DI TURNO -->
+          <article class="card card-turno">
+            <span class="card-badge">1</span>
+            <div class="card-header">
+              <div class="card-icon">⏰</div>
+              <div class="card-title-group">
+                <h2>Farmacia di turno</h2>
+                <span class="chip chip-turno">00:00 – 24:00</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <p><strong>Farmacia Montesano</strong></p>
+              <p class="small-text">
+                Via Esempio 12, Matera<br />
+                Tel: 0835 000000
+              </p>
+              <div class="divider"></div>
+              <p class="small-text">
+                <strong>Farmacia di appoggio</strong><br />
+                Farmacia Centrale – Via Dante 8, Matera – Tel: 0835 111111
+              </p>
+            </div>
+            <div class="card-footer">
+              <button id="openFarmacie" class="btn-secondary">
+                Lista farmacie di turno
+              </button>
+            </div>
+          </article>
+
+          <!-- COMUNICAZIONI -->
+          <article class="card card-comunicazioni">
+            <span class="card-badge">3</span>
+            <div class="card-header">
+              <div class="card-icon">📢</div>
+              <div class="card-title-group">
+                <h2>Comunicazioni</h2>
+              </div>
+            </div>
+            <div class="card-body card-body-list">
+              <div class="list-item">Nuova procedura disponibile</div>
+              <div class="list-item">Aggiornare il registro sicurezza</div>
+              <div class="list-item">Incontro all'orario di chiusura</div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-primary">
+                Comunica o modifica la comunicazione
+              </button>
+            </div>
+          </article>
+
+          <!-- PROCEDURE -->
+          <article class="card card-procedure">
+            <span class="card-badge">1</span>
+            <div class="card-header">
+              <div class="card-icon">🗂️</div>
+              <div class="card-title-group">
+                <h2>Procedure</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Consulta, modifica o inserisci nuove procedure operative interne.
+              </p>
+            </div>
+            <div class="card-footer">
+              <button id="openProcedure" class="btn-secondary">
+                Modifica o aggiungi procedura
+              </button>
+            </div>
+          </article>
+
+          <!-- LOGISTICA -->
+          <article class="card card-logistica">
+            <span class="card-badge">4</span>
+            <div class="card-header">
+              <div class="card-icon">📦</div>
+              <div class="card-title-group">
+                <h2>Logistica</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Arrivi, corrieri, espositori e materiali per reparto.
+              </p>
+            </div>
+            <div class="card-footer">
+              <button class="btn-secondary">
+                Modifica o inserisci nuova logistica
+              </button>
+            </div>
+          </article>
+
+          <!-- MAGAZZINIERA -->
+          <article class="card card-magazziniera">
+            <span class="card-badge">2</span>
+            <div class="card-header">
+              <div class="card-icon">📋</div>
+              <div class="card-title-group">
+                <h2>Magazziniera</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Controllo scorte, scadenze, arrivi e sistemazione magazzino.
+              </p>
+            </div>
+            <div class="card-footer">
+              <button class="btn-secondary">
+                Modifica
+              </button>
+            </div>
+          </article>
+
         </div>
-      </header>
+      </div>
+    </section>
 
-      <div class="cards-grid">
+    <!-- ======= PAGINA ASSENZE ======= -->
+    <section id="assenzePage" class="page page-assenze hidden">
+      <div class="dashboard-inner">
 
-        <!-- ASSENZE -->
-        <article class="card card-assenze">
-          <span class="card-badge">2</span>
-          <div class="card-header">
-            <div class="card-icon">📅</div>
-            <div class="card-title-group">
-              <h2>Assenze del personale</h2>
-              <span class="chip chip-today">Oggi</span>
-            </div>
+        <header class="page-header">
+          <button class="back-button back-dashboard">← Dashboard</button>
+          <div class="page-title-block">
+            <h1>Assenze del personale</h1>
+            <p>Consulta le tue assenze, verifica chi è assente oggi e invia una nuova richiesta.</p>
           </div>
-          <div class="card-body">
-            <p class="caption">2 richieste in attesa</p>
+          <div class="summary-badges">
+            <span class="badge badge-pending">2 in attesa</span>
+            <span class="badge badge-approved">5 approvate</span>
+            <span class="badge badge-rejected">1 rifiutata</span>
+          </div>
+        </header>
+
+        <!-- MINI CARD PERSONALI -->
+        <div class="assenze-top-cards">
+          <article class="mini-card">
+            <h3>Le tue prossime assenze</h3>
+            <p class="big-number">2 giorni</p>
             <p class="small-text">
-              Assenti oggi: <strong>Mario G., Anna S.</strong><br />
-              In ferie: <strong>Luca B.</strong>
+              20/12 – 21/12 · Ferie approvate
             </p>
-          </div>
-          <div class="card-footer">
-            <button id="openAssenze" class="btn-primary">
-              Richiedi la tua assenza
-            </button>
-          </div>
-        </article>
+          </article>
 
-        <!-- FARMACIA DI TURNO -->
-        <article class="card card-turno">
-          <span class="card-badge">1</span>
-          <div class="card-header">
-            <div class="card-icon">⏰</div>
-            <div class="card-title-group">
-              <h2>Farmacia di turno</h2>
-              <span class="chip chip-turno">00:00 – 24:00</span>
-            </div>
-          </div>
-          <div class="card-body">
-            <p><strong>Farmacia Montesano</strong></p>
+          <article class="mini-card">
+            <h3>Richieste in attesa</h3>
+            <p class="big-number">1</p>
             <p class="small-text">
-              Via Esempio 12, Matera<br />
-              Tel: 0835 000000
+              10/01 · Permesso pomeriggio · In attesa
             </p>
+          </article>
+
+          <article class="mini-card">
+            <h3>Storico ultimi 3 mesi</h3>
+            <p class="big-number">6 giorni</p>
+            <p class="small-text">
+              Ferie: 5 · Permessi: 1
+            </p>
+          </article>
+        </div>
+
+        <!-- CALENDARIO + OGGI IN FARMACIA -->
+        <div class="assenze-layout">
+          <!-- CALENDARIO -->
+          <article class="card calendar-card">
+            <div class="calendar-header">
+              <div>
+                <h2>Calendario assenze</h2>
+                <p class="small-text">Panoramica mensile delle assenze in farmacia.</p>
+              </div>
+              <div class="calendar-controls">
+                <select>
+                  <option>Dicembre 2025</option>
+                  <option>Gennaio 2026</option>
+                  <option>Febbraio 2026</option>
+                </select>
+                <label class="filter-check">
+                  <input type="checkbox" checked />
+                  <span>Mostra solo le mie assenze</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="calendar-grid">
+              <div class="calendar-row calendar-header-row">
+                <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
+              </div>
+
+              <div class="calendar-row">
+                <span class="empty"></span>
+                <span class="day">1</span>
+                <span class="day">2</span>
+                <span class="day">3</span>
+                <span class="day">4</span>
+                <span class="day">5</span>
+                <span class="day">6</span>
+              </div>
+              <div class="calendar-row">
+                <span class="day">7</span>
+                <span class="day">8</span>
+                <span class="day day-holiday">
+                  9
+                  <span class="dot dot-ferie" title="Luca · Ferie"></span>
+                </span>
+                <span class="day">10</span>
+                <span class="day">11</span>
+                <span class="day">12</span>
+                <span class="day">13</span>
+              </div>
+              <div class="calendar-row">
+                <span class="day">14</span>
+                <span class="day">15</span>
+                <span class="day">16</span>
+                <span class="day today">
+                  17
+                  <span class="dot dot-oggi" title="Assenti: Mario, Anna"></span>
+                </span>
+                <span class="day">18</span>
+                <span class="day">19</span>
+                <span class="day">20</span>
+              </div>
+              <div class="calendar-row">
+                <span class="day">
+                  21
+                  <span class="dot dot-ferie" title="Tu · Ferie"></span>
+                </span>
+                <span class="day">22</span>
+                <span class="day">23</span>
+                <span class="day">24</span>
+                <span class="day">25</span>
+                <span class="day">26</span>
+                <span class="day">27</span>
+              </div>
+              <div class="calendar-row">
+                <span class="day">28</span>
+                <span class="day">29</span>
+                <span class="day">30</span>
+                <span class="day">31</span>
+                <span class="empty"></span>
+                <span class="empty"></span>
+                <span class="empty"></span>
+              </div>
+            </div>
+
+            <div class="calendar-legend">
+              <span><span class="legend-dot ferie"></span> Ferie</span>
+              <span><span class="legend-dot permesso"></span> Permesso</span>
+              <span><span class="legend-dot oggi"></span> Oggi</span>
+            </div>
+          </article>
+
+          <!-- OGGI IN FARMACIA -->
+          <article class="card oggi-card">
+            <h2>Oggi in assenza</h2>
+            <p class="small-text">
+              Situazione del personale nella giornata odierna.
+            </p>
+            <ul class="assenze-list">
+              <li>
+                <span class="name">Mario G.</span>
+                <span class="tag tag-ferie">Ferie</span>
+              </li>
+              <li>
+                <span class="name">Anna S.</span>
+                <span class="tag tag-permesso">Permesso</span>
+              </li>
+              <li>
+                <span class="name">Luca B.</span>
+                <span class="tag tag-malattia">Malattia</span>
+              </li>
+            </ul>
+
             <div class="divider"></div>
-            <p class="small-text">
-              <strong>Farmacia di appoggio</strong><br />
-              Farmacia Centrale – Via Dante 8, Matera – Tel: 0835 111111
-            </p>
-          </div>
-          <div class="card-footer">
-            <button id="openTurni" class="btn-secondary">
-              Lista farmacie di turno
-            </button>
-          </div>
-        </article>
 
-        <!-- COMUNICAZIONI -->
-        <article class="card card-comunicazioni">
-          <span class="card-badge">3</span>
-          <div class="card-header">
-            <div class="card-icon">📢</div>
-            <div class="card-title-group">
-              <h2>Comunicazioni</h2>
-            </div>
-          </div>
-          <div class="card-body card-body-list">
-            <button class="list-pill">Nuova procedura disponibile</button>
-            <button class="list-pill">Aggiornare il registro sicurezza</button>
-            <button class="list-pill">Incontro all’orario di chiusura</button>
-          </div>
-          <div class="card-footer">
-            <button id="openComunicazioni" class="btn-primary">
-              Comunica o modifica la comunicazione
-            </button>
-          </div>
-        </article>
-
-        <!-- PROCEDURE -->
-        <article class="card card-procedure">
-          <span class="card-badge">1</span>
-          <div class="card-header">
-            <div class="card-icon">📁</div>
-            <div class="card-title-group">
-              <h2>Procedure</h2>
-            </div>
-          </div>
-          <div class="card-body">
-            <p class="small-text">
-              Consulta, modifica o inserisci nuove procedure operative interne.
-            </p>
-          </div>
-          <div class="card-footer">
-            <button id="openProcedure" class="btn-secondary">
-              Modifica o aggiungi procedura
-            </button>
-          </div>
-        </article>
-
-        <!-- LOGISTICA -->
-        <article class="card card-logistica">
-          <span class="card-badge">4</span>
-          <div class="card-header">
-            <div class="card-icon">📦</div>
-            <div class="card-title-group">
-              <h2>Logistica</h2>
-            </div>
-          </div>
-          <div class="card-body">
-            <p class="small-text">
-              Arrivi, corrieri, espositori e materiali per reparto.
-            </p>
-          </div>
-          <div class="card-footer">
-            <button class="btn-secondary">
-              Modifica o inserisci nuova logistica
-            </button>
-          </div>
-        </article>
-
-        <!-- MAGAZZINIERA -->
-        <article class="card card-magazziniera">
-          <span class="card-badge">2</span>
-          <div class="card-header">
-            <div class="card-icon">📋</div>
-            <div class="card-title-group">
-              <h2>Magazziniera</h2>
-            </div>
-          </div>
-          <div class="card-body">
-            <p class="small-text">
-              Controllo scorte, scadenze, arrivi e sistemazione magazzino.
-            </p>
-          </div>
-          <div class="card-footer">
-            <button class="btn-secondary">
-              Modifica
-            </button>
-          </div>
-        </article>
-
-      </div>
-    </section>
-
-    <!-- ============ PAGINA ASSENZE ============ -->
-    <section id="assenzePage" class="page hidden">
-      <header class="page-header">
-        <button class="back-button" data-target="dashboard">← Dashboard</button>
-        <div class="page-title-block">
-          <h1>Assenze del personale</h1>
-          <p>Consulta le tue assenze, verifica chi è assente oggi e invia una nuova richiesta.</p>
+            <h3>Prossimi 3 giorni</h3>
+            <ul class="assenze-list small">
+              <li>
+                <span class="name">Marco R.</span>
+                <span class="details">18/12 · Ferie</span>
+              </li>
+              <li>
+                <span class="name">Giulia P.</span>
+                <span class="details">19/12 · Corso</span>
+              </li>
+              <li>
+                <span class="name">Anna S.</span>
+                <span class="details">20/12 · Permesso mattina</span>
+              </li>
+            </ul>
+          </article>
         </div>
-        <div class="summary-badges">
-          <span class="badge badge-pending">2 in attesa</span>
-          <span class="badge badge-approved">5 approvate</span>
-          <span class="badge badge-rejected">1 rifiutata</span>
-        </div>
-      </header>
 
-      <div class="assenze-top-cards">
-        <article class="mini-card">
-          <h3>Le tue prossime assenze</h3>
-          <p class="big-number">2 giorni</p>
-          <p class="small-text">20/12 – 21/12 · Ferie approvate</p>
-        </article>
-        <article class="mini-card">
-          <h3>Richieste in attesa</h3>
-          <p class="big-number">1</p>
-          <p class="small-text">10/01 · Permesso pomeriggio · In attesa</p>
-        </article>
-        <article class="mini-card">
-          <h3>Storico ultimi 3 mesi</h3>
-          <p class="big-number">6 giorni</p>
-          <p class="small-text">Ferie: 5 · Permessi: 1</p>
-        </article>
-      </div>
-
-      <div class="assenze-layout">
-        <!-- Calendario -->
-        <article class="card calendar-card">
-          <div class="calendar-header">
-            <div>
-              <h2>Calendario assenze</h2>
-              <p class="small-text">Panoramica mensile delle assenze in farmacia.</p>
-            </div>
-            <div class="calendar-controls">
-              <select>
-                <option>Dicembre 2025</option>
-                <option>Gennaio 2026</option>
-                <option>Febbraio 2026</option>
-              </select>
-              <label class="filter-check">
-                <input type="checkbox" checked />
-                <span>Mostra solo le mie assenze</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="calendar-grid">
-            <div class="calendar-row calendar-header-row">
-              <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span>
-              <span>Ven</span><span>Sab</span><span>Dom</span>
-            </div>
-            <div class="calendar-row">
-              <span class="empty"></span>
-              <span class="day">1</span>
-              <span class="day">2</span>
-              <span class="day">3</span>
-              <span class="day">4</span>
-              <span class="day">5</span>
-              <span class="day">6</span>
-            </div>
-            <div class="calendar-row">
-              <span class="day">7</span>
-              <span class="day">8</span>
-              <span class="day day-holiday">
-                9 <span class="dot dot-ferie" title="Luca · Ferie"></span>
-              </span>
-              <span class="day">10</span>
-              <span class="day">11</span>
-              <span class="day">12</span>
-              <span class="day">13</span>
-            </div>
-            <div class="calendar-row">
-              <span class="day">14</span>
-              <span class="day">15</span>
-              <span class="day">16</span>
-              <span class="day today">
-                17 <span class="dot dot-oggi" title="Assenti: Mario, Anna"></span>
-              </span>
-              <span class="day">18</span>
-              <span class="day">19</span>
-              <span class="day">20</span>
-            </div>
-            <div class="calendar-row">
-              <span class="day">
-                21 <span class="dot dot-ferie" title="Tu · Ferie"></span>
-              </span>
-              <span class="day">22</span>
-              <span class="day">23</span>
-              <span class="day">24</span>
-              <span class="day">25</span>
-              <span class="day">26</span>
-              <span class="day">27</span>
-            </div>
-            <div class="calendar-row">
-              <span class="day">28</span>
-              <span class="day">29</span>
-              <span class="day">30</span>
-              <span class="day">31</span>
-              <span class="empty"></span>
-              <span class="empty"></span>
-              <span class="empty"></span>
-            </div>
-          </div>
-
-          <div class="calendar-legend">
-            <span><span class="legend-dot ferie"></span> Ferie</span>
-            <span><span class="legend-dot permesso"></span> Permesso</span>
-            <span><span class="legend-dot oggi"></span> Oggi</span>
-          </div>
-        </article>
-
-        <!-- Oggi in farmacia -->
-        <article class="card oggi-card">
-          <h2>Oggi in assenza</h2>
-          <p class="small-text">Situazione del personale nella giornata odierna.</p>
-          <ul class="assenze-list">
-            <li><span class="name">Mario G.</span><span class="tag tag-ferie">Ferie</span></li>
-            <li><span class="name">Anna S.</span><span class="tag tag-permesso">Permesso</span></li>
-            <li><span class="name">Luca B.</span><span class="tag tag-malattia">Malattia</span></li>
-          </ul>
-          <div class="divider"></div>
-          <h3>Prossimi 3 giorni</h3>
-          <ul class="assenze-list small">
-            <li><span class="name">Marco R.</span><span class="details">18/12 · Ferie</span></li>
-            <li><span class="name">Giulia P.</span><span class="details">19/12 · Corso</span></li>
-            <li><span class="name">Anna S.</span><span class="details">20/12 · Permesso mattina</span></li>
-          </ul>
-        </article>
-      </div>
-
-      <!-- Elenco richieste personali + form -->
-      <article class="card requests-card">
-        <div class="requests-header">
-          <h2>Le tue richieste di assenza</h2>
-          <p class="small-text">Vedi lo stato delle richieste che hai inviato.</p>
-        </div>
-        <div class="requests-table">
-          <div class="requests-row header">
-            <span>Dal</span><span>Al</span><span>Tipo</span><span>Stato</span><span>Azioni</span>
-          </div>
-          <div class="requests-row">
-            <span>20/12/2025</span><span>21/12/2025</span><span>Ferie</span>
-            <span><span class="status status-approved">Approvata</span></span><span>—</span>
-          </div>
-          <div class="requests-row">
-            <span>10/01/2026</span><span>10/01/2026</span><span>Permesso</span>
-            <span><span class="status status-pending">In attesa</span></span>
-            <span>
-              <button class="link-button">Modifica</button>
-              <button class="link-button danger">Annulla</button>
-            </span>
-          </div>
-          <div class="requests-row">
-            <span>05/11/2025</span><span>05/11/2025</span><span>Malattia</span>
-            <span><span class="status status-rejected">Rifiutata</span></span><span>—</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="card form-card">
-        <h2>Richiedi una nuova assenza</h2>
-        <p class="small-text">
-          Compila il modulo per inviare la tua richiesta al titolare. Riceverai conferma direttamente nel portale.
-        </p>
-        <form id="assenzeForm" class="assenze-form">
-          <div class="form-row">
-            <label for="tipoAssenza">Tipo di assenza</label>
-            <select id="tipoAssenza" name="tipoAssenza">
-              <option>Ferie</option>
-              <option>Permesso</option>
-              <option>Malattia</option>
-              <option>Corso / Formazione</option>
-              <option>Altro</option>
-            </select>
-          </div>
-          <div class="form-row two-cols">
-            <div>
-              <label for="dalGiorno">Dal giorno</label>
-              <input type="date" id="dalGiorno" name="dalGiorno" />
-            </div>
-            <div>
-              <label for="alGiorno">Al giorno</label>
-              <input type="date" id="alGiorno" name="alGiorno" />
-            </div>
-          </div>
-          <div class="form-row">
-            <label class="checkbox-inline">
-              <input type="checkbox" id="mezzaGiornata" name="mezzaGiornata" />
-              <span>Solo mezza giornata</span>
-            </label>
-          </div>
-          <div class="form-row">
-            <label for="noteAssenza">Motivo / note per il titolare</label>
-            <textarea id="noteAssenza" name="noteAssenza" rows="3"
-              placeholder="Es. permesso per visita medica, ferie programmata, corso di aggiornamento..."></textarea>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn-primary">
-              Invia richiesta di assenza
-            </button>
-          </div>
-          <p id="assenzeFeedback" class="form-feedback hidden">
-            ✅ Richiesta inviata correttamente. (Demo)
-          </p>
-        </form>
-      </article>
-    </section>
-
-    <!-- ============ PAGINA FARMACIE DI TURNO ============ -->
-    <section id="turniPage" class="page hidden">
-      <header class="page-header">
-        <button class="back-button" data-target="dashboard">← Dashboard</button>
-        <div class="page-title-block">
-          <h1>Farmacie di turno</h1>
-          <p>Elenco delle farmacie di turno per la giornata odierna.</p>
-        </div>
-      </header>
-
-      <article class="card">
-        <h2>Oggi</h2>
-        <div class="requests-table">
-          <div class="requests-row header">
-            <span>Farmacia</span><span>Indirizzo</span><span>Telefono</span><span>Orario</span>
-          </div>
-          <div class="requests-row">
-            <span>Farmacia Montesano</span>
-            <span>Via Esempio 12, Matera</span>
-            <span>0835 000000</span>
-            <span>00:00 – 24:00</span>
-          </div>
-          <div class="requests-row">
-            <span>Farmacia Centrale</span>
-            <span>Via Dante 8, Matera</span>
-            <span>0835 111111</span>
-            <span>00:00 – 24:00</span>
-          </div>
-        </div>
-      </article>
-    </section>
-
-    <!-- ============ PAGINA COMUNICAZIONI ============ -->
-    <section id="comunicazioniPage" class="page hidden">
-      <header class="page-header">
-        <button class="back-button" data-target="dashboard">← Dashboard</button>
-        <div class="page-title-block">
-          <h1>Comunicazioni interne</h1>
-          <p>Gestisci le comunicazioni tra titolari e dipendenti.</p>
-        </div>
-      </header>
-
-      <div class="comunicazioni-layout">
-        <article class="card comunicazioni-list-card">
-          <h2>Comunicazioni recenti</h2>
-          <ul id="comunicazioniList" class="comunicazioni-list">
-            <li data-id="1" class="active">
-              <span class="title">Nuova procedura disponibile</span>
-              <span class="meta">Oggi · Titolare</span>
-            </li>
-            <li data-id="2">
-              <span class="title">Aggiornare il registro sicurezza</span>
-              <span class="meta">Ieri · Admin</span>
-            </li>
-            <li data-id="3">
-              <span class="title">Incontro all’orario di chiusura</span>
-              <span class="meta">3 giorni fa · Titolare</span>
-            </li>
-          </ul>
-        </article>
-
-        <article class="card comunicazioni-detail-card">
-          <h2>Dettaglio comunicazione</h2>
-          <p id="comunicazioneDettaglio" class="small-text">
-            Seleziona una comunicazione per vedere il contenuto.
-          </p>
-          <div class="divider"></div>
-          <h3>Nuova comunicazione</h3>
-          <form id="comForm" class="com-form">
-            <div class="form-row">
-              <label for="comTitolo">Titolo</label>
-              <input id="comTitolo" type="text" placeholder="Es. Aggiornamento orari periodo estivo" />
-            </div>
-            <div class="form-row">
-              <label for="comTesto">Testo</label>
-              <textarea id="comTesto" rows="4"
-                placeholder="Scrivi qui la comunicazione che verrà mostrata a tutto il personale..."></textarea>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn-primary">Pubblica comunicazione (demo)</button>
-            </div>
-            <p id="comFeedback" class="form-feedback hidden">
-              ✅ Comunicazione registrata (solo dimostrativo).
-            </p>
-          </form>
-        </article>
-      </div>
-    </section>
-
-    <!-- ============ PAGINA PROCEDURE ============ -->
-    <section id="procedurePage" class="page hidden">
-      <header class="page-header">
-        <button class="back-button" data-target="dashboard">← Dashboard</button>
-        <div class="page-title-block">
-          <h1>Procedure operative</h1>
-          <p>Consulta, modifica o inserisci nuove procedure interne della farmacia.</p>
-        </div>
-        <div class="summary-badges">
-          <span class="badge badge-approved">Procedures attive: 8</span>
-          <span class="badge badge-pending">In revisione: 2</span>
-        </div>
-      </header>
-
-      <div class="procedure-layout">
-        <!-- Colonna categorie -->
-        <aside class="procedure-categories">
-          <h2>Categorie</h2>
-          <ul>
-            <li class="active">Banco / Vendita</li>
-            <li>Ricette & SSN</li>
-            <li>Magazzino</li>
-            <li>Logistica / Corrieri</li>
-            <li>Sicurezza & Privacy</li>
-            <li>Servizi & CUP</li>
-          </ul>
-          <button class="btn-secondary small">Gestisci categorie (demo)</button>
-        </aside>
-
-        <!-- Elenco procedure -->
-        <article class="card procedure-list-card">
-          <div class="procedure-list-header">
-            <h2>Elenco procedure</h2>
-            <button class="btn-primary small">Nuova procedura</button>
+        <!-- ELENCO RICHIESTE PERSONALI -->
+        <article class="card requests-card">
+          <div class="requests-header">
+            <h2>Le tue richieste di assenza</h2>
+            <p class="small-text">Vedi lo stato delle richieste che hai inviato.</p>
           </div>
           <div class="requests-table">
             <div class="requests-row header">
-              <span>Titolo</span>
-              <span>Categoria</span>
-              <span>Ultimo aggiornamento</span>
+              <span>Dal</span>
+              <span>Al</span>
+              <span>Tipo</span>
               <span>Stato</span>
+              <span>Azioni</span>
             </div>
-            <div class="requests-row procedure-row active" data-id="p1">
-              <span>Gestione scontrino errato</span>
-              <span>Banco / Vendita</span>
-              <span>10/11/2025</span>
-              <span><span class="status status-approved">Attiva</span></span>
+            <div class="requests-row">
+              <span>20/12/2025</span>
+              <span>21/12/2025</span>
+              <span>Ferie</span>
+              <span><span class="status status-approved">Approvata</span></span>
+              <span class="actions">—</span>
             </div>
-            <div class="requests-row procedure-row" data-id="p2">
-              <span>Procedure per anticipi ricette SSN</span>
-              <span>Ricette & SSN</span>
-              <span>02/10/2025</span>
-              <span><span class="status status-approved">Attiva</span></span>
+            <div class="requests-row">
+              <span>10/01/2026</span>
+              <span>10/01/2026</span>
+              <span>Permesso</span>
+              <span><span class="status status-pending">In attesa</span></span>
+              <span class="actions">
+                <button class="link-button">Modifica</button>
+                <button class="link-button danger">Annulla</button>
+              </span>
             </div>
-            <div class="requests-row procedure-row" data-id="p3">
-              <span>Controllo scadenze magazzino</span>
-              <span>Magazzino</span>
-              <span>25/09/2025</span>
-              <span><span class="status status-pending">In revisione</span></span>
+            <div class="requests-row">
+              <span>05/11/2025</span>
+              <span>05/11/2025</span>
+              <span>Malattia</span>
+              <span><span class="status status-rejected">Rifiutata</span></span>
+              <span class="actions">—</span>
             </div>
           </div>
         </article>
 
-        <!-- Dettaglio procedura -->
-        <article class="card procedure-detail-card">
-          <h2>Dettaglio procedura</h2>
-          <p id="procTitle" class="proc-title">
-            Seleziona una procedura dalla lista.
+        <!-- FORM RICHIESTA ASSENZA -->
+        <article class="card form-card">
+          <h2>Richiedi una nuova assenza</h2>
+          <p class="small-text">
+            Compila il modulo per inviare la tua richiesta al titolare. (Demo: non viene ancora salvata, è solo grafica.)
           </p>
-          <p id="procBody" class="small-text">
-            Il contenuto completo della procedura verrà mostrato qui in forma di testo
-            strutturato. In futuro potremo aggiungere allegati PDF e immagini.
-          </p>
-          <div class="divider"></div>
-          <h3>Modifica rapida (demo)</h3>
-          <form id="procForm" class="com-form">
+          <form class="assenze-form">
             <div class="form-row">
-              <label for="procNote">Note interne / cambi da fare</label>
-              <textarea id="procNote" rows="3"
-                placeholder="Es. aggiornare passo 3 con nuova gestione cassa automatica..."></textarea>
+              <label for="tipoAssenza">Tipo di assenza</label>
+              <select id="tipoAssenza" name="tipoAssenza">
+                <option>Ferie</option>
+                <option>Permesso</option>
+                <option>Malattia</option>
+                <option>Corso / Formazione</option>
+                <option>Altro</option>
+              </select>
             </div>
+
+            <div class="form-row two-cols">
+              <div>
+                <label for="dalGiorno">Dal giorno</label>
+                <input type="date" id="dalGiorno" name="dalGiorno" />
+              </div>
+              <div>
+                <label for="alGiorno">Al giorno</label>
+                <input type="date" id="alGiorno" name="alGiorno" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="checkbox-inline">
+                <input type="checkbox" id="mezzaGiornata" name="mezzaGiornata" />
+                <span>Solo mezza giornata</span>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label for="noteAssenza">Motivo / note per il titolare</label>
+              <textarea id="noteAssenza" name="noteAssenza" rows="3"
+                placeholder="Es. permesso per visita medica, ferie programmata, corso di aggiornamento..."></textarea>
+            </div>
+
             <div class="form-actions">
-              <button type="submit" class="btn-primary">Salva note (demo)</button>
+              <button type="submit" class="btn-primary">
+                Invia richiesta di assenza
+              </button>
             </div>
-            <p id="procFeedback" class="form-feedback hidden">
-              ✅ Note salvate (solo dimostrativo).
+
+            <p id="assenzeFeedback" class="form-feedback hidden">
+              ✅ (Demo) Richiesta inviata correttamente. In un futuro collegamento al server sarà salvata davvero.
+            </p>
+          </form>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ======= PAGINA FARMACIE DI TURNO ======= -->
+    <section id="farmaciePage" class="page page-farmacie hidden">
+      <div class="dashboard-inner">
+
+        <header class="page-header">
+          <button class="back-button back-dashboard">← Dashboard</button>
+          <div class="page-title-block">
+            <h1>Farmacie di turno</h1>
+            <p>Elenco delle farmacie di turno e di appoggio per i prossimi giorni.</p>
+          </div>
+        </header>
+
+        <article class="card">
+          <h2>Oggi</h2>
+          <p class="small-text">
+            Turno 00:00 – 24:00
+          </p>
+          <ul class="turni-list">
+            <li>
+              <span class="name">Farmacia Montesano</span>
+              <span class="details">Via Esempio 12, Matera · Tel: 0835 000000</span>
+            </li>
+            <li>
+              <span class="name">Farmacia Centrale (appoggio)</span>
+              <span class="details">Via Dante 8, Matera · Tel: 0835 111111</span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2>Prossimi giorni</h2>
+          <div class="requests-table small-table">
+            <div class="requests-row header">
+              <span>Data</span>
+              <span>Farmacia di turno</span>
+              <span>Telefono</span>
+            </div>
+            <div class="requests-row">
+              <span>18/12</span>
+              <span>Farmacia San Pietro</span>
+              <span>0835 222222</span>
+            </div>
+            <div class="requests-row">
+              <span>19/12</span>
+              <span>Farmacia Madonna della Bruna</span>
+              <span>0835 333333</span>
+            </div>
+            <div class="requests-row">
+              <span>20/12</span>
+              <span>Farmacia Centrale</span>
+              <span>0835 111111</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ======= PAGINA PROCEDURE ======= -->
+    <section id="procedurePage" class="page page-procedure hidden">
+      <div class="dashboard-inner">
+        <header class="page-header">
+          <button class="back-button back-dashboard">← Dashboard</button>
+          <div class="page-title-block">
+            <h1>Procedure operative</h1>
+            <p>
+              Consulta, modifica o inserisci le procedure interne della farmacia.
+              (Demo: elenco statico, in futuro collegato a database.)
+            </p>
+          </div>
+        </header>
+
+        <!-- RIASSUNTO -->
+        <div class="assenze-top-cards">
+          <article class="mini-card">
+            <h3>Procedure totali</h3>
+            <p class="big-number">18</p>
+            <p class="small-text">Procedure attualmente registrate</p>
+          </article>
+          <article class="mini-card">
+            <h3>Ultimo aggiornamento</h3>
+            <p class="big-number">10</p>
+            <p class="small-text">Procedure aggiornate negli ultimi 30 giorni</p>
+          </article>
+          <article class="mini-card">
+            <h3>Revisione in corso</h3>
+            <p class="big-number">3</p>
+            <p class="small-text">Bozze da approvare dal titolare</p>
+          </article>
+        </div>
+
+        <!-- ELENCO PROCEDURE -->
+        <article class="card">
+          <div class="requests-header">
+            <h2>Elenco procedure</h2>
+            <p class="small-text">Esempio di categorie e procedure interne.</p>
+          </div>
+
+          <div class="procedure-list">
+            <div class="procedure-group">
+              <h3>Banco & Vendita</h3>
+              <ul>
+                <li>Gestione scontrino errato / annullamento</li>
+                <li>Procedura reso merce al cliente</li>
+                <li>Gestione anticipi con ricetta SSR</li>
+              </ul>
+            </div>
+
+            <div class="procedure-group">
+              <h3>Magazzino & Scadenze</h3>
+              <ul>
+                <li>Controllo scadenze mensile</li>
+                <li>Gestione farmaci da smaltire</li>
+                <li>Ricezione merci da grossista</li>
+              </ul>
+            </div>
+
+            <div class="procedure-group">
+              <h3>Servizi & Cup</h3>
+              <ul>
+                <li>Prenotazione servizi interni (PA, autoanalisi...)</li>
+                <li>Identificazione paziente e consenso</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <!-- FORM NUOVA PROCEDURA (DEMO) -->
+        <article class="card form-card">
+          <h2>Nuova / modifica procedura</h2>
+          <p class="small-text">
+            In futuro qui potrai salvare davvero nel database. Ora è solo per vedere la grafica.
+          </p>
+
+          <form class="assenze-form">
+            <div class="form-row">
+              <label for="categoriaProcedura">Categoria</label>
+              <select id="categoriaProcedura" name="categoriaProcedura">
+                <option>Banco & Vendita</option>
+                <option>Magazzino & Scadenze</option>
+                <option>Servizi & Cup</option>
+                <option>Altro</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="titoloProcedura">Titolo procedura</label>
+              <input id="titoloProcedura" name="titoloProcedura" type="text"
+                     placeholder="Es. Gestione scontrino contanti vs POS" />
+            </div>
+
+            <div class="form-row">
+              <label for="testoProcedura">Descrizione / passaggi</label>
+              <textarea id="testoProcedura" name="testoProcedura" rows="5"
+                placeholder="Scrivi qui i passaggi operativi passo-passo..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">
+                Salva procedura (demo)
+              </button>
+            </div>
+
+            <p id="procedureFeedback" class="form-feedback hidden">
+              ✅ (Demo) Procedura inviata. In una versione con server verrà salvata davvero.
             </p>
           </form>
         </article>
