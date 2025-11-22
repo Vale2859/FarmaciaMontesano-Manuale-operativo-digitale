@@ -1,9 +1,16 @@
-/* ========== BASE ========== */
+/* ========== RESET & BASE ========== */
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* niente scroll laterale “storto” */
 }
 
 :root {
@@ -12,26 +19,21 @@
   --text-main: #f7fafd;
   --text-soft: #b7c6d8;
   --card-radius: 26px;
-  --shadow-strong: 0 22px 45px rgba(0, 0, 0, 0.45);
   --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.35);
-  --glass-bg: rgba(9, 26, 47, 0.92);
   --transition-fast: 0.22s ease-out;
   --green: #22c55e;
   --red: #ef4444;
   --yellow: #facc15;
   --blue: #3b82f6;
-  --magenta: #ec4899;
 }
 
 body {
-  margin: 0;
   min-height: 100vh;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
   color: var(--text-main);
   background: radial-gradient(circle at 0 0, #06b6d4 0, #0f172a 50%, #020617 100%);
   display: flex;
-  align-items: stretch;
   justify-content: center;
 }
 
@@ -72,16 +74,6 @@ body {
   width: 74%;
   height: auto;
   filter: drop-shadow(0 14px 35px rgba(0, 0, 0, 0.6));
-  animation: logoFloat 4s ease-in-out infinite alternate;
-}
-
-@keyframes logoFloat {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-4px);
-  }
 }
 
 .auth-card h1 {
@@ -128,8 +120,8 @@ body {
 }
 
 .auth-subtitle span {
-  font-weight: 600;
   color: #e5fbe7;
+  font-weight: 600;
 }
 
 .auth-form {
@@ -215,9 +207,9 @@ body {
 
 .btn-primary.wide {
   width: 100%;
-  justify-content: center;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 
 .auth-error {
@@ -226,16 +218,15 @@ body {
   color: #fecaca;
 }
 
-/* ========== SHELL APP (DASHBOARD) ========== */
+/* ========== APP / LAYOUT GENERALE ========== */
 
 #appContainer {
   flex: 1;
   display: flex;
-  align-items: stretch;
   justify-content: center;
 }
 
-/* SIDEBAR */
+/* Sidebar */
 
 .sidebar {
   position: fixed;
@@ -304,7 +295,7 @@ body {
   color: #fecaca;
 }
 
-/* HAMBURGER */
+/* Hamburger */
 
 .hamburger {
   position: fixed;
@@ -322,16 +313,16 @@ body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
-/* APP CONTAINER */
+/* App container */
 
 .app {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 52px 18px 32px;
+  padding: 52px 20px 32px;
 }
 
-/* HEADER DASHBOARD */
+/* Header */
 
 .app-header {
   display: flex;
@@ -380,7 +371,8 @@ body {
   border: 1px solid rgba(148, 163, 184, 0.5);
 }
 
-/* DASHBOARD CARDS */
+/* ========== DASHBOARD CARDS ==========
+*/
 
 .dashboard {
   margin-top: 10px;
@@ -400,7 +392,6 @@ body {
   background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), transparent 55%),
     linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(12, 74, 110, 0.96));
   border: 1px solid rgba(148, 163, 184, 0.45);
-  overflow: hidden;
 }
 
 .card-assenze {
@@ -510,7 +501,7 @@ body {
   font-size: 13px;
 }
 
-/* LISTA IN COMUNICAZIONI */
+/* Comunicazioni lista */
 
 .card-body-list {
   display: flex;
@@ -525,7 +516,7 @@ body {
   font-size: 13px;
 }
 
-/* DIVISORE */
+/* Divider */
 
 .divider {
   height: 1px;
@@ -598,7 +589,7 @@ body {
   color: #fed7aa;
 }
 
-/* MINI CARDS IN ALTO */
+/* Mini-cards */
 
 .assenze-top-cards {
   display: grid;
@@ -626,7 +617,7 @@ body {
   font-weight: 800;
 }
 
-/* LAYOUT CENTRALE */
+/* Layout centrale */
 
 .assenze-layout {
   display: grid;
@@ -643,7 +634,7 @@ body {
   background: linear-gradient(145deg, #16a34a, #0f766e);
 }
 
-/* CALENDARIO */
+/* Calendario */
 
 .calendar-header {
   display: flex;
@@ -759,7 +750,7 @@ body {
   background: #22c55e;
 }
 
-/* LISTE ASSENZE */
+/* Liste assenze */
 
 .assenze-list {
   list-style: none;
@@ -806,7 +797,7 @@ body {
   border: 1px solid #f97316;
 }
 
-/* TABELLA RICHIESTE */
+/* Tabella richieste */
 
 .requests-card {
   margin-bottom: 18px;
@@ -879,7 +870,7 @@ body {
   color: #fecaca;
 }
 
-/* FORM FINALE ASSENZE */
+/* Form finale assenze */
 
 .form-card {
   margin-bottom: 26px;
@@ -917,38 +908,46 @@ body {
 }
 
 @media (max-width: 720px) {
-  /* Login più alto su telefono */
+  /* Login più alto */
   .auth-container {
     align-items: flex-start;
-    padding: 24px 16px;
+    padding: 20px 14px;
   }
 
   .auth-card {
-    margin-top: 12px;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 380px;
   }
 
-  /* App più compatta e logo protagonista */
+  /* App centrata con margini laterali piccoli */
   .app {
-    padding: 24px 14px 22px;
+    padding: 22px 14px 26px;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Nascondo testo sotto al logo (c'è già nel logo) */
+  .app-title-text,
+  .access-info {
+    display: none !important;
+  }
+
+  .app-logo-main {
+    width: 70vw;
+    max-width: 240px;
   }
 
   .app-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
-  }
-
-  /* Nascondi scritte sotto il logo per non occupare spazio */
-  .app-title-text {
-    display: none !important;
-  }
-
-  .dashboard {
-    margin-top: 4px;
+    gap: 8px;
   }
 
   .cards-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .assenze-top-cards {
@@ -957,6 +956,11 @@ body {
 
   .assenze-layout {
     grid-template-columns: 1fr;
+  }
+
+  .requests-table {
+    width: 100%;
+    overflow-x: auto;
   }
 
   .requests-row {
