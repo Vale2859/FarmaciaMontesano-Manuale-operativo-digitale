@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
      RIFERIMENTI GENERALI
   ===================================================== */
 
-  const authContainer = document.getElementById("authContainer");   // blocco login
-  const appContainer = document.getElementById("appContainer");     // blocco app/dashboard
+  const authContainer = document.getElementById("authContainer");
+  const appContainer = document.getElementById("appContainer");
 
   const loginForm = document.getElementById("loginForm");
   const loginError = document.getElementById("loginError");
@@ -49,8 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Se vuoi controllare davvero user/pass metti qui le credenziali;
-  // per ora accettiamo QUALSIASI cosa NON vuota
+  // Login: per ora basta che username e password non siano vuoti
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -59,12 +58,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const p = document.getElementById("loginPassword")?.value.trim();
 
       if (!u || !p) {
-        // username o password vuota → errore
         if (loginError) loginError.classList.remove("hidden");
         return;
       }
 
-      // Login ok → mostro l'app
       showApp();
     });
   }
@@ -83,6 +80,12 @@ document.addEventListener("DOMContentLoaded", () => {
       currentRoleLabel.textContent = map[currentRole] || "Farmacia (accesso generico)";
     }
 
+    // assicuriamo di essere sulla dashboard
+    if (dashboard && assenzePage) {
+      dashboard.classList.remove("hidden");
+      assenzePage.classList.add("hidden");
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -91,11 +94,17 @@ document.addEventListener("DOMContentLoaded", () => {
   ===================================================== */
 
   function doLogout() {
-    // Nascondo app, mostro login, pulisco form
     if (appContainer) appContainer.classList.add("hidden");
     if (authContainer) authContainer.classList.remove("hidden");
     if (loginForm) loginForm.reset();
     if (loginError) loginError.classList.add("hidden");
+
+    // torna sempre alla dashboard principale
+    if (dashboard && assenzePage) {
+      dashboard.classList.remove("hidden");
+      assenzePage.classList.add("hidden");
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
