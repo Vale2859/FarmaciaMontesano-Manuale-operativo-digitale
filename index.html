@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <!-- ================= LOGIN & REGISTRAZIONE ================ -->
+  <!-- ============ LOGIN ============ -->
   <div id="authContainer" class="auth-container">
     <div class="auth-card">
       <div class="auth-logo-wrap">
@@ -32,207 +32,222 @@
 
       <form id="loginForm" class="auth-form">
         <div class="form-row">
-          <label for="loginUser">Username</label>
-          <input id="loginUser" type="text" autocomplete="off" />
+          <label for="loginUsername">Username</label>
+          <input id="loginUsername" type="text" placeholder="Inserisci username" />
         </div>
         <div class="form-row">
-          <label for="loginPass">Password</label>
-          <input id="loginPass" type="password" />
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" placeholder="Inserisci password" />
         </div>
         <button type="submit" class="btn-primary wide">Entra</button>
         <p class="login-hint">
-          (Per ora il login è dimostrativo: qualsiasi username/password va bene)
+          Demo: per ora puoi inserire qualsiasi username e password.
         </p>
       </form>
     </div>
   </div>
 
-  <!-- ================== APP MAIN ================== -->
+  <!-- ============ APP PRINCIPALE ============ -->
   <main id="app" class="app hidden">
 
-    <!-- ====== SIDEBAR MENU LATERALE ====== -->
+    <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
-        <h2>Menu</h2>
+        <div class="sidebar-logo-row">
+          <img src="logo.jpg" alt="Farmacia Montesano" class="sidebar-logo" />
+          <span class="sidebar-title">Portale interno</span>
+        </div>
         <button id="closeSidebar" class="icon-button" aria-label="Chiudi menu">✕</button>
       </div>
+
       <ul class="sidebar-list">
         <li data-nav="dashboard">Dashboard</li>
-        <li data-nav="assenzePage">Assenze del personale</li>
+        <li data-nav="assenzePage">Assenze</li>
+        <li data-nav="turniPage">Farmacie di turno</li>
         <li data-nav="comunicazioniPage">Comunicazioni</li>
-        <li class="divider"></li>
-        <li>Area personale</li>
-        <li>Admin</li>
-        <li class="divider"></li>
-        <li class="logout">Logout</li>
+        <li class="divider-label">Sezioni dedicate</li>
+        <li data-nav="areaPersonale">Area personale</li>
+        <li data-nav="areaAdmin">Admin</li>
+        <li id="logoutBtn" class="logout">Logout</li>
       </ul>
     </aside>
 
-    <!-- Pulsante hamburger -->
-    <button id="hamburger" class="hamburger" aria-label="Apri menu">☰</button>
+    <!-- HAMBURGER -->
+    <button id="hamburger" class="hamburger" aria-label="Apri menu">
+      ☰
+    </button>
 
-    <!-- ================= DASHBOARD ================= -->
-    <section id="dashboard" class="dashboard page-visible">
+    <!-- ============ DASHBOARD ============ -->
+    <section id="dashboard" class="dashboard">
 
-      <header class="app-header">
-        <div class="header-logo">
-          <img src="logo.jpg" alt="Farmacia Montesano" />
+      <header class="dashboard-header">
+        <div class="dashboard-logo-block">
+          <img src="logo.jpg" alt="Farmacia Montesano" class="dash-logo" />
         </div>
-        <div class="header-right">
-          <span id="currentRoleLabel" class="role-chip">Farmacia (accesso generico)</span>
+        <div class="dashboard-header-text">
+          <h1>Farmacia Montesano</h1>
+          <p class="header-subtitle">Portale interno</p>
+          <span id="currentRolePill" class="role-pill">Farmacia (accesso generico)</span>
         </div>
       </header>
 
-      <div class="dashboard-title">
-        <h1>FARMACIA MONTESANO</h1>
-        <p>Portale interno</p>
-      </div>
+      <div class="dashboard-content">
+        <div class="cards-grid">
 
-      <div class="cards-grid">
-
-        <!-- ASSENZE DEL PERSONALE -->
-        <article class="card card-assenze">
-          <span class="card-badge">2</span>
-          <div class="card-header">
-            <div class="card-icon">📅</div>
-            <div class="card-title-group">
-              <h2>Assenze del personale</h2>
-              <span class="chip chip-today">Oggi</span>
+          <!-- ASSENZE -->
+          <article class="card card-assenze">
+            <span class="card-badge">2</span>
+            <div class="card-header">
+              <div class="card-icon">📅</div>
+              <div class="card-title-group">
+                <h2 id="assenzeTitle">Assenze del personale</h2>
+                <span class="chip chip-today">Oggi</span>
+              </div>
             </div>
-          </div>
-          <div class="card-body">
-            <p class="caption">2 richieste in attesa</p>
-            <p class="small-text">
-              Assenti oggi: <strong>Mario G., Anna S.</strong><br />
-              In ferie: <strong>Luca B.</strong>
-            </p>
-          </div>
-          <div class="card-footer">
-            <button id="openAssenze" class="btn-primary">
-              Richiedi la tua assenza
-            </button>
-          </div>
-        </article>
-
-        <!-- FARMACIA DI TURNO -->
-        <article class="card card-turno">
-          <span class="card-badge">1</span>
-          <div class="card-header">
-            <div class="card-icon">⏰</div>
-            <div class="card-title-group">
-              <h2>Farmacia di turno</h2>
-              <span class="chip chip-turno">00:00 – 24:00</span>
+            <div class="card-body">
+              <p class="caption">2 richieste in attesa</p>
+              <p class="small-text">
+                Assenti oggi: <strong>Mario G., Anna S.</strong><br />
+                In ferie: <strong>Luca B.</strong>
+              </p>
             </div>
-          </div>
-          <div class="card-body">
-            <p><strong>Farmacia Montesano</strong></p>
-            <p class="small-text">
-              Via Esempio 12, Matera<br />
-              Tel: 0835 000000
-            </p>
-            <div class="divider"></div>
-            <p class="small-text">
-              <strong>Farmacia di appoggio</strong><br />
-              Farmacia Centrale – Via Dante 8, Matera – Tel: 0835 111111
-            </p>
-          </div>
-          <div class="card-footer">
-            <button class="btn-secondary">
-              Lista farmacie di turno
-            </button>
-          </div>
-        </article>
-
-        <!-- COMUNICAZIONI -->
-        <article class="card card-comunicazioni">
-          <span class="card-badge">3</span>
-          <div class="card-header">
-            <div class="card-icon">📢</div>
-            <div class="card-title-group">
-              <h2>Comunicazioni</h2>
+            <div class="card-footer">
+              <button id="openAssenze" class="btn-primary">
+                Richiedi la tua assenza
+              </button>
             </div>
-          </div>
-          <div class="card-body card-body-list">
-            <div class="list-item">Nuova procedura disponibile</div>
-            <div class="list-item">Aggiornare il registro sicurezza</div>
-            <div class="list-item">Incontro all'orario di chiusura</div>
-          </div>
-          <div class="card-footer">
-            <button id="openComunicazioni" class="btn-primary">
-              Comunica o modifica la comunicazione
-            </button>
-          </div>
-        </article>
+          </article>
 
-        <!-- PROCEDURE -->
-        <article class="card card-procedure">
-          <span class="card-badge">1</span>
-          <div class="card-header">
-            <div class="card-icon">🗂️</div>
-            <div class="card-title-group">
-              <h2>Procedure</h2>
+          <!-- FARMACIA DI TURNO -->
+          <article class="card card-turno">
+            <span class="card-badge">1</span>
+            <div class="card-header">
+              <div class="card-icon">⏰</div>
+              <div class="card-title-group">
+                <h2>Farmacia di turno</h2>
+                <span class="chip chip-turno" id="turnoOrarioChip">00:00 – 24:00</span>
+              </div>
             </div>
-          </div>
-          <div class="card-body">
-            <p class="small-text">
-              Consulta, modifica o inserisci nuove procedure operative interne.
-            </p>
-          </div>
-          <div class="card-footer">
-            <button class="btn-secondary">
-              Modifica o aggiungi procedura
-            </button>
-          </div>
-        </article>
-
-        <!-- LOGISTICA -->
-        <article class="card card-logistica">
-          <span class="card-badge">4</span>
-          <div class="card-header">
-            <div class="card-icon">📦</div>
-            <div class="card-title-group">
-              <h2>Logistica</h2>
+            <div class="card-body">
+              <p><strong id="turnoNome">Farmacia Montesano</strong></p>
+              <p class="small-text" id="turnoIndirizzo">
+                Via Esempio 12, Matera<br />
+                Tel: 0835 000000
+              </p>
+              <div class="divider"></div>
+              <p class="small-text">
+                <strong>Farmacia di appoggio</strong><br />
+                <span id="turnoAppoggio">
+                  Farmacia Centrale – Via Dante 8, Matera – Tel: 0835 111111
+                </span>
+              </p>
             </div>
-          </div>
-          <div class="card-body">
-            <p class="small-text">
-              Arrivi, corrieri, espositori e materiali per reparto.
-            </p>
-          </div>
-          <div class="card-footer">
-            <button class="btn-secondary">
-              Modifica o inserisci nuova logistica
-            </button>
-          </div>
-        </article>
-
-        <!-- MAGAZZINIERA -->
-        <article class="card card-magazziniera">
-          <span class="card-badge">2</span>
-          <div class="card-header">
-            <div class="card-icon">📋</div>
-            <div class="card-title-group">
-              <h2>Magazziniera</h2>
+            <div class="card-footer">
+              <button id="openTurni" class="btn-secondary">
+                Lista farmacie di turno
+              </button>
             </div>
-          </div>
-          <div class="card-body">
-            <p class="small-text">
-              Controllo scorte, scadenze, arrivi e sistemazione magazzino.
-            </p>
-          </div>
-          <div class="card-footer">
-            <button class="btn-secondary">
-              Modifica
-            </button>
-          </div>
-        </article>
+          </article>
 
+          <!-- COMUNICAZIONI -->
+          <article class="card card-comunicazioni">
+            <span class="card-badge">3</span>
+            <div class="card-header">
+              <div class="card-icon">📢</div>
+              <div class="card-title-group">
+                <h2>Comunicazioni</h2>
+              </div>
+            </div>
+            <div class="card-body card-body-list">
+              <div class="list-item">
+                <span class="list-title">Nuova procedura notturni</span>
+                <span class="list-meta">Oggi · Urgente</span>
+              </div>
+              <div class="list-item">
+                <span class="list-title">Verifica armadietto stupefacenti</span>
+                <span class="list-meta">Ieri · Importante</span>
+              </div>
+              <div class="list-item">
+                <span class="list-title">Aggiornamento promo vetrina</span>
+                <span class="list-meta">2 giorni fa · Informativa</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button id="openComunicazioni" class="btn-primary">
+                Comunica o modifica la comunicazione
+              </button>
+            </div>
+          </article>
+
+          <!-- PROCEDURE -->
+          <article class="card card-procedure">
+            <span class="card-badge">1</span>
+            <div class="card-header">
+              <div class="card-icon">🗂️</div>
+              <div class="card-title-group">
+                <h2>Procedure</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Consulta, modifica o inserisci nuove procedure operative interne.
+              </p>
+            </div>
+            <div class="card-footer">
+              <button class="btn-secondary">
+                Modifica o aggiungi procedura
+              </button>
+            </div>
+          </article>
+
+          <!-- LOGISTICA -->
+          <article class="card card-logistica">
+            <span class="card-badge">4</span>
+            <div class="card-header">
+              <div class="card-icon">📦</div>
+              <div class="card-title-group">
+                <h2>Logistica</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Arrivi, corrieri, espositori e materiali per reparto.
+              </p>
+            </div>
+            <div class="card-footer">
+              <button class="btn-secondary">
+                Modifica o inserisci nuova logistica
+              </button>
+            </div>
+          </article>
+
+          <!-- MAGAZZINIERA -->
+          <article class="card card-magazziniera">
+            <span class="card-badge">2</span>
+            <div class="card-header">
+              <div class="card-icon">📋</div>
+              <div class="card-title-group">
+                <h2>Magazziniera</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Controllo scorte, scadenze, arrivi e sistemazione magazzino.
+              </p>
+            </div>
+            <div class="card-footer">
+              <button class="btn-secondary">
+                Modifica
+              </button>
+            </div>
+          </article>
+
+        </div>
       </div>
     </section>
 
-    <!-- =============== PAGINA ASSENZE =============== -->
+    <!-- ============ PAGINA ASSENZE ============ -->
     <section id="assenzePage" class="page hidden">
-
       <header class="page-header">
         <button id="backFromAssenze" class="back-button">← Dashboard</button>
         <div class="page-title-block">
@@ -246,7 +261,6 @@
         </div>
       </header>
 
-      <!-- MINI CARD PERSONALI -->
       <div class="assenze-top-cards">
         <article class="mini-card">
           <h3>Le tue prossime assenze</h3>
@@ -273,7 +287,6 @@
         </article>
       </div>
 
-      <!-- CALENDARIO + OGGI IN FARMACIA -->
       <div class="assenze-layout">
         <!-- CALENDARIO -->
         <article class="card calendar-card">
@@ -297,8 +310,10 @@
 
           <div class="calendar-grid">
             <div class="calendar-row calendar-header-row">
-              <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
+              <span>Lun</span><span>Mar</span><span>Mer</span>
+              <span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
             </div>
+
             <div class="calendar-row">
               <span class="empty"></span>
               <span class="day">1</span>
@@ -403,7 +418,6 @@
         </article>
       </div>
 
-      <!-- ELENCO RICHIESTE PERSONALI -->
       <article class="card requests-card">
         <div class="requests-header">
           <h2>Le tue richieste di assenza</h2>
@@ -444,13 +458,12 @@
         </div>
       </article>
 
-      <!-- FORM RICHIESTA ASSENZA -->
       <article class="card form-card">
         <h2>Richiedi una nuova assenza</h2>
         <p class="small-text">
-          Compila il modulo per inviare la tua richiesta al titolare. Riceverai conferma direttamente nel portale.
+          Compila il modulo per inviare la tua richiesta al titolare.
         </p>
-        <form id="assenzeForm" class="assenze-form">
+        <form class="assenze-form">
           <div class="form-row">
             <label for="tipoAssenza">Tipo di assenza</label>
             <select id="tipoAssenza" name="tipoAssenza">
@@ -493,83 +506,248 @@
           </div>
 
           <p id="assenzeFeedback" class="form-feedback hidden">
-            ✅ Richiesta inviata correttamente. (Demo)
+            ✅ Richiesta inviata correttamente. (demo)
           </p>
         </form>
       </article>
+    </section>
 
-    </section> <!-- fine pagina assenze -->
+    <!-- ============ PAGINA FARMACIE DI TURNO ============ -->
+    <section id="turniPage" class="page hidden">
+      <header class="page-header">
+        <button id="backFromTurni" class="back-button">← Dashboard</button>
+        <div class="page-title-block">
+          <h1>Farmacie di turno</h1>
+          <p>Consulta le farmacie in turno oggi, nei prossimi giorni e per il mese corrente.</p>
+        </div>
+        <div class="summary-badges">
+          <span class="badge badge-today">Oggi</span>
+          <span class="badge badge-week">Prossimi 7 giorni</span>
+          <span class="badge badge-month">Mese corrente</span>
+        </div>
+      </header>
 
-    <!-- =============== PAGINA COMUNICAZIONI =============== -->
+      <div class="turni-tabs">
+        <button class="turni-tab active" data-view="oggi">Oggi</button>
+        <button class="turni-tab" data-view="settimana">Settimana</button>
+        <button class="turni-tab" data-view="mese">Mese</button>
+      </div>
+
+      <div class="turni-layout">
+
+        <article class="card turni-oggi-card">
+          <h2>Turno di oggi</h2>
+          <p class="small-text">Farmacia principale e farmacia di appoggio per la giornata odierna.</p>
+
+          <div class="turno-main">
+            <h3 id="turnoOggiNome">Farmacia Montesano</h3>
+            <p id="turnoOggiIndirizzo" class="small-text">
+              Via Esempio 12, Matera
+            </p>
+            <p id="turnoOggiTelefono" class="small-text">
+              Tel: 0835 000000
+            </p>
+            <span id="turnoOggiOrario" class="chip chip-turno">00:00 – 24:00</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="turno-appoggio">
+            <p class="small-text label">Farmacia di appoggio</p>
+            <h3 id="turnoOggiAppoggioNome">Farmacia Centrale</h3>
+            <p id="turnoOggiAppoggioDettagli" class="small-text">
+              Via Dante 8, Matera – Tel: 0835 111111
+            </p>
+          </div>
+
+          <div class="turni-actions">
+            <a href="https://maps.google.com/?q=Farmacia+Montesano+Matera"
+               target="_blank"
+               class="btn-secondary small">
+              📍 Apri in Maps
+            </a>
+            <button class="btn-secondary small">
+              📄 Stampa / Esponi turno
+            </button>
+          </div>
+        </article>
+
+        <article class="card turni-table-card">
+          <div class="turni-table-header">
+            <div>
+              <h2>Elenco turni</h2>
+              <p class="small-text">
+                Visualizza i turni in base al periodo selezionato.
+              </p>
+            </div>
+            <div class="turni-filters">
+              <select id="turniMeseSelect">
+                <option value="all">Tutti i mesi</option>
+                <option value="12">Dicembre</option>
+                <option value="1">Gennaio</option>
+                <option value="2">Febbraio</option>
+              </select>
+              <select id="turniFarmaciaSelect">
+                <option value="all">Tutte le farmacie</option>
+                <option value="Farmacia Montesano">Farmacia Montesano</option>
+                <option value="Farmacia Centrale">Farmacia Centrale</option>
+                <option value="Farmacia Madonna delle Grazie">Farmacia Madonna delle Grazie</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="turni-table">
+            <div class="turni-row header">
+              <span>Data</span>
+              <span>Orario</span>
+              <span>Farmacia principale</span>
+              <span>Farmacia di appoggio</span>
+              <span>Telefono</span>
+              <span>Note</span>
+            </div>
+            <div id="turniRows"></div>
+          </div>
+
+          <div class="turni-footer-actions">
+            <button class="btn-secondary small">📥 Esporta elenco in PDF</button>
+            <button class="btn-secondary small">🔄 Aggiorna turni</button>
+            <p class="small-text note">
+              I dati dei turni sono indicativi. Demo grafica, non collegata a gestionali.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ PAGINA COMUNICAZIONI ============ -->
     <section id="comunicazioniPage" class="page hidden">
-
       <header class="page-header">
         <button id="backFromComunicazioni" class="back-button">← Dashboard</button>
         <div class="page-title-block">
           <h1>Comunicazioni interne</h1>
-          <p>Invia avvisi a tutto il personale e tieni traccia delle comunicazioni importanti.</p>
+          <p>Avvisi, note operative e messaggi tra titolare e dipendenti.</p>
+        </div>
+        <div class="summary-badges">
+          <span class="badge badge-today" id="badgeTotComunicazioni">Totali: 0</span>
+          <span class="badge badge-week" id="badgeNonLette">Non lette: 0</span>
+          <span class="badge badge-month" id="badgeUrgenti">Urgenti: 0</span>
         </div>
       </header>
 
-      <div class="comms-layout">
-        <!-- Lista comunicazioni -->
-        <article class="card comms-list-card">
-          <div class="requests-header">
-            <h2>Comunicazioni recenti</h2>
-            <p class="small-text">Seleziona una comunicazione per leggerla o modificarla.</p>
+      <div class="comunicazioni-layout">
+        <!-- COLONNA SINISTRA: ELENCO -->
+        <article class="card comunicazioni-list-card">
+          <div class="comunicazioni-list-header">
+            <h2>Ultime comunicazioni</h2>
+            <p class="small-text">
+              In ordine dalla più recente. Demo statica per ora.
+            </p>
           </div>
-          <ul id="commsList" class="comms-list">
-            <li class="active">
-              <h3>Nuova procedura banco etico</h3>
-              <p class="meta">Inviata da: Titolare · 15/12/2025 · Tutto il personale</p>
-            </li>
-            <li>
-              <h3>Aggiornare il registro sicurezza</h3>
-              <p class="meta">Inviata da: Admin · 10/12/2025 · Solo titolari</p>
-            </li>
-            <li>
-              <h3>Incontro all'orario di chiusura</h3>
-              <p class="meta">Inviata da: Titolare · 08/12/2025 · Tutti</p>
-            </li>
-          </ul>
+
+          <div id="comunicazioniList" class="comunicazioni-list">
+            <!-- riempito da JS -->
+          </div>
         </article>
 
-        <!-- Dettaglio + nuovo messaggio -->
-        <article class="card comms-detail-card">
-          <h2>Nuova / modifica comunicazione</h2>
-          <form id="commsForm" class="comms-form">
+        <!-- COLONNA DESTRA: FILTRI + NUOVA COMUNICAZIONE -->
+        <article class="card comunicazioni-side-card">
+          <h2>Filtra e nuova comunicazione</h2>
+
+          <div class="form-row">
+            <label for="filtroCategoria">Filtra per categoria</label>
+            <select id="filtroCategoria">
+              <option value="tutte">Tutte</option>
+              <option value="urgente">Urgente</option>
+              <option value="importante">Importante</option>
+              <option value="informativa">Informativa</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="filtroSoloNonLette" />
+              <span>Mostra solo non lette</span>
+            </label>
+          </div>
+
+          <div class="divider"></div>
+
+          <h3>Invia nuova comunicazione (demo)</h3>
+          <p class="small-text">
+            Questo modulo è dimostrativo. In futuro invierà davvero al server.
+          </p>
+
+          <form id="comunicazioneForm" class="comunicazione-form">
             <div class="form-row">
-              <label for="commsTitolo">Titolo comunicazione</label>
-              <input type="text" id="commsTitolo" placeholder="Es. Nuova procedura banco etico" />
+              <label for="comTitolo">Titolo</label>
+              <input type="text" id="comTitolo" placeholder="Es. Aggiornamento procedure notturne" />
             </div>
 
             <div class="form-row">
-              <label for="commsDest">Destinatari</label>
-              <select id="commsDest">
-                <option>Tutto il personale</option>
-                <option>Solo titolari</option>
-                <option>Solo magazziniera</option>
-                <option>Banco / farmacisti</option>
+              <label for="comCategoria">Categoria</label>
+              <select id="comCategoria">
+                <option value="urgente">Urgente</option>
+                <option value="importante">Importante</option>
+                <option value="informativa">Informativa</option>
               </select>
             </div>
 
             <div class="form-row">
-              <label for="commsTesto">Testo comunicazione</label>
-              <textarea id="commsTesto" rows="5"
-                placeholder="Scrivi qui il messaggio da inviare a tutto il personale..."></textarea>
+              <label for="comTesto">Testo breve</label>
+              <textarea id="comTesto" rows="3"
+                placeholder="Scrivi qui una breve comunicazione..."></textarea>
             </div>
 
-            <div class="form-actions space-between">
-              <button type="button" id="commsBozza" class="btn-secondary">Salva come bozza</button>
-              <button type="submit" class="btn-primary">Invia comunicazione</button>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Invia comunicazione (demo)</button>
             </div>
 
-            <p id="commsFeedback" class="form-feedback hidden">
-              ✅ Comunicazione salvata (demo, nessun invio reale).
+            <p id="comunicazioneFeedback" class="form-feedback hidden">
+              ✅ Comunicazione registrata (demo). In futuro sarà salvata su server.
             </p>
           </form>
         </article>
       </div>
+
+      <!-- STORICO SOTTO -->
+      <article class="card comunicazioni-storico-card">
+        <div class="requests-header">
+          <h2>Storico comunicazioni (demo)</h2>
+          <p class="small-text">
+            Tabella puramente grafica per mostrare come apparirà uno storico.
+          </p>
+        </div>
+        <div class="requests-table">
+          <div class="requests-row header">
+            <span>Data</span>
+            <span>Titolo</span>
+            <span>Categoria</span>
+            <span>Autore</span>
+            <span>Stato</span>
+          </div>
+          <div class="requests-row">
+            <span>15/12/2025</span>
+            <span>Inventario magazzino</span>
+            <span>Importante</span>
+            <span>Titolare</span>
+            <span><span class="status status-approved">Letta</span></span>
+          </div>
+          <div class="requests-row">
+            <span>12/12/2025</span>
+            <span>Corso aggiornamento ECM</span>
+            <span>Informativa</span>
+            <span>Titolare</span>
+            <span><span class="status status-approved">Letta</span></span>
+          </div>
+          <div class="requests-row">
+            <span>10/12/2025</span>
+            <span>Nuove regole chiusura cassa</span>
+            <span>Urgente</span>
+            <span>Admin</span>
+            <span><span class="status status-pending">Da rileggere</span></span>
+          </div>
+        </div>
+      </article>
     </section>
 
   </main>
