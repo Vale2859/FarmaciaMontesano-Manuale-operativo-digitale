@@ -19,12 +19,104 @@ body {
   overflow-x: hidden;
 }
 
-/* NASCONDERE ELEMENTI */
+/* UTILI */
 .hidden {
   display: none !important;
 }
 
-/* APP LAYOUT */
+/* ========== LOGIN & REGISTRAZIONE ========== */
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 12px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(135deg, rgba(15, 40, 60, 0.95), rgba(2, 10, 20, 0.98));
+  border-radius: 28px;
+  padding: 22px 22px 20px;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.85),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+}
+
+.auth-card h1 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.auth-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.auth-intro {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.auth-tab {
+  flex: 1;
+  border-radius: 999px;
+  border: none;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.35);
+  color: #e5f7ff;
+}
+
+.auth-tab.active {
+  background: linear-gradient(145deg, #2cd079, #0a8f55);
+  color: #ffffff;
+}
+
+.auth-subtitle {
+  font-size: 13px;
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+
+.auth-subtitle span {
+  font-weight: 700;
+}
+
+.auth-form {
+  margin-top: 4px;
+}
+
+.link-as-button {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #c6e6ff;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.auth-submit {
+  width: 100%;
+}
+
+/* ========== APP LAYOUT ========== */
+
 .app {
   max-width: 1200px;
   margin: 0 auto;
@@ -114,6 +206,9 @@ body {
 /* HEADER APP */
 .app-header {
   margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .app-header h1 {
@@ -121,6 +216,14 @@ body {
   letter-spacing: 0.08em;
   font-weight: 800;
   text-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.user-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.4);
+  font-size: 12px;
+  opacity: 0.95;
 }
 
 /* GRID CARDS DASHBOARD */
@@ -297,7 +400,6 @@ body {
   margin-top: -12px;
 }
 
-/* HEADER PAGINA ASSENZE */
 .page-header {
   display: flex;
   align-items: flex-start;
@@ -659,16 +761,7 @@ body {
   color: #ffb3b3;
 }
 
-/* FORM RICHIESTA ASSENZA */
-.form-card h2 {
-  font-size: 18px;
-  margin-bottom: 4px;
-}
-
-.assenze-form {
-  margin-top: 10px;
-}
-
+/* FORM GENERICO (LOGIN + ASSENZE) */
 .form-row {
   margin-bottom: 10px;
 }
@@ -679,6 +772,8 @@ body {
   margin-bottom: 4px;
 }
 
+.form-row input[type="text"],
+.form-row input[type="password"],
 .form-row input[type="date"],
 .form-row select,
 .form-row textarea {
@@ -718,9 +813,13 @@ body {
 }
 
 .form-feedback {
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 13px;
   color: #c5ffd6;
+}
+
+.form-feedback.error {
+  color: #ffb3b3;
 }
 
 /* RESPONSIVE */
