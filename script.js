@@ -5,7 +5,7 @@ const turniFarmacie = [
     orario: "00:00 – 24:00",
     principale: "Farmacia Montesano",
     appoggio: "Farmacia Centrale",
-    telefono: "0835 000000",
+    telefono: "0835 335921",
     note: "Turno completo",
     tipoRange: "oggi",
     mese: 12
