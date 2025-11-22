@@ -1,1 +1,657 @@
+/* ===== RESET BASE ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top left, #0fd3a7 0, #01366b 45%, #000814 100%);
+  color: #fff;
+}
+
+/* Nascondi elementi */
+.hidden {
+  display: none !important;
+}
+
+/* ======= LOGIN ======= */
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(135deg, rgba(15, 40, 60, 0.95), rgba(2, 10, 20, 0.98));
+  border-radius: 28px;
+  padding: 22px 22px 26px;
+  box-shadow: 0 40px 60px rgba(0, 0, 0, 0.85),
+    inset 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+}
+
+.auth-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.auth-logo {
+  max-width: 220px;
+  height: auto;
+}
+
+.auth-card h1 {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 8px 0 6px;
+}
+
+.auth-intro {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.auth-tab {
+  flex: 1;
+  border-radius: 999px;
+  border: none;
+  padding: 8px 0;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-tab.active {
+  background: #02c26d;
+}
+
+.auth-subtitle {
+  font-size: 13px;
+  margin-bottom: 10px;
+  opacity: 0.85;
+}
+
+.auth-form .form-row {
+  margin-bottom: 10px;
+}
+
+.auth-form label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.auth-form input {
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+}
+
+.btn-primary.large {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* ====== BOTTONI GENERICI ====== */
+
+.btn-primary,
+.btn-secondary {
+  border-radius: 999px;
+  border: none;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+.btn-primary {
+  background: #00c169;
+  color: #021012;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.55);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.7);
+}
+
+.btn-secondary {
+  background: #02131d;
+  color: #fdfdfd;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.55);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.7);
+}
+
+/* Errori form */
+.form-error {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #ff7b7b;
+}
+
+/* ====== APP ====== */
+
+.app {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 260px;
+  height: 100%;
+  background: rgba(3, 16, 30, 0.98);
+  box-shadow: 6px 0 18px rgba(0, 0, 0, 0.85);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+  transition: left 0.2s ease;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.sidebar-header h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.icon-button {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  border: none;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.sidebar-list li {
+  padding: 8px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.sidebar-list li:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-list .logout {
+  margin-top: 10px;
+  color: #ff8c8c;
+}
+
+.sidebar-list .divider {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin: 8px 0;
+}
+
+.sidebar-list .disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Hamburger */
+.hamburger {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 25;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(3, 10, 20, 0.9);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+}
+
+/* Shell app */
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+/* Header dashboard */
+.dashboard-header {
+  margin-top: 40px;
+  margin-bottom: 22px;
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-logo {
+  width: 190px;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85);
+}
+
+.brand-text h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.role-pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.75);
+  font-size: 12px;
+}
+
+/* Sezioni base */
+.section {
+  display: none;
+}
+
+.section.visible {
+  display: block;
+}
+
+/* Grid delle card */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* Card generica */
+.card {
+  position: relative;
+  border-radius: 28px;
+  padding: 18px 20px 18px;
+  background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.22), transparent 55%),
+    rgba(2, 30, 53, 0.98);
+  box-shadow: 0 28px 50px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(14px);
+}
+
+/* Colori card */
+.card-assenze {
+  background: linear-gradient(135deg, #17c65c, #0f9d4a);
+}
+
+.card-turno {
+  background: linear-gradient(135deg, #2196f3, #006ad4);
+}
+
+.card-comunicazioni {
+  background: linear-gradient(135deg, #ff4081, #c2185b);
+}
+
+.card-procedure {
+  background: linear-gradient(135deg, #00c3a3, #009b8a);
+}
+
+.card-logistica {
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+}
+
+.card-magazziniera {
+  background: linear-gradient(135deg, #2196f3, #005fcb);
+}
+
+/* Header card */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.card-title-group h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.chip-today {
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.chip-turno {
+  background: rgba(0, 0, 0, 0.32);
+}
+
+/* Badge notifiche */
+.card-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #fff, #ff1744);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 0 16px rgba(255, 23, 68, 0.7);
+}
+
+/* Testo card */
+.caption {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.small-text {
+  font-size: 13px;
+  opacity: 0.93;
+}
+
+/* Lista nelle comunicazioni */
+.card-body-list .list-item {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+/* Divider sottile */
+.divider {
+  height: 1px;
+  margin: 8px 0;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Footer card */
+.card-footer {
+  margin-top: 10px;
+}
+
+/* ======= PAGINE INTERNE ======= */
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.page-header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.back-button {
+  align-self: flex-start;
+  border-radius: 999px;
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+}
+
+/* Mini card e wide card */
+.mini-card {
+  padding: 16px 18px;
+}
+
+.big-number {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 4px 0 6px;
+}
+
+.wide-card {
+  margin-top: 12px;
+}
+
+/* Layout Assenze */
+.assenze-layout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* Form assenze / procedure */
+.assenze-form,
+.procedure-form {
+  margin-top: 10px;
+}
+
+.form-row {
+  margin-bottom: 10px;
+}
+
+.form-row label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  width: 100%;
+  border-radius: 18px;
+  border: none;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 13px;
+}
+
+.form-row textarea {
+  border-radius: 16px;
+}
+
+.form-row.two-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.checkbox-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.checkbox-inline input {
+  width: auto;
+}
+
+.form-actions {
+  margin-top: 6px;
+}
+
+.form-feedback {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #a9ffb5;
+}
+
+/* Liste farmacie / procedure */
+.pharmacy-list,
+.bullet-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.pharmacy-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.pharmacy-list li:last-child {
+  border-bottom: none;
+}
+
+.pharmacy-list .name {
+  display: block;
+  font-weight: 600;
+}
+
+.pharmacy-list .details {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.bullet-list li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.bullet-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+}
+
+/* Procedure cards */
+.procedure-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* ====== RESPONSIVE ====== */
+
+@media (max-width: 1024px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .procedure-cards,
+  .assenze-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .brand-logo {
+    width: 170px;
+  }
+
+  .dashboard-header {
+    margin-top: 70px;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 18px 16px 22px;
+  }
+
+  .brand-block {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .brand-logo {
+    width: 170px;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .procedure-cards,
+  .assenze-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell {
+    padding: 70px 12px 32px;
+  }
+
+  .card {
+    padding: 16px 16px 18px;
+  }
+}
