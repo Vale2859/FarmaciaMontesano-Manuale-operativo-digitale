@@ -1,165 +1,138 @@
-// script.js
-
 document.addEventListener("DOMContentLoaded", () => {
-  // RUOLI
-  const ROLE_FARMACIA = "farmacia";
-  const ROLE_TITOLARE = "titolare";
-  const ROLE_DIPENDENTE = "dipendente";
+  /* ========== LOGIN LOGICA SEMPLICE ========== */
 
-  let selectedRole = ROLE_FARMACIA;
-  let currentUser = null;
-
-  // ELEMENTI LOGIN
   const authContainer = document.getElementById("authContainer");
-  const loginTabs = document.querySelectorAll(".auth-tab");
-  const loginRoleLabel = document.getElementById("loginRoleLabel");
+  const appContainer = document.getElementById("appContainer");
   const loginForm = document.getElementById("loginForm");
-  const loginUsername = document.getElementById("loginUsername");
-  const loginPassword = document.getElementById("loginPassword");
+  const loginRoleLabel = document.getElementById("loginRoleLabel");
   const loginError = document.getElementById("loginError");
+  const roleTabs = document.querySelectorAll(".auth-tab");
+  const currentRoleLabel = document.getElementById("currentRoleLabel");
 
-  // ELEMENTI APP
-  const appRoot = document.getElementById("appRoot");
-  const userBadge = document.getElementById("userBadge");
+  let currentRole = "farmacia";
 
-  const hamburger = document.getElementById("hamburger");
-  const sidebar = document.getElementById("sidebar");
-  const closeSidebar = document.getElementById("closeSidebar");
-  const menuLogout = document.getElementById("menuLogout");
-
-  const tileAssenzeTitle = document.getElementById("tileAssenzeTitle");
-
-  // FUNZIONI UTILITARIE
-  function roleLabel(role) {
-    if (role === ROLE_TITOLARE) return "Titolare";
-    if (role === ROLE_DIPENDENTE) return "Dipendente";
-    return "Farmacia";
-  }
-
-  function applyUserUI() {
-    if (!currentUser) return;
-
-    // Titolo card Assenze
-    if (currentUser.role === ROLE_DIPENDENTE) {
-      tileAssenzeTitle.textContent = "Le mie assenze";
-    } else {
-      tileAssenzeTitle.textContent = "Assenze del personale";
-    }
-
-    // Badge utente in alto
-    let badgeText = "";
-    if (currentUser.role === ROLE_TITOLARE) {
-      badgeText = "Titolare · " + (currentUser.username || "");
-    } else if (currentUser.role === ROLE_DIPENDENTE) {
-      badgeText = "Dipendente · " + (currentUser.username || "");
-    } else {
-      badgeText = "Accesso · Farmacia";
-    }
-    userBadge.textContent = badgeText;
-  }
-
-  function showApp() {
-    authContainer.classList.add("hidden");
-    appRoot.classList.remove("hidden");
-    applyUserUI();
-  }
-
-  function showLogin() {
-    appRoot.classList.add("hidden");
-    authContainer.classList.remove("hidden");
-    loginUsername.value = "";
-    loginPassword.value = "";
-    loginError.classList.add("hidden");
-  }
-
-  // GESTIONE TAB RUOLI
-  loginTabs.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const role = btn.getAttribute("data-role");
-      selectedRole = role;
-      loginTabs.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      loginRoleLabel.textContent = roleLabel(role);
-      loginError.classList.add("hidden");
+  // Cambia ruolo (Farmacia / Titolare / Dipendente)
+  roleTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      roleTabs.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      currentRole = tab.dataset.role;
+      const labelMap = {
+        farmacia: "Farmacia",
+        titolare: "Titolare",
+        dipendente: "Dipendente",
+      };
+      loginRoleLabel.textContent = labelMap[currentRole] || "Farmacia";
     });
   });
 
-  // LOGIN (DEMO: accetta qualunque username/password non vuoti)
-  if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const user = loginUsername.value.trim();
-      const pass = loginPassword.value.trim();
+  // Fake credenziali (solo per demo)
+  const credentials = {
+    farmacia: { user: "farmacia", pass: "1234" },
+    titolare: { user: "titolare", pass: "1234" },
+    dipendente: { user: "dipendente", pass: "1234" },
+  };
 
-      if (!user || !pass) {
-        loginError.classList.remove("hidden");
-        return;
-      }
+  loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const userInput = document.getElementById("loginUsername").value.trim();
+    const passInput = document.getElementById("loginPassword").value.trim();
 
-      currentUser = {
-        role: selectedRole,
-        username: user,
-      };
+    const cred = credentials[currentRole];
 
+    // Se vuoi accesso libero, commenta il blocco IF e usa solo showApp()
+    if (cred && userInput === cred.user && passInput === cred.pass) {
       showApp();
-    });
+    } else {
+      // Per ora: se lasci username vuoto, NON entra
+      loginError.classList.remove("hidden");
+      return;
+    }
+  });
+
+  function showApp() {
+    authContainer.classList.add("hidden");
+    appContainer.classList.remove("hidden");
+    loginError.classList.add("hidden");
+
+    const roleTextMap = {
+      farmacia: "Farmacia (accesso generico)",
+      titolare: "Titolare",
+      dipendente: "Dipendente",
+    };
+    if (currentRoleLabel) {
+      currentRoleLabel.textContent =
+        roleTextMap[currentRole] || "Farmacia (accesso generico)";
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // SIDEBAR
-  if (hamburger) {
+  /* ========== SIDEBAR HAMBURGER ========== */
+
+  const sidebar = document.getElementById("sidebar");
+  const hamburger = document.getElementById("hamburger");
+  const closeSidebarBtn = document.getElementById("closeSidebar");
+
+  if (hamburger && sidebar) {
     hamburger.addEventListener("click", () => {
       sidebar.classList.add("open");
     });
   }
 
-  if (closeSidebar) {
-    closeSidebar.addEventListener("click", () => {
+  if (closeSidebarBtn && sidebar) {
+    closeSidebarBtn.addEventListener("click", () => {
       sidebar.classList.remove("open");
     });
   }
 
-  // click fuori dalla sidebar
+  // Chiudi sidebar cliccando fuori
   document.addEventListener("click", (event) => {
-    if (!sidebar.classList.contains("open")) return;
-    const clickInside = sidebar.contains(event.target);
-    const clickHamb = hamburger.contains(event.target);
-    if (!clickInside && !clickHamb) {
+    if (!sidebar) return;
+    const clickInsideSidebar = sidebar.contains(event.target);
+    const clickOnHamburger = hamburger && hamburger.contains(event.target);
+
+    if (!clickInsideSidebar && !clickOnHamburger) {
       sidebar.classList.remove("open");
     }
   });
 
-  // LOGOUT
-  if (menuLogout) {
-    menuLogout.addEventListener("click", () => {
-      currentUser = null;
-      sidebar.classList.remove("open");
-      showLogin();
+  /* ========== NAVIGAZIONE DASHBOARD <-> ASSENZE ========== */
+
+  const dashboard = document.getElementById("dashboard");
+  const assenzePage = document.getElementById("assenzePage");
+  const btnOpenAssenze = document.getElementById("openAssenze");
+  const btnBackDashboard = document.getElementById("backToDashboard");
+  const assenzeForm = document.querySelector(".assenze-form");
+  const assenzeFeedback = document.getElementById("assenzeFeedback");
+
+  // Apri pagina Assenze
+  if (btnOpenAssenze && dashboard && assenzePage) {
+    btnOpenAssenze.addEventListener("click", () => {
+      dashboard.classList.add("hidden");
+      assenzePage.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
 
-  // (eventuali alert demo sui menu)
-  const menuAreaPersonale = document.getElementById("menuAreaPersonale");
-  if (menuAreaPersonale) {
-    menuAreaPersonale.addEventListener("click", () => {
-      alert("In futuro qui puoi aprire l'Area Personale (dati, ferie, ecc.).");
+  // Torna alla Dashboard
+  if (btnBackDashboard && dashboard && assenzePage) {
+    btnBackDashboard.addEventListener("click", () => {
+      assenzePage.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
 
-  const menuAdmin = document.getElementById("menuAdmin");
-  if (menuAdmin) {
-    menuAdmin.addEventListener("click", () => {
-      if (!currentUser || currentUser.role !== ROLE_TITOLARE) {
-        alert("Area Admin riservata al Titolare.");
-        return;
-      }
-      alert("In futuro: gestione completa dipendenti, reset password, ecc.");
-    });
-  }
+  // Invio del modulo di richiesta assenza (solo FEEDBACK, nessun server)
+  if (assenzeForm && assenzeFeedback) {
+    assenzeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
 
-  const menuFormazione = document.getElementById("menuFormazione");
-  if (menuFormazione) {
-    menuFormazione.addEventListener("click", () => {
-      alert("In futuro: corsi ECM, documenti, video formativi...");
+      assenzeFeedback.classList.remove("hidden");
+      assenzeFeedback.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      assenzeForm.reset();
     });
   }
 });
