@@ -2,14 +2,103 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <title>Dashboard Farmacia</title>
+  <title>Portale Farmacia Montesano</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <script src="script.js" defer></script>
 </head>
 <body>
 
-  <!-- SIDEBAR (MENU LATERALE) -->
+  <!-- ========== LOGIN & REGISTRAZIONE ========== -->
+  <div id="authContainer" class="auth-container">
+
+    <!-- CARD LOGIN -->
+    <div id="authLoginCard" class="auth-card">
+      <h1>Portale Farmacia Montesano</h1>
+      <p class="auth-intro">Seleziona il tipo di accesso e inserisci le credenziali.</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-role="farmacia">Farmacia</button>
+        <button class="auth-tab" data-role="titolare">Titolare</button>
+        <button class="auth-tab" data-role="dipendente">Dipendente</button>
+      </div>
+
+      <p class="auth-subtitle">
+        Accesso come: <span id="loginRoleLabel">Farmacia</span>
+      </p>
+
+      <form id="loginForm" class="auth-form">
+        <div class="form-row">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" autocomplete="username" />
+        </div>
+        <div class="form-row">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" autocomplete="current-password" />
+        </div>
+
+        <p id="loginError" class="form-feedback error hidden">
+          Credenziali non valide. Controlla username, password e ruolo.
+        </p>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary auth-submit">Entra</button>
+        </div>
+      </form>
+
+      <button id="showRegister" class="link-as-button hidden">
+        Registrati come nuovo dipendente
+      </button>
+    </div>
+
+    <!-- CARD REGISTRAZIONE DIPENDENTE -->
+    <div id="registerCard" class="auth-card hidden">
+      <h2>Registrazione dipendente</h2>
+      <p class="auth-intro">
+        Questa sezione è pensata per il titolare, per creare gli account dei dipendenti.
+      </p>
+
+      <form id="registerForm" class="auth-form">
+        <div class="form-row">
+          <label for="regNome">Nome</label>
+          <input type="text" id="regNome" />
+        </div>
+        <div class="form-row">
+          <label for="regCognome">Cognome</label>
+          <input type="text" id="regCognome" />
+        </div>
+        <div class="form-row">
+          <label for="regUsername">Username</label>
+          <input type="text" id="regUsername" autocomplete="off" />
+        </div>
+        <div class="form-row">
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" autocomplete="new-password" />
+        </div>
+        <div class="form-row">
+          <label for="regPassword2">Conferma password</label>
+          <input type="password" id="regPassword2" autocomplete="new-password" />
+        </div>
+
+        <p id="registerError" class="form-feedback error hidden">
+          Errore nella registrazione. Controlla i campi.
+        </p>
+        <p id="registerSuccess" class="form-feedback hidden">
+          ✅ Dipendente registrato correttamente. Ora può effettuare il login.
+        </p>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary auth-submit">Salva dipendente</button>
+        </div>
+      </form>
+
+      <button id="backToLogin" class="link-as-button">
+        ← Torna al login
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== SIDEBAR (MENU LATERALE) ========== -->
   <aside id="sidebar" class="sidebar">
     <div class="sidebar-header">
       <h2>Menu</h2>
@@ -17,35 +106,36 @@
     </div>
     <ul class="sidebar-list">
       <li>Area personale</li>
-      <li>Admin</li>
-      <li class="logout">Logout</li>
+      <li id="adminMenuItem">Admin</li>
+      <li class="logout" id="logoutBtn">Logout</li>
     </ul>
   </aside>
 
-  <!-- PULSANTE HAMBURGER -->
-  <button id="hamburger" class="hamburger" aria-label="Apri menu">
+  <!-- ========== PULSANTE HAMBURGER ========== -->
+  <button id="hamburger" class="hamburger hidden" aria-label="Apri menu">
     ☰
   </button>
 
-  <!-- CONTENUTO PRINCIPALE -->
-  <main class="app">
+  <!-- ========== CONTENUTO PRINCIPALE ========== -->
+  <main id="appRoot" class="app hidden">
 
-    <!-- DASHBOARD PRINCIPALE -->
+    <!-- DASHBOARD PRINCIPALE (FARMACIA / TITOLARE / DIPENDENTE) -->
     <section id="dashboard" class="dashboard">
 
       <header class="app-header">
         <h1>FARMACIA</h1>
+        <div id="userBadge" class="user-badge"></div>
       </header>
 
       <div class="cards-grid">
 
-        <!-- ASSENZE DEL PERSONALE -->
+        <!-- ASSENZE / LE MIE ASSENZE -->
         <article class="card card-assenze">
           <span class="card-badge">2</span>
           <div class="card-header">
             <div class="card-icon">📅</div>
             <div class="card-title-group">
-              <h2>Assenze del personale</h2>
+              <h2 id="assenzeCardTitle">Assenze del personale</h2>
               <span class="chip chip-today">Oggi</span>
             </div>
           </div>
@@ -179,14 +269,14 @@
       </div>
     </section>
 
-    <!-- PAGINA INTERNA: ASSENZE DEL PERSONALE -->
+    <!-- PAGINA INTERNA: ASSENZE (VISTA DIPENDENTE/FARMACIA/TITOLARE) -->
     <section id="assenzePage" class="page page-assenze hidden">
 
       <header class="page-header">
         <button id="backToDashboard" class="back-button">← Dashboard</button>
         <div class="page-title-block">
-          <h1>Assenze del personale</h1>
-          <p>Consulta le tue assenze, verifica chi è assente oggi e invia una nuova richiesta.</p>
+          <h1 id="assenzePageTitle">Assenze del personale</h1>
+          <p>Consulta le assenze, verifica chi è assente oggi e invia una nuova richiesta.</p>
         </div>
         <div class="summary-badges">
           <span class="badge badge-pending">2 in attesa</span>
@@ -249,7 +339,6 @@
               <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
             </div>
 
-            <!-- Settimane (statiche di esempio) -->
             <div class="calendar-row">
               <span class="empty"></span>
               <span class="day">1</span>
@@ -450,7 +539,6 @@
       </article>
 
     </section> <!-- fine pagina assenze -->
-
   </main>
 </body>
 </html>
