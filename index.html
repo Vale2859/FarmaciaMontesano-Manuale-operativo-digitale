@@ -6,15 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <script src="script.js" defer></script>
-  
+
   <!-- Icone per aggiunta a Home su iPhone/iPad -->
-<link rel="apple-touch-icon" sizes="180x180" href="logo.jpg">
-<link rel="apple-touch-icon" sizes="152x152" href="logo.jpg">
-<link rel="apple-touch-icon" sizes="120x120" href="logo.jpg">
-<link rel="apple-touch-icon" href="logo.jpg">
-  <head>
-<!-- Per Android con browser -->
-<link rel="icon" type="image/png" href="logo.jpg"></head>
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.jpg">
+  <link rel="apple-touch-icon" sizes="152x152" href="logo.jpg">
+  <link rel="apple-touch-icon" sizes="120x120" href="logo.jpg">
+  <link rel="apple-touch-icon" href="logo.jpg">
+
+  <!-- Favicon Android / browser -->
+  <link rel="icon" type="image/png" href="logo.jpg">
+</head>
 <body>
 
   <!-- ============ LOGIN ============ -->
@@ -73,9 +74,10 @@
         <li data-nav="assenzePage">Assenze</li>
         <li data-nav="turniPage">Farmacie di turno</li>
         <li data-nav="comunicazioniPage">Comunicazioni</li>
+        <li data-nav="procedurePage">Procedure</li>
         <li class="divider-label">Sezioni dedicate</li>
-        <li data-nav="areaPersonale">Area personale</li>
-        <li data-nav="areaAdmin">Admin</li>
+        <li data-nav="areaPersonale">Area personale (coming soon)</li>
+        <li data-nav="areaAdmin">Admin (coming soon)</li>
         <li id="logoutBtn" class="logout">Logout</li>
       </ul>
     </aside>
@@ -103,8 +105,12 @@
         <div class="cards-grid">
 
           <!-- ASSENZE -->
-          <article class="card card-assenze">
-            <span class="card-badge">2</span>
+          <article class="card card-assenze" data-card="assenze">
+            <span class="card-badge js-card-badge" data-card-key="assenze">
+              <span class="badge-count" id="badgeCount-assenze">0</span>
+            </span>
+            <span class="card-badge-label js-card-badge-label" data-card-key="assenze"></span>
+
             <div class="card-header">
               <div class="card-icon">📅</div>
               <div class="card-title-group">
@@ -127,8 +133,12 @@
           </article>
 
           <!-- FARMACIA DI TURNO -->
-          <article class="card card-turno">
-            <span class="card-badge">1</span>
+          <article class="card card-turno" data-card="turni">
+            <span class="card-badge js-card-badge" data-card-key="turni">
+              <span class="badge-count" id="badgeCount-turni">0</span>
+            </span>
+            <span class="card-badge-label js-card-badge-label" data-card-key="turni"></span>
+
             <div class="card-header">
               <div class="card-icon">⏰</div>
               <div class="card-title-group">
@@ -158,8 +168,12 @@
           </article>
 
           <!-- COMUNICAZIONI -->
-          <article class="card card-comunicazioni">
-            <span class="card-badge">3</span>
+          <article class="card card-comunicazioni" data-card="comunicazioni">
+            <span class="card-badge js-card-badge" data-card-key="comunicazioni">
+              <span class="badge-count" id="badgeCount-comunicazioni">0</span>
+            </span>
+            <span class="card-badge-label js-card-badge-label" data-card-key="comunicazioni"></span>
+
             <div class="card-header">
               <div class="card-icon">📢</div>
               <div class="card-title-group">
@@ -188,8 +202,12 @@
           </article>
 
           <!-- PROCEDURE -->
-          <article class="card card-procedure">
-            <span class="card-badge">1</span>
+          <article class="card card-procedure" data-card="procedure">
+            <span class="card-badge js-card-badge" data-card-key="procedure">
+              <span class="badge-count" id="badgeCount-procedure">0</span>
+            </span>
+            <span class="card-badge-label js-card-badge-label" data-card-key="procedure"></span>
+
             <div class="card-header">
               <div class="card-icon">🗂️</div>
               <div class="card-title-group">
@@ -202,15 +220,19 @@
               </p>
             </div>
             <div class="card-footer">
-              <button class="btn-secondary">
+              <button id="openProcedure" class="btn-secondary">
                 Modifica o aggiungi procedura
               </button>
             </div>
           </article>
 
           <!-- LOGISTICA -->
-          <article class="card card-logistica">
-            <span class="card-badge">4</span>
+          <article class="card card-logistica" data-card="logistica">
+            <span class="card-badge js-card-badge" data-card-key="logistica">
+              <span class="badge-count" id="badgeCount-logistica">0</span>
+            </span>
+            <span class="card-badge-label js-card-badge-label" data-card-key="logistica"></span>
+
             <div class="card-header">
               <div class="card-icon">📦</div>
               <div class="card-title-group">
@@ -230,8 +252,12 @@
           </article>
 
           <!-- MAGAZZINIERA -->
-          <article class="card card-magazziniera">
-            <span class="card-badge">2</span>
+          <article class="card card-magazziniera" data-card="magazzino">
+            <span class="card-badge js-card-badge" data-card-key="magazzino">
+              <span class="badge-count" id="badgeCount-magazzino">0</span>
+            </span>
+            <span class="card-badge-label js-card-badge-label" data-card-key="magazzino"></span>
+
             <div class="card-header">
               <div class="card-icon">📋</div>
               <div class="card-title-group">
@@ -757,6 +783,66 @@
         </div>
       </article>
     </section>
+
+    <!-- ============ PAGINA PROCEDURE (SEMPLICE DEMO) ============ -->
+    <section id="procedurePage" class="page hidden">
+      <header class="page-header">
+        <button id="backFromProcedure" class="back-button">← Dashboard</button>
+        <div class="page-title-block">
+          <h1>Procedure interne</h1>
+          <p>Ricerca veloce e consultazione delle procedure divise per reparto.</p>
+        </div>
+      </header>
+
+      <article class="card">
+        <div class="form-row">
+          <label for="procedureSearch">Cerca tra le procedure</label>
+          <input id="procedureSearch" type="text" placeholder="Es. chiusura cassa, buono SSN, reso fornitore..." />
+        </div>
+
+        <div class="procedure-filters">
+          <button class="proc-filter-btn active" data-reparto="tutti">Tutti</button>
+          <button class="proc-filter-btn" data-reparto="cassa">Cassa / Banco</button>
+          <button class="proc-filter-btn" data-reparto="magazzino">Magazzino</button>
+          <button class="proc-filter-btn" data-reparto="servizi">Servizi</button>
+          <button class="proc-filter-btn" data-reparto="logistica">Logistica</button>
+        </div>
+
+        <div id="procedureList" class="procedure-list">
+          <!-- riempito da JS -->
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Dettaglio procedura</h2>
+        <p class="small-text">
+          Tocca una procedura dall’elenco per visualizzare qui il dettaglio completo.
+        </p>
+        <div id="procedureDetail" class="procedure-detail">
+          <p class="small-text muted">Nessuna procedura selezionata.</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ OVERLAY NOTIFICHE ============ -->
+    <div id="notificationOverlay" class="notif-overlay hidden">
+      <div class="notif-backdrop"></div>
+      <div class="notif-modal">
+        <button id="notifClose" class="notif-close" aria-label="Chiudi">✕</button>
+        <h2 id="notifTitle">Notifiche</h2>
+        <p id="notifIntro" class="small-text"></p>
+
+        <div id="notifList" class="notif-list">
+          <!-- riempito da JS -->
+        </div>
+
+        <div class="notif-footer">
+          <button id="notifCloseBottom" class="btn-secondary small">
+            Chiudi
+          </button>
+        </div>
+      </div>
+    </div>
 
   </main>
 </body>
