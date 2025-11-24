@@ -395,34 +395,51 @@ button {
   position: absolute;
   top: 12px;
   right: 16px;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
   background: radial-gradient(circle at 30% 30%, #ffebee 0, #ff1744 30%, #b71c1c 100%);
-  display: flex;
+  display: none; /* di base nascosto, lo mostra JS se ci sono nuove notifiche */
   align-items: center;
   justify-content: center;
   font-size: 13px;
   font-weight: 700;
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.09);
+  color: #fff;
 }
-/* ANIMAZIONE PER I BADGE */
-.card-badge {
+
+/* etichetta "Nuovo/Nuovi" */
+.card-badge-label {
+  position: absolute;
+  top: 14px;
+  right: 52px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  opacity: 0.9;
+  display: none;
+}
+
+/* ANIMAZIONE SOLO SE CI SONO NON LETTI */
+.card-badge.has-unread {
+  display: flex;
   animation: badgePulse 2.2s infinite ease-out;
 }
 
-.card-badge::after {
+.card-badge.has-unread::after {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.45);
   animation: badgeHalo 2.2s infinite ease-out;
   z-index: -1;
 }
+
 /* Card struttura */
 .card-header {
   display: flex;
@@ -495,6 +512,10 @@ button {
 
 .small-text {
   font-size: 13px;
+}
+
+.small-text.muted {
+  opacity: 0.7;
 }
 
 .card-footer {
@@ -1068,6 +1089,164 @@ button {
   margin-top: 4px;
 }
 
+/* ====== PAGINA PROCEDURE ====== */
+
+.procedure-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0 10px;
+}
+
+.proc-filter-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #e0f7fa;
+}
+
+.proc-filter-btn.active {
+  background: linear-gradient(135deg, #80cbc4, #26a69a);
+  color: #001012;
+}
+
+.procedure-list {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.proc-item {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 14px;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.proc-item-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.proc-item-title {
+  font-weight: 600;
+}
+
+.proc-item-meta {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.proc-tag {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.procedure-detail {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ====== OVERLAY NOTIFICHE ====== */
+
+.notif-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+}
+
+.notif-overlay.active {
+  display: block;
+}
+
+.notif-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.notif-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(480px, 92vw);
+  max-height: 80vh;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, rgba(8, 53, 85, 0.97), rgba(1, 15, 28, 0.97));
+  border-radius: 24px;
+  padding: 18px 18px 14px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.notif-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  font-size: 18px;
+  padding: 4px 6px;
+  border-radius: 999px;
+}
+
+.notif-modal h2 {
+  margin: 0 0 4px;
+  padding-right: 26px;
+}
+
+.notif-list {
+  margin-top: 10px;
+  padding-right: 4px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.notif-item {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 18px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.notif-text h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.notif-text p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.notif-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* ====== MEDIA QUERIES ====== */
 
 @media (max-width: 1100px) {
@@ -1144,6 +1323,7 @@ button {
     display: none;
   }
 }
+
 /* Animazioni badge */
 @keyframes badgePulse {
   0% {
