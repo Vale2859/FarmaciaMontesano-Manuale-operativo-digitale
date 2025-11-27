@@ -4,27 +4,26 @@
   <meta charset="UTF-8" />
   <title>Portale Farmacia Montesano</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#051729" />
-
-  <!-- PWA ready per NAS (file nella stessa cartella) -->
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" sizes="180x180" href="logo-192.png" />
-  <link rel="icon" type="image/png" href="logo-192.png" />
-
   <link rel="stylesheet" href="style.css" />
   <script src="script.js" defer></script>
+
+  <!-- Icone (puoi cambiare logo.jpg) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.jpg">
+  <link rel="icon" type="image/png" href="logo.jpg">
 </head>
 <body>
-  <!-- ============ LOGIN / REGISTRAZIONE ============ -->
+
+  <!-- ============ LOGIN ============ -->
   <div id="authContainer" class="auth-container">
     <div class="auth-card">
       <div class="auth-logo-wrap">
-        <img src="logo-192.png" alt="Farmacia Montesano" class="auth-logo" />
+        <img src="logo.jpg" alt="Farmacia Montesano" class="auth-logo" />
       </div>
       <h1>Portale Farmacia Montesano</h1>
       <p class="auth-intro">
-        Seleziona il tipo di accesso, inserisci le credenziali o registrati come dipendente.
+        Seleziona il tipo di accesso e inserisci le credenziali.
       </p>
+
       <div class="auth-tabs">
         <button class="auth-tab active" data-role="farmacia">Farmacia</button>
         <button class="auth-tab" data-role="titolare">Titolare</button>
@@ -35,7 +34,6 @@
         Accesso come: <span id="loginRoleLabel">Farmacia</span>
       </p>
 
-      <!-- LOGIN -->
       <form id="loginForm" class="auth-form">
         <div class="form-row">
           <label for="loginUsername">Username</label>
@@ -47,444 +45,629 @@
         </div>
         <button type="submit" class="btn-primary wide">Entra</button>
         <p class="login-hint">
-          Titolare / Farmacia: credenziali predefinite. Dipendente: usa quelle registrate.
+          Demo: per ora puoi inserire qualsiasi username e password.
         </p>
       </form>
-      <!-- REGISTRAZIONE DIPENDENTE -->
-      <div id="registerBox" class="register-box hidden">
-        <h2>Registrazione dipendente</h2>
-        <form id="registerForm" class="auth-form">
-          <div class="form-row">
-            <label for="regUsername">Nome utente (es. mario.rossi)</label>
-            <input id="regUsername" type="text" />
-          </div>
-          <div class="form-row">
-            <label for="regPassword">Password</label>
-            <input id="regPassword" type="password" />
-          </div>
-          <button type="submit" class="btn-secondary wide">Registra</button>
-          <p id="registerFeedback" class="form-feedback small"></p>
-        </form>
-      </div>
-
-      <button id="toggleRegister" class="link-button">
-        Sei un dipendente nuovo? Registrati
-      </button>
     </div>
   </div>
+
   <!-- ============ APP PRINCIPALE ============ -->
   <main id="app" class="app hidden">
 
-    <!-- HEADER -->
-    <header class="app-header">
-      <div class="header-left">
-        <img src="logo-192.png" alt="Farmacia Montesano" class="header-logo-big" />
-        <div>
-          <h1 class="header-title">FARMACIA MONTESANO</h1>
-          <p class="header-subtitle-main">PORTALE INTERNO</p>
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-row">
+          <img src="logo.jpg" alt="Farmacia Montesano" class="sidebar-logo" />
+          <span class="sidebar-title">Portale interno</span>
+        </div>
+        <button id="closeSidebar" class="icon-button" aria-label="Chiudi menu">✕</button>
+      </div>
+
+      <ul class="sidebar-list">
+        <li data-nav="dashboard">Dashboard</li>
+        <li data-nav="assenzePage">Assenze</li>
+        <li data-nav="turniPage">Farmacie di turno</li>
+        <li data-nav="comunicazioniPage">Comunicazioni</li>
+        <li data-nav="procedurePage">Procedure</li>
+        <li class="divider-label">Strumenti</li>
+        <li data-nav="archivioPage">Archivio file</li>
+        <li id="logoutBtn" class="logout">Logout</li>
+      </ul>
+    </aside>
+
+    <!-- HAMBURGER -->
+    <button id="hamburger" class="hamburger" aria-label="Apri menu">
+      ☰
+    </button>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section id="dashboard" class="dashboard">
+      <header class="dashboard-header">
+        <div class="dashboard-logo-block">
+          <img src="logo.jpg" alt="Farmacia Montesano" class="dash-logo" />
+        </div>
+        <div class="dashboard-header-text">
+          <h1>Farmacia Montesano</h1>
+          <p class="header-subtitle">Portale interno</p>
           <span id="currentRolePill" class="role-pill">Farmacia (accesso generico)</span>
         </div>
-      </div>
-      <div class="header-right card card-mini-turno">
-        <h2 class="turno-title">Farmacia di turno oggi</h2>
-        <div id="turnoTodayInfo" class="turno-info"></div>
-      </div>
-    </header>
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="dashboard">
-      <div class="cards-grid-main">
+      </header>
 
-        <!-- ASSENZE + CALENDARIO -->
-        <article class="card card-assenti card-link" data-section="assenzePage">
-          <div class="card-top-row">
-            <div class="card-top-left">
-              <div class="card-icon-circle">👥</div>
-              <div>
-                <p id="assenzeOggiDataLabel" class="assenze-data-label">Mer 26 Nov</p>
-                <h2 class="card-title">Assenze / permessi</h2>
-              </div>
-            </div>
-            <button class="card-notif-badge" data-card="assenze">
-              <span class="badge-label"></span>
-              <span class="badge-dot"></span>
+      <div class="dashboard-content">
+        <div class="cards-grid">
+
+          <!-- ASSENZE -->
+          <article class="card card-assenze">
+            <div class="card-badge js-card-badge" data-card-key="assenze">
               <span class="badge-count"></span>
-            </button>
-          </div>
-          <div class="assenti-content">
-            <div class="assenti-left">
-              <ul id="listaAssentiOggi" class="assenze-list"></ul>
+            </div>
+            <div class="card-badge-label" data-card-key="assenze"></div>
 
-              <h3 class="assenti-subtitle">Assenti prossimamente</h3>
-              <ul id="listaAssentiProssimi" class="assenze-list"></ul>
-
-              <div class="assenti-actions">
-                <button id="btnVaiTuttiAssenti" class="btn-secondary">
-                  Vai a tutti gli assenti
-                </button>
-                <button id="btnRichiediAssenza" class="btn-primary small hidden">
-                  Richiedi assenza / ritardo
-                </button>
-                <button id="btnSegnaAssenza" class="btn-primary small hidden">
-                  Segna assenza / ritardo
-                </button>
+            <div class="card-header">
+              <div class="card-icon">📅</div>
+              <div class="card-title-group">
+                <h2 id="assenzeTitle">Assenze del personale</h2>
+                <span class="chip chip-today">Oggi</span>
               </div>
             </div>
-
-            <div class="assenti-right">
-              <div class="cal-mini-header">
-                <button id="calPrevMonth" class="cal-nav">&lt;</button>
-                <span id="calMonthLabel">Novembre 2025</span>
-                <button id="calNextMonth" class="cal-nav">&gt;</button>
-              </div>
-              <div id="calMiniWeekdays" class="cal-mini-weekdays"></div>
-              <div id="calMiniGrid" class="cal-mini-grid"></div>
-              <p class="cal-legend">
-                <span class="cal-dot"></span> giorno con almeno un assente
+            <div class="card-body">
+              <p class="caption">Demo grafica assenze.</p>
+              <p class="small-text">
+                Consulta calendario, richieste e stato assenze.
               </p>
             </div>
-          </div>
-        </article>
-        <!-- CONSEGNE / RITIRI -->
-        <article class="card card-arrivi card-link" data-section="arriviPage">
-          <div class="card-top-row">
-            <div class="card-top-left">
-              <div class="card-icon-circle">🚚</div>
-              <h2 class="card-title">Consegne / ritiri</h2>
+            <div class="card-footer">
+              <button id="openAssenze" class="btn-primary">
+                Vai a Assenze
+              </button>
             </div>
-            <button class="card-notif-badge" data-card="arrivi">
-              <span class="badge-label"></span>
-              <span class="badge-dot"></span>
-              <span class="badge-count"></span>
-            </button>
-          </div>
-          <p class="card-text">
-            Registra consegne, ritiri di espositori e materiale.
-          </p>
-        </article>
+          </article>
 
-        <!-- PRODOTTI IN SCADENZA -->
-        <article class="card card-scadenze card-link" data-section="scadenzePage">
-          <div class="card-top-row">
-            <div class="card-top-left">
-              <div class="card-icon-circle">⏳</div>
-              <h2 class="card-title">Prodotti in scadenza</h2>
-            </div>
-            <button class="card-notif-badge" data-card="scadenze">
-              <span class="badge-label"></span>
-              <span class="badge-dot"></span>
+          <!-- FARMACIE DI TURNO -->
+          <article class="card card-turno">
+            <div class="card-badge js-card-badge" data-card-key="turni">
               <span class="badge-count"></span>
-            </button>
-          </div>
-          <p class="card-text">
-            Elenco completo, allerta a 45/30 giorni e prodotti scaduti.
-          </p>
-        </article>
+            </div>
+            <div class="card-badge-label" data-card-key="turni"></div>
 
-        <!-- CONSUMABILI -->
-        <article class="card card-consumabili card-link" data-section="consumabiliPage">
-          <div class="card-top-row">
-            <div class="card-top-left">
-              <div class="card-icon-circle">📦</div>
-              <h2 class="card-title">Consumabili</h2>
+            <div class="card-header">
+              <div class="card-icon">⏰</div>
+              <div class="card-title-group">
+                <h2>Farmacia di turno</h2>
+                <span class="chip chip-turno" id="turnoOrarioChip">00:00 – 24:00</span>
+              </div>
             </div>
-            <button class="card-notif-badge" data-card="consumabili">
-              <span class="badge-label"></span>
-              <span class="badge-dot"></span>
-              <span class="badge-count"></span>
-            </button>
-          </div>
-          <p class="card-text">
-            Lista quotidiana di caffè, carta, toner, rotoli POS e altro.
-          </p>
-        </article>
-        <!-- CAMBIO CASSA -->
-        <article class="card card-cambio card-link" data-section="cambioPage">
-          <div class="card-top-row">
-            <div class="card-top-left">
-              <div class="card-icon-circle">💶</div>
-              <h2 class="card-title">Cambio cassa</h2>
+            <div class="card-body">
+              <p><strong id="turnoNome">Farmacia Montesano</strong></p>
+              <p class="small-text" id="turnoIndirizzo">
+                Via Esempio 12, Matera<br />Tel: 0835 000000
+              </p>
+              <div class="divider"></div>
+              <p class="small-text">
+                <strong>Farmacia di appoggio</strong><br />
+                <span id="turnoAppoggio">
+                  Farmacia Centrale – Via Dante 8, Matera – Tel: 0835 111111
+                </span>
+              </p>
             </div>
-            <button class="card-notif-badge" data-card="cambio">
-              <span class="badge-label"></span>
-              <span class="badge-dot"></span>
-              <span class="badge-count"></span>
-            </button>
-          </div>
-          <p class="card-text">
-            Segnala velocemente: necessito riordino di monete e banconote.
-          </p>
-        </article>
+            <div class="card-footer">
+              <button id="openTurni" class="btn-secondary">
+                Lista farmacie di turno
+              </button>
+            </div>
+          </article>
 
-        <!-- COMUNICAZIONI -->
-        <article class="card card-comunicazioni card-link" data-section="comunicazioniPage">
-          <div class="card-top-row">
-            <div class="card-top-left">
-              <div class="card-icon-circle">💬</div>
-              <h2 class="card-title">Comunicazioni</h2>
-            </div>
-            <button class="card-notif-badge" data-card="comunicazioni">
-              <span class="badge-label"></span>
-              <span class="badge-dot"></span>
+          <!-- COMUNICAZIONI -->
+          <article class="card card-comunicazioni">
+            <div class="card-badge js-card-badge" data-card-key="comunicazioni">
               <span class="badge-count"></span>
-            </button>
-          </div>
-          <p class="card-text">
-            Messaggi interni, note veloci e avvisi per tutto lo staff.
-          </p>
-        </article>
+            </div>
+            <div class="card-badge-label" data-card-key="comunicazioni"></div>
 
+            <div class="card-header">
+              <div class="card-icon">📢</div>
+              <div class="card-title-group">
+                <h2>Comunicazioni</h2>
+              </div>
+            </div>
+            <div class="card-body card-body-list">
+              <div class="list-item">
+                <span class="list-title">Nuova procedura notturni</span>
+                <span class="list-meta">Oggi · Urgente</span>
+              </div>
+              <div class="list-item">
+                <span class="list-title">Verifica armadietto stupefacenti</span>
+                <span class="list-meta">Ieri · Importante</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button id="openComunicazioni" class="btn-primary">
+                Vai a Comunicazioni
+              </button>
+            </div>
+          </article>
+
+          <!-- PROCEDURE -->
+          <article class="card card-procedure">
+            <div class="card-badge js-card-badge" data-card-key="procedure">
+              <span class="badge-count"></span>
+            </div>
+            <div class="card-badge-label" data-card-key="procedure"></div>
+
+            <div class="card-header">
+              <div class="card-icon">🗂️</div>
+              <div class="card-title-group">
+                <h2>Procedure</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Consulta rapidamente le procedure interne della farmacia.
+              </p>
+            </div>
+            <div class="card-footer">
+              <button id="openProcedure" class="btn-secondary">
+                Vai a Procedure
+              </button>
+            </div>
+          </article>
+
+          <!-- LOGISTICA -->
+          <article class="card card-logistica">
+            <div class="card-badge js-card-badge" data-card-key="logistica">
+              <span class="badge-count"></span>
+            </div>
+            <div class="card-badge-label" data-card-key="logistica"></div>
+
+            <div class="card-header">
+              <div class="card-icon">📦</div>
+              <div class="card-title-group">
+                <h2>Logistica</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Arrivi corrieri, espositori e materiale (sezione demo).
+              </p>
+            </div>
+            <div class="card-footer">
+              <button class="btn-secondary">In arrivo</button>
+            </div>
+          </article>
+
+          <!-- MAGAZZINIERA -->
+          <article class="card card-magazziniera">
+            <div class="card-badge js-card-badge" data-card-key="magazzino">
+              <span class="badge-count"></span>
+            </div>
+            <div class="card-badge-label" data-card-key="magazzino"></div>
+
+            <div class="card-header">
+              <div class="card-icon">📋</div>
+              <div class="card-title-group">
+                <h2>Magazziniera</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Scorte, scadenze e inventari veloci (sezione demo).
+              </p>
+            </div>
+            <div class="card-footer">
+              <button class="btn-secondary">In arrivo</button>
+            </div>
+          </article>
+
+          <!-- ARCHIVIO FILE -->
+          <article class="card card-archivio">
+            <div class="card-header">
+              <div class="card-icon">🗄️</div>
+              <div class="card-title-group">
+                <h2>Archivio file</h2>
+                <span class="chip chip-archivio">Rapido & intuitivo</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="small-text">
+                Gestisci file e cartelle come su un PC:
+                doppio click per aprire, tasto destro o pressione lunga
+                per copiare, incollare, rinominare o eliminare.
+              </p>
+            </div>
+            <div class="card-footer">
+              <button id="openArchivio" class="btn-primary">
+                Apri Archivio
+              </button>
+            </div>
+          </article>
+
+        </div>
       </div>
     </section>
-    <!-- ============ PAGINA ASSENZE / PERMESSI ============ -->
+
+    <!-- ============ PAGINA ASSENZE ============ -->
     <section id="assenzePage" class="page hidden">
       <header class="page-header">
-        <button class="back-button" data-back="dashboard">← Dashboard</button>
+        <button id="backFromAssenze" class="back-button">← Dashboard</button>
         <div class="page-title-block">
-          <h1>Assenze / permessi</h1>
-          <p>Richieste, approvazioni e riepilogo per ruolo.</p>
+          <h1>Assenze del personale</h1>
+          <p>Calendario, assenti di oggi e richieste di ferie/permessi (demo).</p>
+        </div>
+        <div class="summary-badges">
+          <span class="badge badge-today">Oggi</span>
+          <span class="badge badge-week">Settimana</span>
+          <span class="badge badge-month">Mese</span>
         </div>
       </header>
 
-      <div class="page-content-grid">
-        <!-- Elenco assenti oggi + prossimi (view) -->
-        <article class="card">
-          <h2>Oggi e prossimi giorni</h2>
+      <div class="assenze-top-cards">
+        <div class="mini-card">
+          <h3>Richieste in attesa</h3>
+          <p class="big-number">2</p>
+          <p class="small-text">Permessi/ferie da approvare.</p>
+        </div>
+        <div class="mini-card">
           <h3>Assenti oggi</h3>
-          <ul id="pageAssentiOggi" class="assenze-list"></ul>
-          <h3>Assenti prossimamente</h3>
-          <ul id="pageAssentiProssimi" class="assenze-list"></ul>
-        </article>
-        <!-- Richiesta dipendente -->
-        <article id="boxRichiestaAssenza" class="card hidden">
-          <h2>Richiedi assenza / permesso</h2>
-          <form id="formRichiestaAssenza" class="simple-form">
-            <div class="form-row">
-              <label for="assTipo">Tipo richiesta</label>
-              <select id="assTipo">
-                <option value="assenza">Assenza</option>
-                <option value="permesso">Permesso</option>
-                <option value="ritardo">Ritardo</option>
-                <option value="uscita anticipata">Uscita anticipata</option>
+          <p class="big-number">1</p>
+          <p class="small-text">Demo statica.</p>
+        </div>
+        <div class="mini-card">
+          <h3>Ferie mese</h3>
+          <p class="big-number">4</p>
+          <p class="small-text">Totale giornate ferie richieste.</p>
+        </div>
+      </div>
+
+      <div class="assenze-layout">
+        <!-- Calendario DEMO -->
+        <article class="card calendar-card">
+          <div class="calendar-header">
+            <h2>Calendario assenze (demo)</h2>
+            <div class="calendar-controls">
+              <select>
+                <option>Dicembre 2025</option>
+                <option>Gennaio 2026</option>
               </select>
             </div>
-            <div class="form-row two-cols">
-              <div>
-                <label for="assDal">Dal</label>
-                <input type="date" id="assDal" />
-              </div>
-              <div>
-                <label for="assAl">Al</label>
-                <input type="date" id="assAl" />
-              </div>
-            </div>
-            <div class="form-row">
-              <label for="assMotivo">Motivo</label>
-              <textarea id="assMotivo" rows="2"></textarea>
-            </div>
-            <button type="submit" class="btn-primary">Invia richiesta</button>
-            <p id="assRichiestaFeedback" class="form-feedback hidden"></p>
-          </form>
-
-          <h3>Storico personale</h3>
-          <div id="storicoPersonale" class="table-like small"></div>
-        </article>
-
-        <!-- Gestione titolare -->
-        <article id="boxApprovazioneAssenze" class="card hidden">
-          <h2>Richieste da gestire (tutti)</h2>
-          <div id="listaRichiesteAssenze" class="table-like small"></div>
-        </article>
-      </div>
-    </section>
-    <!-- ============ PAGINA CONSEGNE / RITIRI ============ -->
-    <section id="arriviPage" class="page hidden">
-      <header class="page-header">
-        <button class="back-button" data-back="dashboard">← Dashboard</button>
-        <div class="page-title-block">
-          <h1>Consegne / ritiri</h1>
-          <p>Corrieri, espositori, materiale in ingresso o uscita.</p>
-        </div>
-      </header>
-
-      <div class="page-content-grid">
-        <article class="card">
-          <h2>Registra consegna / ritiro</h2>
-          <form id="formArrivo" class="simple-form">
-            <div class="form-row">
-              <label for="arrData">Data</label>
-              <input type="date" id="arrData" />
-            </div>
-            <div class="form-row">
-              <label for="arrDescrizione">Descrizione</label>
-              <input type="text" id="arrDescrizione" placeholder="Es. Corriere ABC, espositore Vichy..." />
-            </div>
-            <div class="form-row">
-              <label for="arrNote">Note</label>
-              <textarea id="arrNote" rows="2"></textarea>
-            </div>
-            <button type="submit" class="btn-primary">Registra</button>
-            <p id="arrivoFeedback" class="form-feedback hidden"></p>
-          </form>
-        </article>
-
-        <article class="card">
-          <h2>Elenco consegne / ritiri</h2>
-          <div id="listaArrivi" class="table-like small"></div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ============ PAGINA PRODOTTI IN SCADENZA ============ -->
-    <section id="scadenzePage" class="page hidden">
-      <header class="page-header">
-        <button class="back-button" data-back="dashboard">← Dashboard</button>
-        <div class="page-title-block">
-          <h1>Prodotti in scadenza</h1>
-          <p>Elenco completo, allerta a 45/30 giorni e scaduti non rimossi.</p>
-        </div>
-      </header>
-
-      <div class="page-content-grid">
-        <article class="card">
-          <h2>Segnala scadenza</h2>
-          <form id="formScadenza" class="simple-form">
-            <div class="form-row">
-              <label for="scadNome">Nome prodotto</label>
-              <input type="text" id="scadNome" />
-            </div>
-            <div class="form-row two-cols">
-              <div>
-                <label for="scadPezzi">Numero pezzi</label>
-                <input type="number" id="scadPezzi" min="1" />
-              </div>
-              <div>
-                <label for="scadData">Mese / anno scadenza</label>
-                <input type="month" id="scadData" />
-              </div>
-            </div>
-            <button type="submit" class="btn-primary">Registra scadenza</button>
-            <p id="scadFeedback" class="form-feedback hidden"></p>
-          </form>
-        </article>
-
-        <article class="card">
-          <h2>Tutti i prodotti in scadenza</h2>
-          <p class="small-muted">Evidenziati quelli entro 45 giorni.</p>
-          <div id="listaScadenze" class="table-like small"></div>
-
-          <h3>Prodotti scaduti non ancora tolti</h3>
-          <div id="listaScaduti" class="table-like small"></div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ============ PAGINA CONSUMABILI ============ -->
-    <section id="consumabiliPage" class="page hidden">
-      <header class="page-header">
-        <button class="back-button" data-back="dashboard">← Dashboard</button>
-        <div class="page-title-block">
-          <h1>Consumabili</h1>
-          <p>Controllo quotidiano di caffè, carta, toner, rotoli e altro.</p>
-        </div>
-      </header>
-
-      <article class="card">
-        <h2>Lista consumabili giornaliera</h2>
-        <p class="small-muted">
-          Spunta ciò che è stato controllato oggi. I flag si resettano ogni giorno.
-        </p>
-        <form id="formConsumabile" class="simple-form consumabili-form-inline">
-          <div class="form-row">
-            <label for="consLabel">Aggiungi nuovo consumabile</label>
-            <input type="text" id="consLabel" placeholder="Es. Bicchieri plastica, tovaglioli..." />
           </div>
-          <button type="submit" class="btn-secondary">Aggiungi alla lista</button>
-          <p id="consFeedback" class="form-feedback hidden"></p>
-        </form>
 
-        <div id="listaConsumabili" class="consumabili-list"></div>
+          <div class="calendar-grid">
+            <div class="calendar-row calendar-header-row">
+              <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
+            </div>
+            <!-- Riga esempio -->
+            <div class="calendar-row">
+              <span class="empty">.</span>
+              <span class="empty">.</span>
+              <span class="day"><span>1</span></span>
+              <span class="day"><span>2</span></span>
+              <span class="day day-holiday"><span>3</span></span>
+              <span class="day"><span>4</span></span>
+              <span class="day"><span>5</span></span>
+            </div>
+          </div>
+
+          <div class="calendar-legend">
+            <span><span class="legend-dot ferie"></span>Ferie</span>
+            <span><span class="legend-dot permesso"></span>Permesso</span>
+            <span><span class="legend-dot oggi"></span>Oggi</span>
+          </div>
+        </article>
+
+        <!-- Oggi demo -->
+        <article class="card oggi-card">
+          <h2>Assenti oggi (demo)</h2>
+          <ul class="assenze-list small">
+            <li>
+              <span>Mario Rossi</span>
+              <span class="tag tag-ferie">Ferie</span>
+            </li>
+          </ul>
+        </article>
+      </div>
+
+      <!-- Richieste assenza demo -->
+      <article class="card requests-card">
+        <h2>Richieste di assenza (demo)</h2>
+        <div class="requests-table">
+          <div class="requests-row header">
+            <span>Nome</span>
+            <span>Dal</span>
+            <span>Al</span>
+            <span>Tipo</span>
+            <span>Stato</span>
+          </div>
+          <div class="requests-row">
+            <span>Mario Rossi</span>
+            <span>20/12</span>
+            <span>22/12</span>
+            <span>Ferie</span>
+            <span><span class="status status-pending">In attesa</span></span>
+          </div>
+        </div>
       </article>
-    </section>
 
-    <!-- ============ PAGINA CAMBIO CASSA ============ -->
-    <section id="cambioPage" class="page hidden">
-      <header class="page-header">
-        <button class="back-button" data-back="dashboard">← Dashboard</button>
-        <div class="page-title-block">
-          <h1>Cambio cassa</h1>
-          <p>Segnala velocemente necessità di monete e banconote.</p>
-        </div>
-      </header>
-
-      <article class="card">
-        <h2>Richiesta cambio cassa</h2>
-        <form id="formCambio" class="simple-form">
-          <div class="form-row">
-            <label for="cambioDettaglio">Dettaglio richiesta</label>
-            <input type="text" id="cambioDettaglio" placeholder="Es. servono 20 pezzi da 0,50€" />
+      <!-- Form assenza demo -->
+      <article class="card form-card">
+        <h2>Invia richiesta di assenza (demo)</h2>
+        <form class="assenze-form">
+          <div class="form-row two-cols">
+            <div class="form-row">
+              <label>Dal</label>
+              <input type="date" />
+            </div>
+            <div class="form-row">
+              <label>Al</label>
+              <input type="date" />
+            </div>
           </div>
           <div class="form-row">
-            <label for="cambioUrgenza">Urgenza</label>
-            <select id="cambioUrgenza">
-              <option value="normale">Normale</option>
-              <option value="alta">Alta</option>
+            <label>Tipo</label>
+            <select>
+              <option>Ferie</option>
+              <option>Permesso</option>
+              <option>Malattia</option>
             </select>
           </div>
-          <button type="submit" class="btn-primary">Invia richiesta</button>
-          <p id="cambioFeedback" class="form-feedback hidden"></p>
+          <div class="form-row">
+            <label>Note</label>
+            <textarea rows="3"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Invia richiesta (demo)</button>
+          </div>
         </form>
+        <p id="assenzeFeedback" class="form-feedback hidden">
+          ✅ Richiesta inviata (demo). In futuro verrà salvata sul server.
+        </p>
       </article>
+    </section>
 
-      <article class="card">
-        <h2>Ultime richieste</h2>
-        <div id="listaCambio" class="table-like small"></div>
-      </article>
+    <!-- ============ PAGINA TURNI ============ -->
+    <section id="turniPage" class="page hidden">
+      <header class="page-header">
+        <button id="backFromTurni" class="back-button">← Dashboard</button>
+        <div class="page-title-block">
+          <h1>Farmacie di turno</h1>
+          <p>Oggi, prossimi giorni e mese (demo dati).</p>
+        </div>
+      </header>
+
+      <div class="turni-tabs">
+        <button class="turni-tab active" data-view="oggi">Oggi</button>
+        <button class="turni-tab" data-view="settimana">Settimana</button>
+        <button class="turni-tab" data-view="mese">Mese</button>
+      </div>
+
+      <div class="turni-layout">
+        <article class="card turni-oggi-card">
+          <h2>Turno di oggi</h2>
+          <p class="small-text">Farmacia principale e farmacia di appoggio.</p>
+
+          <div class="turno-main">
+            <h3 id="turnoOggiNome">Farmacia Montesano</h3>
+            <p id="turnoOggiIndirizzo" class="small-text">
+              Via Esempio 12, Matera
+            </p>
+            <p id="turnoOggiTelefono" class="small-text">
+              Tel: 0835 000000
+            </p>
+            <span id="turnoOggiOrario" class="chip chip-turno">00:00 – 24:00</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="turno-appoggio">
+            <p class="small-text label">Farmacia di appoggio</p>
+            <h3 id="turnoOggiAppoggioNome">Farmacia Centrale</h3>
+            <p id="turnoOggiAppoggioDettagli" class="small-text">
+              Via Dante 8, Matera – Tel: 0835 111111
+            </p>
+          </div>
+        </article>
+
+        <article class="card turni-table-card">
+          <div class="turni-table-header">
+            <div>
+              <h2>Elenco turni</h2>
+              <p class="small-text">
+                Filtra per mese e farmacia.
+              </p>
+            </div>
+            <div class="turni-filters">
+              <select id="turniMeseSelect">
+                <option value="all">Tutti i mesi</option>
+                <option value="12">Dicembre</option>
+                <option value="1">Gennaio</option>
+              </select>
+              <select id="turniFarmaciaSelect">
+                <option value="all">Tutte le farmacie</option>
+                <option value="Farmacia Montesano">Farmacia Montesano</option>
+                <option value="Farmacia Centrale">Farmacia Centrale</option>
+                <option value="Farmacia Madonna delle Grazie">Farmacia Madonna delle Grazie</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="turni-table">
+            <div class="turni-row header">
+              <span>Data</span>
+              <span>Orario</span>
+              <span>Farmacia principale</span>
+              <span>Farmacia di appoggio</span>
+              <span>Telefono</span>
+              <span>Note</span>
+            </div>
+            <div id="turniRows"></div>
+          </div>
+        </article>
+      </div>
     </section>
 
     <!-- ============ PAGINA COMUNICAZIONI ============ -->
     <section id="comunicazioniPage" class="page hidden">
       <header class="page-header">
-        <button class="back-button" data-back="dashboard">← Dashboard</button>
+        <button id="backFromComunicazioni" class="back-button">← Dashboard</button>
         <div class="page-title-block">
           <h1>Comunicazioni interne</h1>
-          <p>Messaggi rapidi per tutto lo staff.</p>
+          <p>Avvisi, note e messaggi (demo).</p>
+        </div>
+        <div class="summary-badges">
+          <span id="badgeTotComunicazioni" class="badge badge-week">Totali: 0</span>
+          <span id="badgeNonLette" class="badge badge-pending">Non lette: 0</span>
+          <span id="badgeUrgenti" class="badge badge-pending">Urgenti: 0</span>
         </div>
       </header>
 
-      <div class="page-content-grid">
-        <article class="card">
-          <h2>Nuova comunicazione</h2>
-          <form id="formComunicazione" class="simple-form">
-            <div class="form-row">
-              <label for="commTitolo">Titolo</label>
-              <input type="text" id="commTitolo" />
-            </div>
-            <div class="form-row">
-              <label for="commTesto">Testo</label>
-              <textarea id="commTesto" rows="3"></textarea>
-            </div>
-            <button type="submit" class="btn-primary">Invia comunicazione</button>
-            <p id="commFeedback" class="form-feedback hidden"></p>
-          </form>
+      <div class="comunicazioni-layout">
+        <article class="card comunicazioni-list-card">
+          <h2>Ultime comunicazioni</h2>
+          <p class="small-text">
+            Ordinato dalla più recente (demo).
+          </p>
+          <div id="comunicazioniList" class="comunicazioni-list"></div>
         </article>
 
-        <article class="card">
-          <h2>Comunicazioni recenti</h2>
-          <div id="listaComunicazioni" class="table-like small"></div>
+        <article class="card comunicazioni-side-card">
+          <h2>Filtri & nuova comunicazione (demo)</h2>
+
+          <div class="form-row">
+            <label for="filtroCategoria">Categoria</label>
+            <select id="filtroCategoria">
+              <option value="tutte">Tutte</option>
+              <option value="urgente">Urgente</option>
+              <option value="importante">Importante</option>
+              <option value="informativa">Informativa</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="filtroSoloNonLette" />
+              <span>Mostra solo non lette</span>
+            </label>
+          </div>
+
+          <div class="divider"></div>
+
+          <form id="comunicazioneForm" class="comunicazione-form">
+            <div class="form-row">
+              <label for="comTitolo">Titolo</label>
+              <input id="comTitolo" type="text" placeholder="Es. Aggiornamento notturni" />
+            </div>
+            <div class="form-row">
+              <label for="comCategoria">Categoria</label>
+              <select id="comCategoria">
+                <option value="urgente">Urgente</option>
+                <option value="importante">Importante</option>
+                <option value="informativa">Informativa</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="comTesto">Testo</label>
+              <textarea id="comTesto" rows="3"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Invia comunicazione (demo)</button>
+            </div>
+            <p id="comunicazioneFeedback" class="form-feedback hidden">
+              ✅ Comunicazione registrata (demo).
+            </p>
+          </form>
         </article>
       </div>
     </section>
 
-    <!-- OVERLAY NOTIFICHE GENERALE -->
-    <div id="notifOverlay" class="notif-overlay hidden">
+    <!-- ============ PAGINA PROCEDURE ============ -->
+    <section id="procedurePage" class="page hidden">
+      <header class="page-header">
+        <button id="backFromProcedure" class="back-button">← Dashboard</button>
+        <div class="page-title-block">
+          <h1>Procedure interne</h1>
+          <p>Ricerca veloce per reparto.</p>
+        </div>
+      </header>
+
+      <article class="card">
+        <div class="form-row">
+          <label for="procedureSearch">Cerca</label>
+          <input id="procedureSearch" type="text" placeholder="Es. chiusura cassa, buoni SSN..." />
+        </div>
+
+        <div class="procedure-filters">
+          <button class="proc-filter-btn active" data-reparto="tutti">Tutti</button>
+          <button class="proc-filter-btn" data-reparto="cassa">Cassa / Banco</button>
+          <button class="proc-filter-btn" data-reparto="magazzino">Magazzino</button>
+          <button class="proc-filter-btn" data-reparto="servizi">Servizi</button>
+          <button class="proc-filter-btn" data-reparto="logistica">Logistica</button>
+        </div>
+
+        <div id="procedureList" class="procedure-list"></div>
+      </article>
+
+      <article class="card">
+        <h2>Dettaglio procedura</h2>
+        <p class="small-text">
+          Tocca una procedura per vedere qui i dettagli.
+        </p>
+        <div id="procedureDetail" class="procedure-detail">
+          <p class="small-text muted">Nessuna procedura selezionata.</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ PAGINA ARCHIVIO FILE ============ -->
+    <section id="archivioPage" class="page hidden">
+      <header class="page-header">
+        <button id="backFromArchivio" class="back-button">← Dashboard</button>
+        <div class="page-title-block">
+          <h1>Archivio file</h1>
+          <p>Cartelle e file stile PC, super semplice.</p>
+        </div>
+      </header>
+
+      <article class="card archivio-card">
+        <div class="archivio-toolbar">
+          <div class="archivio-path">
+            Percorso: <span id="archivioPath">/root</span>
+          </div>
+          <div class="archivio-actions">
+            <button id="archivioUp" class="btn-secondary small">⬆ Cartella su</button>
+            <button id="archivioNewFolder" class="btn-secondary small">+ Nuova cartella</button>
+            <button id="archivioBtnUpload" class="btn-primary small">⬆ Carica file</button>
+            <input id="archivioUpload" type="file" multiple class="hidden" />
+          </div>
+        </div>
+
+        <p class="small-text long-press-hint">
+          💡 PC: tasto destro per opzioni · Telefono: tieni premuto sul file/cartella.
+        </p>
+
+        <div id="archivioGrid" class="file-grid">
+          <!-- Popolato da JS -->
+        </div>
+      </article>
+    </section>
+
+    <!-- MENU TASTO DESTRO ARCHIVIO -->
+    <div id="archivioContextMenu" class="context-menu hidden">
+      <button id="menuNuova" class="context-menu-item">📁 Nuova cartella</button>
+      <button id="menuRinomina" class="context-menu-item">✏️ Rinomina</button>
+      <button id="menuCopia" class="context-menu-item">📄 Copia</button>
+      <button id="menuIncolla" class="context-menu-item">📥 Incolla</button>
+      <button id="menuDownload" class="context-menu-item">⬇️ Scarica file</button>
+      <button id="menuElimina" class="context-menu-item danger">🗑 Elimina</button>
+    </div>
+
+    <!-- OVERLAY NOTIFICHE CARD -->
+    <div id="notificationOverlay" class="notif-overlay hidden">
       <div class="notif-backdrop"></div>
       <div class="notif-modal">
         <button id="notifClose" class="notif-close" aria-label="Chiudi">✕</button>
         <h2 id="notifTitle">Notifiche</h2>
-        <p id="notifIntro" class="notif-intro"></p>
+        <p id="notifIntro" class="small-text"></p>
         <div id="notifList" class="notif-list"></div>
         <div class="notif-footer">
-          <button id="notifSegnaTutte" class="btn-secondary small">Segna tutte come lette</button>
           <button id="notifCloseBottom" class="btn-secondary small">Chiudi</button>
         </div>
       </div>
@@ -493,3 +676,1368 @@
   </main>
 </body>
 </html>
+
+
+STILE:
+/* ====== RESET ====== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top left, #0fd2ff 0, #00426b 35%, #001827 80%);
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ====== BUTTONS ====== */
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary,
+.btn-secondary {
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 10px 18px;
+  font-size: 14px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00c853, #00e676);
+  color: #001016;
+  box-shadow: 0 10px 25px rgba(0, 200, 83, 0.45);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(0, 200, 83, 0.6);
+}
+
+.btn-secondary {
+  background: rgba(0, 0, 0, 0.72);
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.8);
+}
+
+.btn-secondary.small,
+.btn-primary.small {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.btn-primary.wide {
+  width: 100%;
+}
+
+/* ====== LOGIN ====== */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(135deg, rgba(4, 32, 61, 0.97), rgba(1, 15, 28, 0.97));
+  border-radius: 28px;
+  padding: 26px 22px 26px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.75),
+    0 0 1px rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  color: #ffffff;
+}
+
+.auth-logo-wrap {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.auth-logo {
+  max-width: 210px;
+  width: 80%;
+  display: inline-block;
+  filter: drop-shadow(0 14px 35px rgba(0, 0, 0, 0.6));
+}
+
+.auth-card h1 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.auth-intro {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 14px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 4px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+.auth-tab {
+  flex: 1;
+  border-radius: 999px;
+  padding: 8px 0;
+  background: transparent;
+  color: #e0e6ff;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.auth-tab.active {
+  background: linear-gradient(135deg, #00c853, #00e676);
+  color: #001016;
+  opacity: 1;
+}
+
+.auth-subtitle {
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.auth-subtitle span {
+  font-weight: 700;
+}
+
+.auth-form .form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.auth-form label {
+  font-size: 13px;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.auth-form input {
+  border-radius: 999px;
+  border: none;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.auth-form input:focus {
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 230, 118, 0.9),
+    0 0 0 1px rgba(0, 230, 118, 0.3);
+}
+
+.login-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* ====== APP LAYOUT ====== */
+.app {
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 32px;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 260px;
+  background: rgba(1, 14, 26, 0.98);
+  color: #ffffff;
+  transform: translateX(-270px);
+  transition: transform 0.25s ease-out;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 14px;
+  box-shadow: 12px 0 35px rgba(0, 0, 0, 0.85);
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.sidebar-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-logo {
+  width: 40px;
+  height: auto;
+  border-radius: 10px;
+}
+
+.sidebar-title {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.icon-button {
+  background: transparent;
+  color: #ffffff;
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.sidebar-list li {
+  padding: 10px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.sidebar-list li:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateX(2px);
+}
+
+.sidebar-list li.logout {
+  margin-top: 12px;
+  color: #ff8a80;
+}
+
+.sidebar-list li.divider-label {
+  text-transform: uppercase;
+  font-size: 11px;
+  opacity: 0.6;
+  margin-top: 8px;
+  margin-bottom: 2px;
+  cursor: default;
+}
+
+.hamburger {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 30;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.75);
+}
+
+/* ====== DASHBOARD ====== */
+
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 70px 16px 32px;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.dashboard-logo-block {
+  flex-shrink: 0;
+}
+
+.dash-logo {
+  width: 230px;
+  max-width: 60vw;
+  height: auto;
+  filter: drop-shadow(0 22px 60px rgba(0, 0, 0, 0.8));
+}
+
+.dashboard-header-text h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.header-subtitle {
+  margin: 2px 0 6px;
+  font-size: 13px;
+  opacity: 0.9;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.role-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.7);
+  font-size: 12px;
+}
+
+/* Contenuto centrale con margini anche su mobile */
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 10px 32px;
+}
+
+/* Cards grid */
+.cards-grid {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
+}
+
+/* Card base */
+.card {
+  position: relative;
+  background: linear-gradient(145deg, rgba(8, 53, 85, 0.97), rgba(4, 24, 42, 0.98));
+  border-radius: 26px;
+  padding: 18px 18px 16px;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(18px);
+}
+
+/* Colori specifici */
+.card-assenze {
+  background: linear-gradient(145deg, #00c853, #009c3b);
+}
+.card-turno {
+  background: linear-gradient(145deg, #2196f3, #1769aa);
+}
+.card-comunicazioni {
+  background: linear-gradient(145deg, #ff4081, #d81b60);
+}
+.card-procedure {
+  background: linear-gradient(145deg, #26a69a, #00897b);
+}
+.card-logistica {
+  background: linear-gradient(145deg, #fdd835, #f9a825);
+}
+.card-magazziniera {
+  background: linear-gradient(145deg, #1e88e5, #1565c0);
+}
+
+/* Badge notifica */
+.card-badge {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #ffebee 0, #ff1744 30%, #b71c1c 100%);
+  display: none; /* di base nascosto, lo mostra JS se ci sono nuove notifiche */
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.09);
+  color: #fff;
+}
+
+/* etichetta "Nuovo/Nuovi" */
+.card-badge-label {
+  position: absolute;
+  top: 14px;
+  right: 52px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  opacity: 0.9;
+  display: none;
+}
+
+/* ANIMAZIONE SOLO SE CI SONO NON LETTI */
+.card-badge.has-unread {
+  display: flex;
+  animation: badgePulse 2.2s infinite ease-out;
+}
+
+.card-badge.has-unread::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  animation: badgeHalo 2.2s infinite ease-out;
+  z-index: -1;
+}
+
+/* Card struttura */
+.card-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.card-title-group h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.chip-today {
+  background: rgba(0, 0, 0, 0.36);
+}
+
+.chip-turno {
+  background: rgba(0, 0, 0, 0.38);
+}
+
+.card-body {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.card-body-list .list-item {
+  background: rgba(0, 0, 0, 0.16);
+  padding: 7px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-title {
+  font-weight: 600;
+}
+
+.list-meta {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.caption {
+  font-size: 13px;
+  opacity: 0.95;
+  margin-top: 0;
+}
+
+.small-text {
+  font-size: 13px;
+}
+
+.small-text.muted {
+  opacity: 0.7;
+}
+
+.card-footer {
+  margin-top: 10px;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.25);
+  margin: 10px 0;
+}
+
+/* ====== PAGINE INTERNE GENERICHE ====== */
+.page {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 70px 16px 32px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.page-title-block h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+}
+
+.page-title-block p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.back-button {
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.summary-badges {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-pending {
+  background: rgba(255, 214, 0, 0.16);
+}
+.badge-approved {
+  background: rgba(0, 230, 118, 0.18);
+}
+.badge-rejected {
+  background: rgba(255, 82, 82, 0.22);
+}
+.badge-today {
+  background: rgba(129, 212, 250, 0.3);
+}
+.badge-week {
+  background: rgba(200, 230, 201, 0.3);
+}
+.badge-month {
+  background: rgba(244, 143, 177, 0.3);
+}
+
+/* ====== PAGINA ASSENZE ====== */
+
+.assenze-top-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.mini-card {
+  background: rgba(1, 22, 39, 0.92);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85);
+}
+
+.mini-card h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.big-number {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Layout centrale assenze */
+.assenze-layout {
+  display: grid;
+  grid-template-columns: 2.1fr 1.1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* Calendario */
+.calendar-card .calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.calendar-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar-controls select {
+  border-radius: 999px;
+  padding: 6px 10px;
+  border: none;
+  font-size: 13px;
+}
+
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.calendar-grid {
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 18px;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.calendar-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.calendar-header-row {
+  opacity: 0.85;
+}
+
+.calendar-row span {
+  text-align: center;
+  padding: 4px 0;
+}
+
+.day {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  position: relative;
+}
+
+.day.today {
+  background: rgba(0, 230, 118, 0.26);
+}
+
+.day-holiday {
+  background: rgba(255, 193, 7, 0.26);
+}
+
+.empty {
+  opacity: 0;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+}
+
+.dot-ferie {
+  background: #ffca28;
+}
+.dot-oggi {
+  background: #00e676;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.legend-dot.ferie {
+  background: #ffca28;
+}
+.legend-dot.permesso {
+  background: #80deea;
+}
+.legend-dot.oggi {
+  background: #00e676;
+}
+
+/* Oggi card */
+.oggi-card h2 {
+  margin-top: 0;
+}
+
+.assenze-list {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.assenze-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.assenze-list.small li {
+  font-size: 13px;
+}
+
+.tag {
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.tag-ferie {
+  background: rgba(255, 214, 0, 0.22);
+}
+.tag-permesso {
+  background: rgba(129, 212, 250, 0.24);
+}
+.tag-malattia {
+  background: rgba(244, 143, 177, 0.26);
+}
+
+/* Tabella richieste assenza */
+.requests-card {
+  margin-bottom: 20px;
+}
+
+.requests-table {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 18px;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.requests-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr 1.1fr 1.1fr 1.6fr;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.requests-row.header {
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.status {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+.status-approved {
+  background: rgba(0, 230, 118, 0.3);
+}
+.status-pending {
+  background: rgba(255, 241, 118, 0.3);
+}
+.status-rejected {
+  background: rgba(244, 67, 54, 0.4);
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.link-button {
+  background: transparent;
+  color: #bbdefb;
+  font-size: 12px;
+  padding: 0;
+}
+
+.link-button.danger {
+  color: #ff8a80;
+}
+
+/* Form assenze */
+.form-card .assenze-form {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.form-row.two-cols {
+  flex-direction: row;
+  gap: 10px;
+}
+
+.form-row label {
+  margin-bottom: 3px;
+  font-size: 13px;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  border-radius: 12px;
+  border: none;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.checkbox-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.form-actions {
+  margin-top: 8px;
+}
+
+.form-feedback {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+/* ====== PAGINA TURNI ====== */
+
+.turni-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.turni-tab {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #e0f7fa;
+  font-size: 13px;
+}
+
+.turni-tab.active {
+  background: linear-gradient(135deg, #29b6f6, #00b0ff);
+  color: #00101a;
+}
+
+.turni-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 2fr;
+  gap: 20px;
+}
+
+.turni-oggi-card h2 {
+  margin-top: 0;
+}
+
+.turno-main h3,
+.turno-appoggio h3 {
+  margin: 2px 0 2px;
+}
+
+.turno-main {
+  margin-bottom: 10px;
+}
+
+.turni-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Tabella turni */
+.turni-table-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.turni-filters {
+  display: flex;
+  gap: 8px;
+}
+
+.turni-filters select {
+  border-radius: 999px;
+  padding: 6px 10px;
+  border: none;
+  font-size: 12px;
+}
+
+.turni-table {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 18px;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.turni-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1.7fr 1.7fr 1.3fr 1.4fr;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.turni-row.header {
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+}
+
+.turni-row:nth-child(odd):not(.header) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.turni-row .turno-type-pill {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+.turno-type-pill.normale {
+  background: rgba(0, 230, 118, 0.25);
+}
+.turno-type-pill.festivo {
+  background: rgba(255, 213, 79, 0.3);
+}
+.turno-type-pill.notturno {
+  background: rgba(171, 71, 188, 0.35);
+}
+
+.turni-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.turni-footer-actions .note {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+/* ====== PAGINA COMUNICAZIONI ====== */
+
+.comunicazioni-layout {
+  display: grid;
+  grid-template-columns: 2fr 1.4fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.comunicazioni-list-card h2 {
+  margin-top: 0;
+}
+
+.comunicazioni-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.com-card {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 18px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "pill title"
+    "pill meta";
+  column-gap: 8px;
+  row-gap: 2px;
+}
+
+.com-pill {
+  grid-area: pill;
+  align-self: center;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.com-pill.urgente {
+  background: rgba(244, 67, 54, 0.7);
+}
+.com-pill.importante {
+  background: rgba(251, 192, 45, 0.85);
+  color: #102027;
+}
+.com-pill.informativa {
+  background: rgba(129, 212, 250, 0.85);
+  color: #102027;
+}
+
+.com-title {
+  grid-area: title;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.com-meta {
+  grid-area: meta;
+  font-size: 11px;
+  opacity: 0.82;
+}
+
+.com-text {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* Colonna destra comunicazioni */
+.comunicazioni-side-card h2 {
+  margin-top: 0;
+}
+
+.comunicazioni-storico-card {
+  margin-top: 4px;
+}
+
+/* ====== PAGINA PROCEDURE ====== */
+
+.procedure-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0 10px;
+}
+
+.proc-filter-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #e0f7fa;
+}
+
+.proc-filter-btn.active {
+  background: linear-gradient(135deg, #80cbc4, #26a69a);
+  color: #001012;
+}
+
+.procedure-list {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.proc-item {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 14px;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.proc-item-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.proc-item-title {
+  font-weight: 600;
+}
+
+.proc-item-meta {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.proc-tag {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.procedure-detail {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ====== OVERLAY NOTIFICHE ====== */
+
+.notif-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+}
+
+.notif-overlay.active {
+  display: block;
+}
+
+.notif-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.notif-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(480px, 92vw);
+  max-height: 80vh;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, rgba(8, 53, 85, 0.97), rgba(1, 15, 28, 0.97));
+  border-radius: 24px;
+  padding: 18px 18px 14px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.notif-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  font-size: 18px;
+  padding: 4px 6px;
+  border-radius: 999px;
+}
+
+.notif-modal h2 {
+  margin: 0 0 4px;
+  padding-right: 26px;
+}
+
+.notif-list {
+  margin-top: 10px;
+  padding-right: 4px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.notif-item {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 18px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.notif-text h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.notif-text p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.notif-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ====== MEDIA QUERIES ====== */
+
+@media (max-width: 1100px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+  }
+  .turni-layout {
+    grid-template-columns: 1fr;
+  }
+  .turni-table-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .comunicazioni-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .assenze-layout {
+    grid-template-columns: 1fr;
+  }
+  .assenze-top-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    top: 10px;
+    left: 10px;
+  }
+
+  .dashboard {
+    padding-top: 66px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-content {
+    padding: 0 12px 32px;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 16px 14px 14px;
+  }
+
+  .page {
+    padding-top: 66px;
+  }
+
+  .turni-row {
+    grid-template-columns: 1.2fr 1.2fr 1.6fr 1.6fr;
+    grid-auto-rows: auto;
+  }
+
+  .turni-row span:nth-child(5),
+  .turni-row span:nth-child(6) {
+    display: none;
+  }
+
+  .requests-row {
+    grid-template-columns: 1.1fr 1.1fr 1.1fr 1.1fr;
+  }
+
+  .requests-row span:nth-child(5) {
+    display: none;
+  }
+}
+
+/* Animazioni badge */
+@keyframes badgePulse {
+  0% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 0 rgba(255, 255, 255, 0.45),
+      0 8px 16px rgba(0, 0, 0, 0.35);
+  }
+  40% {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 0 6px rgba(255, 255, 255, 0.0),
+      0 12px 26px rgba(0, 0, 0, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 0 rgba(255, 255, 255, 0.0),
+      0 8px 16px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@keyframes badgeHalo {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  40% {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
