@@ -1282,52 +1282,46 @@ button {
 
   /* DASHBOARD SUPER COMPATTA */
   .dashboard {
-    padding-top: 10px;           /* quasi attaccata in alto */
+    padding-top: 6px;
   }
 
   .dashboard-header {
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 0;
     margin-bottom: 0;
   }
 
-  /* Logo un filo più piccolo per lasciare più spazio alle card */
+  /* 🔥 LOGO PIÙ GRANDE SU MOBILE */
   .dash-logo {
-    width: 170px;
-    max-width: 48vw;
+    width: 210px;           /* aumenta */
+    max-width: 55vw;
   }
 
-  /* 👉 QUI NASCONDIAMO TUTTO IL BLOCCO TESTO SOTTO IL LOGO */
-  .dashboard-header-text {
-    display: none;               /* niente FARMACIA MONTESANO / PORTALE INTERNO */
-  }
-
+  /* Nasconde titoli e ruolo */
+  .dashboard-header-text,
   .role-pill {
-    display: none;               /* niente Farmacia (accesso generico) / Titolare / Dipendente */
+    display: none;
   }
 
   .dashboard-content {
-    padding: 0 8px 16px;
-    margin-top: -8px;            /* spinge le card ancora più su */
+    padding: 0 8px 8px;
+    margin-top: -10px;       /* spinge tutto ancora più su */
   }
 
-  /* ====== CARDS DASHBOARD: 2 PER RIGA, MOLTO COMPATTE ====== */
+  /* ====== CARDS: più piccole, zero “NUOVO/NUOVI” ====== */
   .dashboard .cards-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
 
   .dashboard .card {
-    padding: 9px 8px;
+    padding: 10px 10px;
     border-radius: 20px;
-    min-height: 95px;
+    min-height: 88px;         /* più basse → guadagni spazio verticale */
     display: flex;
     flex-direction: column;
     justify-content: center;
-    box-shadow:
-      0 10px 24px rgba(0, 0, 0, 0.8),
-      0 0 0 1px rgba(255, 255, 255, 0.04);
   }
 
   .dashboard .card-header {
@@ -1343,16 +1337,17 @@ button {
   }
 
   .dashboard .card-title-group h2 {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.2;
+    margin: 0;
   }
 
+  /* 🔥 TOGLIE COMPLETAMENTE "NUOVO / NUOVI" */
   .dashboard .chip {
-    font-size: 9px;
-    padding: 2px 6px;
+    display: none !important;
   }
 
-  /* Nessun testo descrittivo / bottoni sulla dashboard */
+  /* NO testi aggiuntivi */
   .dashboard .card-body,
   .dashboard .card-footer,
   .dashboard .card .small-text,
@@ -1360,15 +1355,19 @@ button {
     display: none;
   }
 
-  /* PAGINE INTERNE (assenze, turni, ecc.) come prima */
+  /* Riduce spazio sotto le ultime card */
+  .dashboard-content {
+    padding-bottom: 4px;
+  }
+
+  /* PAGINE INTERNE sempre normali */
   .page {
     padding-top: 66px;
   }
 
-  /* TURNI: tabella compatta */
+  /* TURNI */
   .turni-row {
     grid-template-columns: 1.2fr 1.2fr 1.6fr 1.6fr;
-    grid-auto-rows: auto;
   }
 
   .turni-row span:nth-child(5),
@@ -1376,33 +1375,7 @@ button {
     display: none;
   }
 
-  /* RICHIESTE ASSENZE: nascondo ultima colonna */
-  .requests-row {
-    grid-template-columns: 1.1fr 1.1fr 1.1fr 1.1fr;
-  }
-
-  .requests-row span:nth-child(5) {
-    display: none;
-  }
-}
-
-  /* PAGINE INTERNE */
-  .page {
-    padding-top: 66px;
-  }
-
-  /* TURNI: tabella più compatta su mobile */
-  .turni-row {
-    grid-template-columns: 1.2fr 1.2fr 1.6fr 1.6fr;
-    grid-auto-rows: auto;
-  }
-
-  .turni-row span:nth-child(5),
-  .turni-row span:nth-child(6) {
-    display: none;
-  }
-
-  /* RICHIESTE ASSENZE: nascondo l’ultima colonna su mobile */
+  /* ASSENZE LISTA */
   .requests-row {
     grid-template-columns: 1.1fr 1.1fr 1.1fr 1.1fr;
   }
