@@ -1458,3 +1458,71 @@ button {
     opacity: 0;
   }
 }
+/* Sidebar a destra */
+.sidebar {
+  position: fixed;
+  inset: 0 0 0 auto;          /* 👉 attaccata al lato destro */
+  width: 260px;
+  background: rgba(1, 14, 26, 0.98);
+  color: #ffffff;
+  transform: translateX(270px);   /* 👉 parte nascosta verso destra */
+  transition: transform 0.25s ease-out;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 14px;
+  box-shadow: -12px 0 35px rgba(0, 0, 0, 0.85);  /* ombra verso sinistra */
+}
+
+.sidebar.open {
+  transform: translateX(0);      /* 👉 quando è “open” entra da destra */
+}
+.hamburger {
+  position: fixed;
+  top: 14px;
+  right: 14px;               /* sempre a destra */
+  left: auto;
+  z-index: 30;
+  width: 46px;
+  height: 38px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: radial-gradient(circle at 30% 20%,
+    rgba(255, 255, 255, 0.22),
+    rgba(0, 0, 0, 0.9));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95);
+  color: transparent;        /* nasconde il carattere ☰ */
+  font-size: 0;
+}
+
+/* 3 linee stile iOS */
+.hamburger::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: #ffffff;
+  opacity: 0.95;
+  box-shadow:
+    0 -6px 0 #ffffff,   /* linea sopra */
+    0  6px 0 #ffffff;   /* linea sotto */
+}
+
+.hamburger::after {
+  content: none;           /* non ci serve più */
+}
+
+/* Mobile: leggermente più piccolo ma sempre a destra */
+@media (max-width: 768px) {
+  .hamburger {
+    top: 10px;
+    right: 10px;
+    left: auto;
+    width: 42px;
+    height: 34px;
+  }
+}
