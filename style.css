@@ -1293,60 +1293,85 @@ button {
     padding: 0 12px 32px;
   }
 
-  /* ====== CARDS MOBILE: STILE “TILE / APP” ====== */
-  .cards-grid {
+  /* ====== DASHBOARD: CARDS COME APP, 2 PER RIGA ====== */
+  .dashboard .cards-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
   }
 
-  .card {
+  .dashboard .card {
     padding: 14px 12px;
     border-radius: 24px;
-    min-height: 130px;
+    min-height: 120px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     box-shadow:
       0 14px 32px rgba(0, 0, 0, 0.85),
       0 0 0 1px rgba(255, 255, 255, 0.04);
   }
 
-  .card-header {
-    margin-bottom: 6px;
-    align-items: flex-start;
+  .dashboard .card-header {
+    margin: 0;
+    align-items: center;
   }
 
-  .card-icon {
+  .dashboard .card-icon {
     width: 34px;
     height: 34px;
     border-radius: 14px;
     font-size: 18px;
   }
 
-  .card-title-group h2 {
-    font-size: 14px;
+  .dashboard .card-title-group h2 {
+    font-size: 15px;
+    line-height: 1.2;
   }
 
-  .chip {
+  .dashboard .chip {
     font-size: 10px;
     padding: 2px 8px;
   }
 
-  .card-body {
-    font-size: 12px;
-    margin-bottom: 8px;
+  /* 👉 Nascondo testi descrittivi e bottoni sulla DASHBOARD */
+  .dashboard .card-body,
+  .dashboard .card-footer,
+  .dashboard .card .small-text,
+  .dashboard .card .caption {
+    display: none;
   }
 
-  .card-footer {
-    margin-top: 6px;
+  /* Badge notifiche restano visibili */
+  .card-badge,
+  .card-badge-label {
+    /* nessuna modifica qui */
   }
 
-  .card-footer .btn-primary,
-  .card-footer .btn-secondary {
-    width: 100%;
-    font-size: 12px;
-    padding: 8px 10px;
+  /* ====== PAGINE INTERNE ====== */
+  .page {
+    padding-top: 66px;
   }
+
+  /* TURNI: tabella più compatta su mobile */
+  .turni-row {
+    grid-template-columns: 1.2fr 1.2fr 1.6fr 1.6fr;
+    grid-auto-rows: auto;
+  }
+
+  .turni-row span:nth-child(5),
+  .turni-row span:nth-child(6) {
+    display: none;
+  }
+
+  /* RICHIESTE ASSENZE: nascondo l’ultima colonna su mobile */
+  .requests-row {
+    grid-template-columns: 1.1fr 1.1fr 1.1fr 1.1fr;
+  }
+
+  .requests-row span:nth-child(5) {
+    display: none;
+  }
+}
 
   /* PAGINE INTERNE */
   .page {
