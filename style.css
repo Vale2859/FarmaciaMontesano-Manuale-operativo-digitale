@@ -1280,29 +1280,41 @@ button {
     left: 10px;
   }
 
+  /* Dashboard più compatta */
   .dashboard {
-    padding-top: 66px;
+    padding-top: 28px;          /* meno spazio sopra */
   }
 
   .dashboard-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;        /* poco spazio sotto il logo */
+  }
+
+  .dashboard-logo-block {
+    flex-shrink: 0;
+  }
+
+  /* 👉 Nascondo titolo, sottotitolo e pillola ruolo SOLO su mobile */
+  .dashboard-header-text {
+    display: none;
   }
 
   .dashboard-content {
-    padding: 0 12px 32px;
+    padding: 0 10px 20px;
   }
 
   /* ====== DASHBOARD: CARDS COME APP, 2 PER RIGA ====== */
   .dashboard .cards-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    gap: 12px;
   }
 
   .dashboard .card {
-    padding: 14px 12px;
-    border-radius: 24px;
-    min-height: 120px;
+    padding: 12px 10px;
+    border-radius: 22px;
+    min-height: 110px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1317,8 +1329,8 @@ button {
   }
 
   .dashboard .card-icon {
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
     border-radius: 14px;
     font-size: 18px;
   }
@@ -1332,6 +1344,40 @@ button {
     font-size: 10px;
     padding: 2px 8px;
   }
+
+  /* 👉 Niente testi lunghi e bottoni sulla dashboard */
+  .dashboard .card-body,
+  .dashboard .card-footer,
+  .dashboard .card .small-text,
+  .dashboard .card .caption {
+    display: none;
+  }
+
+  /* Le pagine interne restano uguali */
+  .page {
+    padding-top: 66px;
+  }
+
+  /* TURNI: tabella più compatta su mobile */
+  .turni-row {
+    grid-template-columns: 1.2fr 1.2fr 1.6fr 1.6fr;
+    grid-auto-rows: auto;
+  }
+
+  .turni-row span:nth-child(5),
+  .turni-row span:nth-child(6) {
+    display: none;
+  }
+
+  /* RICHIESTE ASSENZE: nascondo l’ultima colonna su mobile */
+  .requests-row {
+    grid-template-columns: 1.1fr 1.1fr 1.1fr 1.1fr;
+  }
+
+  .requests-row span:nth-child(5) {
+    display: none;
+  }
+}
 
   /* 👉 Nascondo testi descrittivi e bottoni sulla DASHBOARD */
   .dashboard .card-body,
