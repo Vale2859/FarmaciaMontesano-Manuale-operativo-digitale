@@ -247,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const turniPage = document.getElementById("turniPage");
   const comunicazioniPage = document.getElementById("comunicazioniPage");
   const procedurePage = document.getElementById("procedurePage");
+  const archivioPage = document.getElementById("archivioPage");
 
   // Pulsanti navigazione rapida
   const openAssenzeBtn = document.getElementById("openAssenze");
@@ -257,6 +258,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const backFromComunicazioniBtn = document.getElementById("backFromComunicazioni");
   const openProcedureBtn = document.getElementById("openProcedure");
   const backFromProcedureBtn = document.getElementById("backFromProcedure");
+  const openArchivioBtn = document.getElementById("openArchivio");
+  const backFromArchivioBtn = document.getElementById("backFromArchivio");
 
   // Turni elementi
   const turnoOggiNome = document.getElementById("turnoOggiNome");
@@ -321,12 +324,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showSection(section) {
     if (!section) return;
-    [dashboardSection, assenzePage, turniPage, comunicazioniPage, procedurePage].forEach(sec => {
+    [dashboardSection, assenzePage, turniPage, comunicazioniPage, procedurePage, archivioPage].forEach(sec => {
       if (sec) sec.classList.add("hidden");
     });
     section.classList.remove("hidden");
 
-    // 🔧 FIX: niente "behavior: 'instant'" (rompe su alcuni browser)
+    // scroll sicuro
     try {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
@@ -412,6 +415,8 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (target === "procedurePage") {
           showSection(procedurePage);
           renderProcedureList();
+        } else if (target === "archivioPage") {
+          showSection(archivioPage);
         }
         closeSidebarMenu();
       });
@@ -484,6 +489,63 @@ document.addEventListener("DOMContentLoaded", () => {
   if (backFromProcedureBtn) {
     backFromProcedureBtn.addEventListener("click", () => {
       showSection(dashboardSection);
+    });
+  }
+
+  if (openArchivioBtn) {
+    openArchivioBtn.addEventListener("click", () => {
+      showSection(archivioPage);
+    });
+  }
+
+  if (backFromArchivioBtn) {
+    backFromArchivioBtn.addEventListener("click", () => {
+      showSection(dashboardSection);
+    });
+  }
+
+  // ====== CLICK SULLE CARD DELLA DASHBOARD ======
+  const cardAssenze = document.querySelector(".card-assenze");
+  const cardTurno = document.querySelector(".card-turno");
+  const cardComunicazioni = document.querySelector(".card-comunicazioni");
+  const cardProcedure = document.querySelector(".card-procedure");
+  const cardArchivio = document.querySelector(".card-archivio");
+
+  if (cardAssenze) {
+    cardAssenze.style.cursor = "pointer";
+    cardAssenze.addEventListener("click", () => {
+      showSection(assenzePage);
+    });
+  }
+
+  if (cardTurno) {
+    cardTurno.style.cursor = "pointer";
+    cardTurno.addEventListener("click", () => {
+      showSection(turniPage);
+      renderTurniTable();
+    });
+  }
+
+  if (cardComunicazioni) {
+    cardComunicazioni.style.cursor = "pointer";
+    cardComunicazioni.addEventListener("click", () => {
+      showSection(comunicazioniPage);
+      renderComunicazioni();
+    });
+  }
+
+  if (cardProcedure) {
+    cardProcedure.style.cursor = "pointer";
+    cardProcedure.addEventListener("click", () => {
+      showSection(procedurePage);
+      renderProcedureList();
+    });
+  }
+
+  if (cardArchivio) {
+    cardArchivio.style.cursor = "pointer";
+    cardArchivio.addEventListener("click", () => {
+      showSection(archivioPage);
     });
   }
 
