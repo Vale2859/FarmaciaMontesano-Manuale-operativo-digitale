@@ -1276,50 +1276,48 @@ button {
 
 @media (max-width: 768px) {
   .hamburger {
-    top: 10px;
-    left: 10px;
+    top: 8px;
+    left: 8px;
   }
 
-  /* Dashboard più compatta */
+  /* Dashboard super compatta */
   .dashboard {
-    padding-top: 28px;          /* meno spazio sopra */
+    padding-top: 14px;     /* ancora meno spazio sopra */
   }
 
   .dashboard-header {
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;        /* poco spazio sotto il logo */
+    gap: 4px;              /* meno spazio tra elementi */
+    margin-bottom: 4px;    /* quasi attaccato alle card */
   }
 
-  .dashboard-logo-block {
-    flex-shrink: 0;
-  }
-
-  /* 👉 Nascondo titolo, sottotitolo e pillola ruolo SOLO su mobile */
-  .dashboard-header-text {
-    display: none;
+  /* Logo leggermente più piccolo su mobile */
+  .dash-logo {
+    width: 180px;
+    max-width: 50vw;
   }
 
   .dashboard-content {
-    padding: 0 10px 20px;
+    padding: 0 8px 18px;
+    margin-top: -4px;      /* spinge le card ancora più su */
   }
 
   /* ====== DASHBOARD: CARDS COME APP, 2 PER RIGA ====== */
   .dashboard .cards-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
   }
 
   .dashboard .card {
-    padding: 12px 10px;
-    border-radius: 22px;
-    min-height: 110px;
+    padding: 10px 9px;
+    border-radius: 20px;
+    min-height: 100px;     /* un filo più basse */
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-shadow:
-      0 14px 32px rgba(0, 0, 0, 0.85),
+      0 12px 26px rgba(0, 0, 0, 0.8),
       0 0 0 1px rgba(255, 255, 255, 0.04);
   }
 
@@ -1329,23 +1327,23 @@ button {
   }
 
   .dashboard .card-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 14px;
-    font-size: 18px;
+    width: 30px;
+    height: 30px;
+    border-radius: 12px;
+    font-size: 17px;
   }
 
   .dashboard .card-title-group h2 {
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.2;
   }
 
   .dashboard .chip {
-    font-size: 10px;
-    padding: 2px 8px;
+    font-size: 9px;
+    padding: 2px 7px;
   }
 
-  /* 👉 Niente testi lunghi e bottoni sulla dashboard */
+  /* Niente testi lunghi e bottoni sulla dashboard */
   .dashboard .card-body,
   .dashboard .card-footer,
   .dashboard .card .small-text,
@@ -1353,7 +1351,7 @@ button {
     display: none;
   }
 
-  /* Le pagine interne restano uguali */
+  /* Pagine interne uguali a prima */
   .page {
     padding-top: 66px;
   }
