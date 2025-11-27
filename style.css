@@ -1306,9 +1306,16 @@ button {
 
 @media (max-width: 768px) {
   .hamburger {
-    top: 6px;
-    left: 6px;
+    top: 10px;
+    right: 10px;   /* 👉 sempre a destra anche su mobile */
+    left: auto;
+    width: 40px;
+    height: 40px;
   }
+
+  /* il resto del tuo blocco rimane uguale */
+  ...
+}
 
   /* DASHBOARD SUPER COMPATTA */
   .dashboard {
