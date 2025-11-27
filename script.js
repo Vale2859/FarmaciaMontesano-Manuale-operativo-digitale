@@ -325,7 +325,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (sec) sec.classList.add("hidden");
     });
     section.classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "instant" });
+
+    // 🔧 FIX: niente "behavior: 'instant'" (rompe su alcuni browser)
+    try {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      window.scrollTo(0, 0);
+    }
   }
 
   function openSidebarMenu() {
