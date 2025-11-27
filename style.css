@@ -1276,48 +1276,57 @@ button {
 
 @media (max-width: 768px) {
   .hamburger {
-    top: 8px;
-    left: 8px;
+    top: 6px;
+    left: 6px;
   }
 
-  /* Dashboard super compatta */
+  /* DASHBOARD SUPER COMPATTA */
   .dashboard {
-    padding-top: 14px;     /* ancora meno spazio sopra */
+    padding-top: 10px;           /* quasi attaccata in alto */
   }
 
   .dashboard-header {
     flex-direction: column;
     align-items: center;
-    gap: 4px;              /* meno spazio tra elementi */
-    margin-bottom: 4px;    /* quasi attaccato alle card */
+    gap: 2px;
+    margin-bottom: 0;
   }
 
-  /* Logo leggermente più piccolo su mobile */
+  /* Logo un filo più piccolo per lasciare più spazio alle card */
   .dash-logo {
-    width: 180px;
-    max-width: 50vw;
+    width: 170px;
+    max-width: 48vw;
+  }
+
+  /* 👉 QUI NASCONDIAMO TUTTO IL BLOCCO TESTO SOTTO IL LOGO */
+  .dashboard-header-text {
+    display: none;               /* niente FARMACIA MONTESANO / PORTALE INTERNO */
+  }
+
+  .role-pill {
+    display: none;               /* niente Farmacia (accesso generico) / Titolare / Dipendente */
   }
 
   .dashboard-content {
-    padding: 0 8px 18px;
-    margin-top: -4px;      /* spinge le card ancora più su */
+    padding: 0 8px 16px;
+    margin-top: -8px;            /* spinge le card ancora più su */
   }
 
-  /* ====== DASHBOARD: CARDS COME APP, 2 PER RIGA ====== */
+  /* ====== CARDS DASHBOARD: 2 PER RIGA, MOLTO COMPATTE ====== */
   .dashboard .cards-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: 8px;
   }
 
   .dashboard .card {
-    padding: 10px 9px;
+    padding: 9px 8px;
     border-radius: 20px;
-    min-height: 100px;     /* un filo più basse */
+    min-height: 95px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-shadow:
-      0 12px 26px rgba(0, 0, 0, 0.8),
+      0 10px 24px rgba(0, 0, 0, 0.8),
       0 0 0 1px rgba(255, 255, 255, 0.04);
   }
 
@@ -1327,23 +1336,23 @@ button {
   }
 
   .dashboard .card-icon {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     border-radius: 12px;
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .dashboard .card-title-group h2 {
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.2;
   }
 
   .dashboard .chip {
     font-size: 9px;
-    padding: 2px 7px;
+    padding: 2px 6px;
   }
 
-  /* Niente testi lunghi e bottoni sulla dashboard */
+  /* Nessun testo descrittivo / bottoni sulla dashboard */
   .dashboard .card-body,
   .dashboard .card-footer,
   .dashboard .card .small-text,
@@ -1351,12 +1360,12 @@ button {
     display: none;
   }
 
-  /* Pagine interne uguali a prima */
+  /* PAGINE INTERNE (assenze, turni, ecc.) come prima */
   .page {
     padding-top: 66px;
   }
 
-  /* TURNI: tabella più compatta su mobile */
+  /* TURNI: tabella compatta */
   .turni-row {
     grid-template-columns: 1.2fr 1.2fr 1.6fr 1.6fr;
     grid-auto-rows: auto;
@@ -1367,47 +1376,7 @@ button {
     display: none;
   }
 
-  /* RICHIESTE ASSENZE: nascondo l’ultima colonna su mobile */
-  .requests-row {
-    grid-template-columns: 1.1fr 1.1fr 1.1fr 1.1fr;
-  }
-
-  .requests-row span:nth-child(5) {
-    display: none;
-  }
-}
-
-  /* 👉 Nascondo testi descrittivi e bottoni sulla DASHBOARD */
-  .dashboard .card-body,
-  .dashboard .card-footer,
-  .dashboard .card .small-text,
-  .dashboard .card .caption {
-    display: none;
-  }
-
-  /* Badge notifiche restano visibili */
-  .card-badge,
-  .card-badge-label {
-    /* nessuna modifica qui */
-  }
-
-  /* ====== PAGINE INTERNE ====== */
-  .page {
-    padding-top: 66px;
-  }
-
-  /* TURNI: tabella più compatta su mobile */
-  .turni-row {
-    grid-template-columns: 1.2fr 1.2fr 1.6fr 1.6fr;
-    grid-auto-rows: auto;
-  }
-
-  .turni-row span:nth-child(5),
-  .turni-row span:nth-child(6) {
-    display: none;
-  }
-
-  /* RICHIESTE ASSENZE: nascondo l’ultima colonna su mobile */
+  /* RICHIESTE ASSENZE: nascondo ultima colonna */
   .requests-row {
     grid-template-columns: 1.1fr 1.1fr 1.1fr 1.1fr;
   }
