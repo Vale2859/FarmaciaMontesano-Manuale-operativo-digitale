@@ -1526,3 +1526,31 @@ button {
     height: 34px;
   }
 }
+/* ====== LAYOUT DESKTOP: GRIGLIA 2x3 A SINISTRA ====== */
+@media (min-width: 1100px) {
+
+  /* Dashboard un po' più “alta” */
+  .dashboard {
+    max-width: 1400px;         /* come prima */
+    margin: 0 auto;            /* centrata nella pagina */
+    padding: 80px 16px 40px;   /* un po' di respiro sopra/sotto */
+  }
+
+  /* Contenitore centrale: flex → le card restano a sinistra,
+     a destra rimane spazio vuoto per aggiungere altro in futuro */
+  .dashboard-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 10px 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;  /* importantissimo: tutto a sinistra */
+  }
+
+  /* Griglia delle card in stile “app” 2x3 */
+  .dashboard .cards-grid {
+    grid-template-columns: repeat(2, minmax(260px, 1fr)); /* 2 colonne */
+    gap: 22px;
+    width: max-content;      /* la griglia prende solo lo spazio delle card */
+  }
+}
