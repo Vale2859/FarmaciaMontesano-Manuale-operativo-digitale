@@ -1554,3 +1554,50 @@ button {
     width: max-content;      /* la griglia prende solo lo spazio delle card */
   }
 }
+
+/* ====== DESKTOP: logo grande a sinistra + griglia 2x3 ====== */
+@media (min-width: 1100px) {
+
+  /* header allineato con le card */
+  .dashboard-header {
+    max-width: 1200px;
+    margin: 40px auto 10px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;   /* tutto a sinistra */
+  }
+
+  .dashboard-logo-block {
+    flex-shrink: 0;
+    margin-right: 32px;            /* un po’ di spazio prima dei testi */
+  }
+
+  .dash-logo {
+    width: 260px;                  /* 🔥 logo più grande sul Mac */
+    max-width: 260px;
+    height: auto;
+  }
+
+  /* contenitore dashboard + griglia card a sinistra, 2x3 */
+  .dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 80px 16px 40px;
+  }
+
+  .dashboard-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 10px 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;   /* card tutte a sinistra */
+  }
+
+  .dashboard .cards-grid {
+    grid-template-columns: repeat(2, minmax(260px, 1fr)); /* 2 colonne */
+    gap: 22px;
+    width: max-content;            /* prende solo lo spazio delle card */
+  }
+}
