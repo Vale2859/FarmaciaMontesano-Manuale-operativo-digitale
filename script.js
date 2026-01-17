@@ -1,5 +1,6 @@
 // ===== STATO =====
 let currentUser = null;
+let panoramicaTimer = null;
 
 // ===== STORAGE KEYS =====
 const STORAGE_KEYS = {
@@ -25,21 +26,6 @@ function loadData(key, fallback) {
 }
 function saveData(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
-}
-
-// ===== MINI UTILS =====
-function escapeHtml(str) {
-  return String(str ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-function unescapeHtml(str) {
-  const div = document.createElement("div");
-  div.innerHTML = str ?? "";
-  return div.textContent || "";
 }
 
 // ===== DATE HELPERS =====
@@ -71,6 +57,24 @@ function diffDays(fromIso, toIso) {
   return Math.round(ms / (1000 * 60 * 60 * 24));
 }
 
+// ===== HTML ESCAPE =====
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+function unescapeHtml(str) {
+  return String(str)
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&quot;", '"')
+    .replaceAll("&#039;", "'")
+    .replaceAll("&amp;", "&");
+}
+
 // ===== DEMO INIT =====
 function initDemoUsers() {
   let utenti = loadData(STORAGE_KEYS.UTENTI, []);
@@ -86,16 +90,26 @@ function initDemoUsers() {
     saveData(STORAGE_KEYS.UTENTI, utenti);
   }
 }
+
 function initConsumabiliCatalogo() {
   let cat = loadData(STORAGE_KEYS.CONSUMABILI_CATALOGO, null);
   if (!cat) {
     cat = [
-      "Rotoli POS","Rotoli Cassa","Carta igienica","Carta stampante","Toner Brother",
-      "Toner Xerox (Nero)","Toner Xerox (Giallo)","Toner Xerox (Blu)","Toner Xerox (Rosso)","Rotoloni"
+      "Rotoli POS",
+      "Rotoli Cassa",
+      "Carta igienica",
+      "Carta stampante",
+      "Toner Brother",
+      "Toner Xerox (Nero)",
+      "Toner Xerox (Giallo)",
+      "Toner Xerox (Blu)",
+      "Toner Xerox (Rosso)",
+      "Rotoloni"
     ];
     saveData(STORAGE_KEYS.CONSUMABILI_CATALOGO, cat);
   }
 }
+
 function initDemoProcedure() {
   let proc = loadData(STORAGE_KEYS.PROCEDURE, []);
   if (proc.length === 0) {
@@ -118,6 +132,7 @@ function initDemoProcedure() {
     saveData(STORAGE_KEYS.PROCEDURE, proc);
   }
 }
+
 function initPromoDemo() {
   let offerte = loadData(STORAGE_KEYS.OFFERTE, []);
   if (offerte.length === 0) {
@@ -137,18 +152,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setupAuth();
   setupSidebar();
-  setupTabs();
-  setupFab();
+  setupQuickMenu();
+  setupDashboard();
   setupModalSystem();
+  setupPanoramaClicks();
 
   restorePhotoQ4();
-  loginAs(null);
 });
 
 // ===== AUTH =====
 function getAllUsers() {
   return loadData(STORAGE_KEYS.UTENTI, []);
 }
+
 function setupAuth() {
   const loginForm = document.getElementById("login-form");
   const btnDemo = document.getElementById("btn-demo-farmacia");
@@ -159,7 +175,9 @@ function setupAuth() {
       e.preventDefault();
       const username = document.getElementById("login-username").value.trim();
       const password = document.getElementById("login-password").value.trim();
-      const found = getAllUsers().find(u => u.username === username && u.password === password);
+
+      const all = getAllUsers();
+      const found = all.find(u => u.username === username && u.password === password);
       if (!found) return alert("Credenziali non valide.");
       loginAs(found);
     });
@@ -167,43 +185,49 @@ function setupAuth() {
 
   if (btnDemo) {
     btnDemo.addEventListener("click", () => {
-      const f = getAllUsers().find(u => u.username === "farmacia");
+      const all = getAllUsers();
+      const f = all.find(u => u.username === "farmacia");
       if (f) loginAs(f);
     });
   }
 
-  if (btnEsci) btnEsci.addEventListener("click", () => loginAs(null));
+  if (btnEsci) {
+    btnEsci.addEventListener("click", () => loginAs(null));
+  }
+
+  loginAs(null);
 }
 
 function loginAs(user) {
   currentUser = user;
 
   const viewAuth = document.getElementById("view-auth");
-  const viewMobile = document.getElementById("view-mobile");
+  const viewDash = document.getElementById("view-dashboard");
   const userLabel = document.getElementById("user-label");
   const topSubtitle = document.getElementById("topbar-subtitle");
 
   if (!user) {
-    viewMobile?.classList.add("hidden");
-    viewAuth?.classList.remove("hidden");
+    if (viewDash) viewDash.classList.add("hidden");
+    if (viewAuth) viewAuth.classList.remove("hidden");
     if (userLabel) userLabel.textContent = "Ospite";
     if (topSubtitle) topSubtitle.textContent = "Accesso non effettuato";
     return;
   }
 
-  viewAuth?.classList.add("hidden");
-  viewMobile?.classList.remove("hidden");
+  if (viewAuth) viewAuth.classList.add("hidden");
+  if (viewDash) viewDash.classList.remove("hidden");
 
   if (userLabel) userLabel.textContent = `${user.nome} (${user.ruolo})`;
   if (topSubtitle) topSubtitle.textContent = `Accesso come ${user.ruolo}`;
 
-  // sidebar admin only
+  // sidebar: mostra gestione dipendenti solo farmacia
   const adminBox = document.getElementById("sidebar-admin-box");
   if (adminBox) adminBox.classList.toggle("hidden", user.ruolo !== "farmacia");
 
   // refresh
   updatePanoramica();
-  setActiveTab("assenti");
+  renderPromo();
+  showPanoramica();
 }
 
 // ===== SIDEBAR =====
@@ -226,18 +250,28 @@ function setupSidebar() {
     sb.setAttribute("aria-hidden", "true");
   }
 
-  btnHamb?.addEventListener("click", (e) => { e.stopPropagation(); openSidebar(); });
-  btnClose?.addEventListener("click", closeSidebar);
-  bd?.addEventListener("click", closeSidebar);
+  if (btnHamb) btnHamb.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openSidebar();
+  });
+  if (btnClose) btnClose.addEventListener("click", closeSidebar);
+  if (bd) bd.addEventListener("click", closeSidebar);
 
   document.querySelectorAll("[data-side-action]").forEach(btn => {
     btn.addEventListener("click", () => {
       const a = btn.getAttribute("data-side-action");
-      if (a === "nuovo-dipendente") { closeSidebar(); return openModalNuovoDipendente(); }
-      if (a === "carica-foto") return triggerUploadPhoto(closeSidebar);
-      if (a === "rimuovi-foto") return removePhotoQ4(closeSidebar);
+      if (a === "nuovo-dipendente") return openModalNuovoDipendente();
+      if (a === "carica-foto") return triggerUploadPhoto();
+      if (a === "rimuovi-foto") return removePhotoQ4();
     });
   });
+}
+
+function closeSidebarHard() {
+  const sb = document.getElementById("sidebar");
+  const bd = document.getElementById("sidebar-backdrop");
+  if (sb) sb.classList.add("hidden");
+  if (bd) bd.classList.add("hidden");
 }
 
 // ===== FOTO Q4 =====
@@ -248,13 +282,14 @@ function restorePhotoQ4() {
   if (!cover) return;
   if (saved) {
     cover.style.backgroundImage = `url(${saved})`;
-    placeholder?.classList.add("hidden");
+    if (placeholder) placeholder.classList.add("hidden");
   } else {
     cover.style.backgroundImage = "";
-    placeholder?.classList.remove("hidden");
+    if (placeholder) placeholder.classList.remove("hidden");
   }
 }
-function triggerUploadPhoto(onDone) {
+
+function triggerUploadPhoto() {
   const input = document.getElementById("photo-file");
   if (!input) return;
   input.value = "";
@@ -266,18 +301,26 @@ function triggerUploadPhoto(onDone) {
     reader.onload = () => {
       saveData(STORAGE_KEYS.FOTO_Q4, reader.result);
       restorePhotoQ4();
-      if (onDone) onDone();
+      closeSidebarHard();
     };
     reader.readAsDataURL(file);
   };
 }
-function removePhotoQ4(onDone) {
+
+function removePhotoQ4() {
   saveData(STORAGE_KEYS.FOTO_Q4, null);
   restorePhotoQ4();
-  if (onDone) onDone();
+  closeSidebarHard();
 }
 
-// ===== MODAL =====
+// ===== MODALE GENERICA =====
+function setupModalSystem() {
+  const mb = document.getElementById("modal-backdrop");
+  const mc = document.getElementById("modal-close");
+  if (mc) mc.addEventListener("click", closeModal);
+  if (mb) mb.addEventListener("click", (e) => { if (e.target === mb) closeModal(); });
+}
+
 function openModal(title, innerHtml, onReady) {
   const mb = document.getElementById("modal-backdrop");
   const mt = document.getElementById("modal-title");
@@ -289,85 +332,88 @@ function openModal(title, innerHtml, onReady) {
   if (onReady) onReady();
 }
 function closeModal() {
-  document.getElementById("modal-backdrop")?.classList.add("hidden");
-}
-function setupModalSystem() {
   const mb = document.getElementById("modal-backdrop");
-  const mc = document.getElementById("modal-close");
-  mc?.addEventListener("click", closeModal);
-  mb?.addEventListener("click", (e) => { if (e.target === mb) closeModal(); });
+  if (mb) mb.classList.add("hidden");
 }
 
-// ===== TABS =====
-let activeTab = "assenti";
+// ===== PANORAMICA TIMER =====
+function resetPanoramicaTimer() {
+  if (panoramicaTimer) clearTimeout(panoramicaTimer);
+  panoramicaTimer = setTimeout(() => showPanoramica(), 20000);
+}
+function showPanoramica() {
+  const pano = document.getElementById("panoramica-box");
+  const det = document.getElementById("sezione-dettaglio");
+  if (!pano || !det) return;
+  pano.classList.remove("hidden");
+  det.classList.add("hidden");
+}
+function showSezioneDettaglio(title, html) {
+  const pano = document.getElementById("panoramica-box");
+  const det = document.getElementById("sezione-dettaglio");
+  const detTitle = document.getElementById("detail-title");
+  const detBody = document.getElementById("detail-content");
+  if (!pano || !det || !detTitle || !detBody) return;
 
-function setupTabs() {
-  document.querySelectorAll(".tab-btn").forEach(btn => {
+  detTitle.textContent = title;
+  detBody.innerHTML = html;
+
+  pano.classList.add("hidden");
+  det.classList.remove("hidden");
+  resetPanoramicaTimer();
+}
+
+// ===== DASHBOARD =====
+function setupDashboard() {
+  const btnBack = document.getElementById("btn-back-panorama");
+  if (btnBack) btnBack.addEventListener("click", showPanoramica);
+
+  document.querySelectorAll(".sec-card").forEach(btn => {
     btn.addEventListener("click", () => {
-      const tab = btn.getAttribute("data-tab");
-      setActiveTab(tab);
+      const sec = btn.getAttribute("data-section");
+      openSection(sec);
     });
   });
+}
 
-  const btnRefresh = document.getElementById("btn-refresh");
-  btnRefresh?.addEventListener("click", () => {
-    if (!currentUser) return;
-    updatePanoramica();
-    renderActiveTab();
+function openSection(sec) {
+  if (sec === "assenti") return renderAssenzeDettaglio();
+  if (sec === "procedure") return renderProcedureGrid();
+  if (sec === "consumabili") return renderConsumabiliRichieste();
+  if (sec === "scadenze") return renderScadenzeGruppi();
+}
+
+// ===== QUICK (+) =====
+function setupQuickMenu() {
+  const quickBtn = document.getElementById("quick-btn");
+  const quickMenu = document.getElementById("quick-menu");
+  if (!quickBtn || !quickMenu) return;
+
+  quickBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    quickMenu.classList.toggle("hidden");
+    quickBtn.classList.toggle("open");
   });
-}
 
-function setActiveTab(tab) {
-  if (!currentUser) return;
-  activeTab = tab;
-
-  document.querySelectorAll(".tab-btn").forEach(b => {
-    b.classList.toggle("active", b.getAttribute("data-tab") === tab);
+  document.addEventListener("click", () => {
+    quickMenu.classList.add("hidden");
+    quickBtn.classList.remove("open");
   });
 
-  const title = document.getElementById("tab-title");
-  if (title) {
-    title.textContent =
-      tab === "assenti" ? "Assenze" :
-      tab === "procedure" ? "Procedure" :
-      tab === "consumabili" ? "Consumabili" :
-      tab === "scadenze" ? "Scadenze" : "Sezione";
-  }
+  quickMenu.querySelectorAll(".qm-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const action = btn.getAttribute("data-action");
+      quickMenu.classList.add("hidden");
+      quickBtn.classList.remove("open");
 
-  renderActiveTab();
-}
+      if (!currentUser) return alert("Devi effettuare il login.");
 
-function renderActiveTab() {
-  if (activeTab === "assenti") return renderAssenzeList();
-  if (activeTab === "procedure") return renderProcedureList();
-  if (activeTab === "consumabili") return renderConsumabiliList();
-  if (activeTab === "scadenze") return renderScadenzeList();
-}
-
-// ===== FAB (+) =====
-function setupFab() {
-  const fab = document.getElementById("fab");
-  if (!fab) return;
-
-  fab.addEventListener("click", () => {
-    if (!currentUser) return alert("Devi effettuare il login.");
-
-    // Action sheet semplice
-    const html = `
-      <div style="display:flex; flex-direction:column; gap:10px;">
-        <button class="primary" id="act-assenza">🧑‍⚕️ Nuova richiesta assenza</button>
-        <button class="primary" id="act-cons">🧻 Segnala consumabili (bassa/finito)</button>
-        <button class="primary" id="act-scad">⏳ Nuove scadenze</button>
-        <button class="primary" id="act-promo">🏷️ Nuova promozione</button>
-        <button class="small-secondary" id="act-close">Chiudi</button>
-      </div>
-    `;
-    openModal("Azioni rapide", html, () => {
-      document.getElementById("act-assenza").onclick = () => { closeModal(); openModalRichiestaAssenza(); };
-      document.getElementById("act-cons").onclick   = () => { closeModal(); openModalConsumabiliSwitch(); };
-      document.getElementById("act-scad").onclick   = () => { closeModal(); openModalScadenzeWizard(); };
-      document.getElementById("act-promo").onclick  = () => { closeModal(); openModalPromozione(); };
-      document.getElementById("act-close").onclick  = closeModal;
+      if (action === "richiesta-assenza") return openModalRichiestaAssenza();
+      if (action === "richiesta-consumabile") return openModalConsumabiliSwitch();
+      if (action === "nuova-promozione") return openModalPromozione();
+      if (action === "nuova-scadenza") return openModalScadenzeWizard();
+      if (action === "procedure-manager") return openModalProcedureManager();
     });
   });
 }
@@ -376,11 +422,13 @@ function setupFab() {
 function updatePanoramica() {
   const oggi = todayISO();
 
+  // assenze approvate che includono oggi
   const assenze = loadData(STORAGE_KEYS.ASSENZE, []);
   const assenzeOggi = assenze.filter(a =>
     a.stato === "APPROVATA" && isDateInRange(oggi, a.dal, a.al)
   ).length;
 
+  // scadenze entro 60gg
   const groups = loadData(STORAGE_KEYS.SCADENZE, []);
   let scadEntro60 = 0;
   groups.forEach(g => {
@@ -390,21 +438,172 @@ function updatePanoramica() {
     });
   });
 
+  // consumabili alert (non provvedute)
   const richiesteCons = loadData(STORAGE_KEYS.CONSUMABILI_RICHIESTE, []);
   const consAlert = richiesteCons.filter(r => r.stato !== "PROVVEDUTO").length;
 
+  // promo attive
   const offerte = loadData(STORAGE_KEYS.OFFERTE, []);
   const promoAttive = offerte.filter(o => isDateInRange(oggi, o.dal, o.al)).length;
 
-  document.getElementById("val-assenze-oggi").textContent = assenzeOggi;
-  document.getElementById("val-scadenze-60").textContent = scadEntro60;
-  document.getElementById("val-consumabili-alert").textContent = consAlert;
-  document.getElementById("val-promo-attive").textContent = promoAttive;
+  const elA = document.getElementById("val-assenze-oggi");
+  const elS = document.getElementById("val-scadenze-60");
+  const elC = document.getElementById("val-consumabili-alert");
+  const elP = document.getElementById("val-promo-attive");
+  if (elA) elA.textContent = assenzeOggi;
+  if (elS) elS.textContent = scadEntro60;
+  if (elC) elC.textContent = consAlert;
+  if (elP) elP.textContent = promoAttive;
 }
 
-// ===============================
-// ASSENZE
-// ===============================
+// =====================================================
+// ✅ TILE PANORAMICA CLICKABILI (come mi hai chiesto)
+// =====================================================
+function setupPanoramaClicks() {
+  document.querySelectorAll("[data-pan]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (!currentUser) return alert("Devi effettuare il login.");
+
+      const key = btn.getAttribute("data-pan");
+
+      if (key === "assenti") return renderAssenzeDettaglio();
+      if (key === "consumabili") return renderConsumabiliRichieste();
+      if (key === "scadenze60") return openScadenzeEntro60Modal();
+      if (key === "promozioni") return openPromoCenterModal();
+    });
+  });
+}
+
+function openPromoCenterModal() {
+  const oggi = todayISO();
+  const offerte = loadData(STORAGE_KEYS.OFFERTE, []).slice();
+
+  const attive = offerte.filter(o => isDateInRange(oggi, o.dal, o.al))
+    .sort((a,b) => parseISO(a.al) - parseISO(b.al));
+  const scadute = offerte.filter(o => parseISO(o.al) < parseISO(oggi))
+    .sort((a,b) => parseISO(b.al) - parseISO(a.al));
+
+  const canEdit = currentUser && (currentUser.ruolo === "farmacia" || currentUser.ruolo === "titolare");
+
+  const listHtml = (arr, emptyText) => {
+    if (!arr.length) return `<p class="hint-text">${emptyText}</p>`;
+    let h = `<ul class="simple-list">`;
+    arr.forEach(o => {
+      h += `
+        <li>
+          <div class="row-main">
+            <span class="row-title">${escapeHtml(o.nome)}</span>
+            <span class="row-sub"><strong>Periodo:</strong> ${formatDateShortIT(o.dal)} → ${formatDateShortIT(o.al)}</span>
+            ${o.note ? `<span class="row-sub">${escapeHtml(o.note)}</span>` : ``}
+          </div>
+          <div class="row-actions">
+            <span class="badge ${isDateInRange(oggi, o.dal, o.al) ? "yes" : "wait"}">${isDateInRange(oggi, o.dal, o.al) ? "ATTIVA" : "SCADUTA"}</span>
+            ${canEdit ? `
+              <button class="small-secondary" data-edit-promo="${o.id}">Modifica</button>
+              <button class="danger" data-del-promo="${o.id}">Elimina</button>
+            ` : ``}
+          </div>
+        </li>
+      `;
+    });
+    h += `</ul>`;
+    return h;
+  };
+
+  const html = `
+    <div class="inline-row" style="flex-wrap:wrap;">
+      <button class="primary" id="btn-new-promo" type="button">+ Nuova promozione</button>
+      <button class="small-secondary" id="btn-close-promo" type="button">Chiudi</button>
+    </div>
+
+    <h4 style="margin:12px 0 8px; font-weight:900;">Attive</h4>
+    ${listHtml(attive, "Nessuna promozione attiva.")}
+
+    <h4 style="margin:14px 0 8px; font-weight:900;">Scadute</h4>
+    ${listHtml(scadute, "Nessuna promozione scaduta.")}
+  `;
+
+  openModal("Promozioni", html, () => {
+    document.getElementById("btn-new-promo").onclick = () => { closeModal(); openModalPromozione(); };
+    document.getElementById("btn-close-promo").onclick = closeModal;
+
+    document.querySelectorAll("[data-edit-promo]").forEach(b => {
+      b.addEventListener("click", () => {
+        const id = b.getAttribute("data-edit-promo");
+        closeModal();
+        openModalPromozione(id);
+      });
+    });
+
+    document.querySelectorAll("[data-del-promo]").forEach(b => {
+      b.addEventListener("click", () => {
+        const id = b.getAttribute("data-del-promo");
+        if (!confirm("Eliminare questa promozione?")) return;
+        let all = loadData(STORAGE_KEYS.OFFERTE, []);
+        all = all.filter(x => x.id !== id);
+        saveData(STORAGE_KEYS.OFFERTE, all);
+        updatePanoramica();
+        renderPromo();
+        closeModal();
+        openPromoCenterModal();
+      });
+    });
+  });
+}
+
+function openScadenzeEntro60Modal() {
+  const oggi = todayISO();
+  const groups = loadData(STORAGE_KEYS.SCADENZE, []);
+  const items = [];
+
+  groups.forEach(g => {
+    (g.items || []).forEach(it => {
+      const diff = diffDays(oggi, it.dataScadenza);
+      if (diff >= 0 && diff <= 60) {
+        items.push({ ...it, ym: g.ym, diff });
+      }
+    });
+  });
+
+  items.sort((a,b) => a.diff - b.diff);
+
+  const html = `
+    <div class="inline-row" style="flex-wrap:wrap;">
+      <button class="primary" id="btn-add-scad" type="button">+ Nuove scadenze</button>
+      <button class="small-secondary" id="btn-open-scad" type="button">Apri elenco mesi</button>
+      <button class="small-secondary" id="btn-close-scad" type="button">Chiudi</button>
+    </div>
+
+    ${items.length ? `
+      <ul class="simple-list" style="margin-top:10px;">
+        ${items.map(it => `
+          <li>
+            <div class="row-main">
+              <span class="row-title">${escapeHtml(it.nome)} <span class="badge yes">${it.pezzi} pz</span></span>
+              <span class="row-sub">
+                <strong>Entro:</strong> ${it.diff} giorni · <strong>Mese:</strong> ${ymLabel(it.ym)}
+                ${it.minsan ? ` · <strong>Minsan:</strong> ${escapeHtml(it.minsan)}` : ``}
+              </span>
+            </div>
+            <div class="row-actions">
+              <span class="badge no">CRITICA</span>
+            </div>
+          </li>
+        `).join("")}
+      </ul>
+    ` : `
+      <p class="hint-text" style="margin-top:10px;">Nessuna scadenza entro 60 giorni ✅</p>
+    `}
+  `;
+
+  openModal("Scadenze entro 60 giorni", html, () => {
+    document.getElementById("btn-add-scad").onclick = () => { closeModal(); openModalScadenzeWizard(); };
+    document.getElementById("btn-open-scad").onclick = () => { closeModal(); renderScadenzeGruppi(); };
+    document.getElementById("btn-close-scad").onclick = closeModal;
+  });
+}
+
+// ===== ASSENZE =====
 function badgeAssenza(stato) {
   if (stato === "APPROVATA") return `<span class="badge ok">APPROVATA</span>`;
   if (stato === "RIFIUTATA") return `<span class="badge no">RIFIUTATA</span>`;
@@ -413,26 +612,29 @@ function badgeAssenza(stato) {
 function canApproveAssenze() {
   return currentUser && (currentUser.ruolo === "titolare" || currentUser.ruolo === "farmacia");
 }
-function renderAssenzeList() {
-  const wrap = document.getElementById("tab-content");
-  const all = loadData(STORAGE_KEYS.ASSENZE, []).slice()
+
+function renderAssenzeDettaglio() {
+  const all = loadData(STORAGE_KEYS.ASSENZE, [])
+    .slice()
     .sort((a,b) => parseISO(b.dal) - parseISO(a.dal));
 
-  if (!all.length) {
-    wrap.innerHTML = `<p style="color:rgba(241,245,255,.72);">Nessuna richiesta inserita.</p>`;
-    return;
+  let html = `<p class="hint-text"><strong>Richieste assenze/permessi</strong></p>`;
+
+  if (all.length === 0) {
+    html += `<p>Nessuna richiesta inserita.</p>`;
+    return showSezioneDettaglio("Assenti / Permessi", html);
   }
 
-  let html = `<ul class="simple-list">`;
+  html += `<ul class="simple-list">`;
   all.forEach(a => {
     const periodo = `${formatDateShortIT(a.dal)} → ${formatDateShortIT(a.al)}`;
     const motiv = a.motivazioneTitolare ? `<div class="row-sub"><strong>Motivo:</strong> ${escapeHtml(a.motivazioneTitolare)}</div>` : "";
     html += `
       <li>
         <div class="row-main">
-          <div class="row-title">${escapeHtml(a.nome)} – ${escapeHtml(a.tipo)}</div>
-          <div class="row-sub"><strong>Inizio/Fine:</strong> ${periodo}</div>
-          ${a.note ? `<div class="row-sub">${escapeHtml(a.note)}</div>` : ``}
+          <span class="row-title">${escapeHtml(a.nome)} – ${escapeHtml(a.tipo)}</span>
+          <span class="row-sub"><strong>Inizio/Fine:</strong> ${periodo}</span>
+          ${a.note ? `<span class="row-sub">${escapeHtml(a.note)}</span>` : ``}
           ${motiv}
         </div>
         <div class="row-actions">
@@ -446,7 +648,8 @@ function renderAssenzeList() {
     `;
   });
   html += `</ul>`;
-  wrap.innerHTML = html;
+
+  showSezioneDettaglio("Assenti / Permessi", html);
 
   document.querySelectorAll("[data-accetta]").forEach(btn => {
     btn.addEventListener("click", () => openModalMotivoAssenza(btn.getAttribute("data-accetta"), true));
@@ -454,13 +657,16 @@ function renderAssenzeList() {
   document.querySelectorAll("[data-rifiuta]").forEach(btn => {
     btn.addEventListener("click", () => openModalMotivoAssenza(btn.getAttribute("data-rifiuta"), false));
   });
+
+  resetPanoramicaTimer();
 }
+
 function openModalMotivoAssenza(id, isApprove) {
   const html = `
     <form id="form-motivo-assenza">
       <label class="field">
         <span>Motivazione (opzionale)</span>
-        <input type="text" id="motivo-assenza" placeholder="Es. manca copertura / ok / ecc." />
+        <input type="text" id="motivo-assenza" placeholder="Es. ok / manca copertura / ecc." />
       </label>
       <button class="primary" type="submit">${isApprove ? "Conferma APPROVAZIONE" : "Conferma RIFIUTO"}</button>
     </form>
@@ -469,7 +675,7 @@ function openModalMotivoAssenza(id, isApprove) {
     document.getElementById("form-motivo-assenza").addEventListener("submit", (e) => {
       e.preventDefault();
       const motivo = document.getElementById("motivo-assenza").value.trim();
-      const all = loadData(STORAGE_KEYS.ASSENZE, []);
+      let all = loadData(STORAGE_KEYS.ASSENZE, []);
       const a = all.find(x => x.id === id);
       if (!a) return;
 
@@ -479,11 +685,13 @@ function openModalMotivoAssenza(id, isApprove) {
 
       saveData(STORAGE_KEYS.ASSENZE, all);
       closeModal();
+      renderAssenzeDettaglio();
       updatePanoramica();
-      renderAssenzeList();
     });
   });
 }
+
+// ===== QUICK: RICHIESTA ASSENZA =====
 function openModalRichiestaAssenza() {
   const html = `
     <form id="form-richiesta-assenza">
@@ -496,6 +704,7 @@ function openModalRichiestaAssenza() {
           <option value="Malattia">Malattia</option>
         </select>
       </label>
+
       <div class="inline-row">
         <label class="field">
           <span>Dal</span>
@@ -506,28 +715,37 @@ function openModalRichiestaAssenza() {
           <input type="date" id="ass-al" />
         </label>
       </div>
+
       <label class="field">
         <span>Nota (facoltativa)</span>
         <input type="text" id="ass-note" placeholder="Es. visita medica / urgenza..." />
       </label>
+
       <button class="primary" type="submit">Invia richiesta</button>
     </form>
+
+    <p class="hint-text">Lo stato sarà visibile in <strong>Assenti / Permessi</strong>.</p>
   `;
-  openModal("Nuova richiesta assenza", html, () => {
+  openModal("Nuova richiesta assenza/permesso", html, () => {
     document.getElementById("form-richiesta-assenza").addEventListener("submit", (e) => {
       e.preventDefault();
+      if (!currentUser) return;
+
       const tipo = document.getElementById("ass-tipo").value;
       const dal = document.getElementById("ass-dal").value;
       const al = document.getElementById("ass-al").value;
       const note = document.getElementById("ass-note").value.trim();
       if (!dal || !al) return alert("Seleziona dal/al.");
 
-      const all = loadData(STORAGE_KEYS.ASSENZE, []);
+      let all = loadData(STORAGE_KEYS.ASSENZE, []);
       all.push({
         id: "ass_" + Date.now(),
         nome: currentUser.nome,
         username: currentUser.username,
-        tipo, dal, al, note,
+        tipo,
+        dal,
+        al,
+        note,
         stato: "IN_ATTESA",
         motivazioneTitolare: "",
         tsRichiesta: Date.now()
@@ -535,27 +753,22 @@ function openModalRichiestaAssenza() {
       saveData(STORAGE_KEYS.ASSENZE, all);
       closeModal();
       updatePanoramica();
-      renderAssenzeList();
-      setActiveTab("assenti");
+      renderAssenzeDettaglio();
     });
   });
 }
 
-// ===============================
-// CONSUMABILI
-// ===============================
-function canMarkProvveduto() {
-  return currentUser && (currentUser.ruolo === "titolare" || currentUser.ruolo === "farmacia");
-}
+// ===== CONSUMABILI: SWITCH SMART =====
 function openModalConsumabiliSwitch() {
   const catalogo = loadData(STORAGE_KEYS.CONSUMABILI_CATALOGO, []);
   const richieste = loadData(STORAGE_KEYS.CONSUMABILI_RICHIESTE, []);
-  const activeSet = new Set(richieste.filter(r => r.stato !== "PROVVEDUTO").map(r => r.nome));
+
+  const activeSet = new Set(
+    richieste.filter(r => r.stato !== "PROVVEDUTO").map(r => r.nome)
+  );
 
   let html = `
-    <div class="hint-text" style="color:rgba(241,245,255,.72); font-weight:900;">
-      Seleziona quelli <strong>FINITI o BASSI</strong> (switch rosso = richiesta)
-    </div>
+    <div class="hint-text"><strong>Seleziona quelli FINITI o BASSI</strong> (switch rosso = richiesta)</div>
     <div style="margin-top:10px;">
       <ul class="simple-list">
   `;
@@ -581,7 +794,7 @@ function openModalConsumabiliSwitch() {
       </ul>
     </div>
 
-    <hr style="opacity:.2;margin:12px 0;">
+    <hr style="opacity:.25;margin:12px 0;">
 
     <form id="form-cons-add">
       <label class="field">
@@ -590,9 +803,13 @@ function openModalConsumabiliSwitch() {
       </label>
       <button class="small-secondary" type="submit">Aggiungi al catalogo</button>
     </form>
+
+    <p class="hint-text small" style="margin-top:10px;">
+      Le richieste selezionate verranno mostrate in <strong>Consumabili</strong> e in panoramica.
+    </p>
   `;
 
-  openModal("Segnala consumabili", html, () => {
+  openModal("Segnala consumabili (BASSA / FINITO)", html, () => {
     document.querySelectorAll(".c-toggle").forEach((el) => {
       el.addEventListener("change", () => {
         const nome = el.getAttribute("data-cons");
@@ -606,8 +823,8 @@ function openModalConsumabiliSwitch() {
               nome,
               livello: "BASSA",
               note: "",
-              richiestoDa: currentUser?.nome || "Sconosciuto",
-              username: currentUser?.username || "",
+              richiestoDa: currentUser ? currentUser.nome : "Sconosciuto",
+              username: currentUser ? currentUser.username : "",
               ts: Date.now(),
               stato: "IN_RICHIESTA"
             });
@@ -622,36 +839,45 @@ function openModalConsumabiliSwitch() {
     });
 
     const formAdd = document.getElementById("form-cons-add");
-    formAdd?.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const inp = document.getElementById("cons-new-name");
-      const nuovo = (inp?.value || "").trim();
-      if (!nuovo) return;
+    if (formAdd) {
+      formAdd.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const inp = document.getElementById("cons-new-name");
+        const nuovo = (inp?.value || "").trim();
+        if (!nuovo) return;
 
-      let cat = loadData(STORAGE_KEYS.CONSUMABILI_CATALOGO, []);
-      if (!cat.includes(nuovo)) {
-        cat.push(nuovo);
-        cat = cat.sort((a, b) => a.localeCompare(b, "it"));
-        saveData(STORAGE_KEYS.CONSUMABILI_CATALOGO, cat);
-      }
-      closeModal();
-      openModalConsumabiliSwitch();
-    });
+        let cat = loadData(STORAGE_KEYS.CONSUMABILI_CATALOGO, []);
+        if (!cat.includes(nuovo)) {
+          cat.push(nuovo);
+          cat = cat.sort((a, b) => a.localeCompare(b, "it"));
+          saveData(STORAGE_KEYS.CONSUMABILI_CATALOGO, cat);
+        }
+        if (inp) inp.value = "";
+        closeModal();
+        openModalConsumabiliSwitch();
+      });
+    }
   });
 }
 
-function renderConsumabiliList() {
-  const wrap = document.getElementById("tab-content");
+// ===== Q2: consumabili richieste =====
+function canMarkProvveduto() {
+  return currentUser && (currentUser.ruolo === "titolare" || currentUser.ruolo === "farmacia");
+}
+
+function renderConsumabiliRichieste() {
   const richieste = loadData(STORAGE_KEYS.CONSUMABILI_RICHIESTE, [])
     .filter(r => r.stato !== "PROVVEDUTO" && r.stato !== "ANNULLATA")
     .sort((a,b) => b.ts - a.ts);
 
-  if (!richieste.length) {
-    wrap.innerHTML = `<p style="color:rgba(241,245,255,.72);">Nessuna richiesta consumabili attiva.</p>`;
-    return;
+  let html = `<p class="hint-text"><strong>Richieste consumabili</strong> (solo non ancora provvedute)</p>`;
+
+  if (richieste.length === 0) {
+    html += `<p>Nessuna richiesta consumabili attiva.</p>`;
+    return showSezioneDettaglio("Consumabili", html);
   }
 
-  let html = `<ul class="simple-list">`;
+  html += `<ul class="simple-list">`;
   richieste.forEach(r => {
     const dt = new Date(r.ts);
     const dd = String(dt.getDate()).padStart(2,"0");
@@ -663,9 +889,9 @@ function renderConsumabiliList() {
     html += `
       <li>
         <div class="row-main">
-          <div class="row-title">${escapeHtml(r.nome)}</div>
-          <div class="row-sub"><strong>Richiesto da:</strong> ${escapeHtml(r.richiestoDa || "—")} · ${dd}/${mm}/${yy} ${hh}:${mi}</div>
-          ${r.note ? `<div class="row-sub"><strong>Nota:</strong> ${escapeHtml(r.note)}</div>` : ``}
+          <span class="row-title">${escapeHtml(r.nome)}</span>
+          <span class="row-sub"><strong>Richiesto da:</strong> ${escapeHtml(r.richiestoDa || "—")} · ${dd}/${mm}/${yy} ${hh}:${mi}</span>
+          ${r.note ? `<span class="row-sub"><strong>Nota:</strong> ${escapeHtml(r.note)}</span>` : ``}
         </div>
         <div class="row-actions">
           <span class="badge wait">IN RICHIESTA</span>
@@ -675,15 +901,18 @@ function renderConsumabiliList() {
     `;
   });
   html += `</ul>`;
-  wrap.innerHTML = html;
+
+  showSezioneDettaglio("Consumabili", html);
 
   document.querySelectorAll("[data-prov]").forEach(btn => {
     btn.addEventListener("click", () => markConsumabileProvveduto(btn.getAttribute("data-prov")));
   });
+
+  resetPanoramicaTimer();
 }
 
 function markConsumabileProvveduto(id) {
-  const richieste = loadData(STORAGE_KEYS.CONSUMABILI_RICHIESTE, []);
+  let richieste = loadData(STORAGE_KEYS.CONSUMABILI_RICHIESTE, []);
   const r = richieste.find(x => x.id === id);
   if (!r) return;
   r.stato = "PROVVEDUTO";
@@ -692,15 +921,106 @@ function markConsumabileProvveduto(id) {
   saveData(STORAGE_KEYS.CONSUMABILI_RICHIESTE, richieste);
 
   updatePanoramica();
-  renderConsumabiliList();
+  renderConsumabiliRichieste();
 }
 
-// ===============================
-// PROMO (solo modal via FAB)
-// ===============================
+// ===== PROMO (Q3) =====
+function promoGradient(i) {
+  const grads = [
+    "linear-gradient(135deg,#ff3d9a,#ff7bbf)",
+    "linear-gradient(135deg,#1b78ff,#4dabff)",
+    "linear-gradient(135deg,#18a26a,#1bd68c)",
+    "linear-gradient(135deg,#f6a623,#ffb74d)",
+    "linear-gradient(135deg,#7e57c2,#9575cd)"
+  ];
+  return grads[i % grads.length];
+}
+
+function renderPromo() {
+  const oggi = todayISO();
+  const offerte = loadData(STORAGE_KEYS.OFFERTE, []);
+
+  const attive = offerte.filter(o => isDateInRange(oggi, o.dal, o.al))
+    .sort((a,b) => parseISO(a.al) - parseISO(b.al));
+  const scadute = offerte.filter(o => parseISO(oggi) > parseISO(o.al))
+    .sort((a,b) => parseISO(b.al) - parseISO(a.al));
+
+  const wrapAtt = document.getElementById("lista-offerte-attive");
+  const wrapSca = document.getElementById("lista-offerte-scadute");
+
+  if (wrapAtt) wrapAtt.innerHTML = "";
+  if (wrapSca) wrapSca.innerHTML = "";
+
+  if (wrapAtt) {
+    if (attive.length === 0) {
+      wrapAtt.innerHTML = `<p class="hint-text">Nessuna offerta attiva.</p>`;
+    } else {
+      attive.forEach((o, idx) => {
+        const card = document.createElement("div");
+        card.className = "promo-card";
+        card.style.background = promoGradient(idx);
+        card.innerHTML = `
+          <div>
+            <div class="pc-title">${escapeHtml(o.nome)}</div>
+            <div class="pc-sub">${formatDateShortIT(o.dal)} → ${formatDateShortIT(o.al)}</div>
+            ${o.note ? `<div class="pc-note">${escapeHtml(o.note)}</div>` : ``}
+          </div>
+          <div class="pc-actions">
+            <button class="small-secondary" data-edit-off="${o.id}">Modifica</button>
+            <button class="danger" data-del-off="${o.id}">Elimina</button>
+          </div>
+        `;
+        wrapAtt.appendChild(card);
+      });
+    }
+  }
+
+  if (wrapSca) {
+    if (scadute.length === 0) {
+      wrapSca.innerHTML = `<p class="hint-text">Nessuna offerta scaduta.</p>`;
+    } else {
+      scadute.forEach((o, idx) => {
+        const card = document.createElement("div");
+        card.className = "promo-card";
+        card.style.background = promoGradient(idx + 2);
+        card.innerHTML = `
+          <div>
+            <div class="pc-title">${escapeHtml(o.nome)}</div>
+            <div class="pc-sub">Scaduta: ${formatDateShortIT(o.dal)} → ${formatDateShortIT(o.al)}</div>
+            ${o.note ? `<div class="pc-note">${escapeHtml(o.note)}</div>` : ``}
+          </div>
+          <div class="pc-actions">
+            <button class="small-secondary" data-edit-off="${o.id}">Modifica</button>
+            <button class="danger" data-del-off="${o.id}">Elimina</button>
+          </div>
+        `;
+        wrapSca.appendChild(card);
+      });
+    }
+  }
+
+  document.querySelectorAll("[data-edit-off]").forEach(btn => {
+    btn.addEventListener("click", () => openModalPromozione(btn.getAttribute("data-edit-off")));
+  });
+  document.querySelectorAll("[data-del-off]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-del-off");
+      let all = loadData(STORAGE_KEYS.OFFERTE, []);
+      all = all.filter(x => x.id !== id);
+      saveData(STORAGE_KEYS.OFFERTE, all);
+      renderPromo();
+      updatePanoramica();
+    });
+  });
+
+  const btnViewAll = document.getElementById("btn-view-all-promo");
+  if (btnViewAll) btnViewAll.onclick = () => openModalTuttePromo();
+}
+
 function openModalPromozione(existingId) {
   let offerte = loadData(STORAGE_KEYS.OFFERTE, []);
-  let off = existingId ? offerte.find(x => x.id === existingId) : null;
+  let off = null;
+  if (existingId) off = offerte.find(x => x.id === existingId);
 
   const html = `
     <form id="form-promo">
@@ -719,7 +1039,7 @@ function openModalPromozione(existingId) {
         </label>
       </div>
       <label class="field">
-        <span>Note</span>
+        <span>Note (ben visibili)</span>
         <input type="text" id="p-note" value="${off ? escapeHtml(off.note || "") : ""}" />
       </label>
       <button class="primary" type="submit">${off ? "Salva modifiche" : "Crea promozione"}</button>
@@ -732,6 +1052,7 @@ function openModalPromozione(existingId) {
       const dal = document.getElementById("p-dal").value;
       const al  = document.getElementById("p-al").value;
       const note = document.getElementById("p-note").value.trim();
+
       if (!nome || !dal || !al) return alert("Compila nome + dal + al.");
 
       let all = loadData(STORAGE_KEYS.OFFERTE, []);
@@ -742,21 +1063,52 @@ function openModalPromozione(existingId) {
       }
       saveData(STORAGE_KEYS.OFFERTE, all);
       closeModal();
+      renderPromo();
       updatePanoramica();
     });
   });
 }
 
+function openModalTuttePromo() {
+  const offerte = loadData(STORAGE_KEYS.OFFERTE, []);
+  let html = `<p class="hint-text"><strong>Tutte le promozioni</strong></p><ul class="simple-list">`;
+  if (offerte.length === 0) {
+    html += `<li><span>Nessuna promozione.</span></li>`;
+  } else {
+    offerte
+      .slice()
+      .sort((a,b) => a.dal.localeCompare(b.dal))
+      .forEach(o => {
+        html += `
+          <li>
+            <div class="row-main">
+              <span class="row-title">${escapeHtml(o.nome)}</span>
+              <span class="row-sub">${formatDateShortIT(o.dal)} → ${formatDateShortIT(o.al)}</span>
+              ${o.note ? `<span class="row-sub"><strong>Note:</strong> ${escapeHtml(o.note)}</span>` : ``}
+            </div>
+          </li>
+        `;
+      });
+  }
+  html += `</ul>`;
+  openModal("Archivio promozioni", html);
+}
+
 // ===============================
-// SCADENZE (wizard + lista mesi)
+// SCADENZE (wizard + gruppi mese/anno + CRUD)
 // ===============================
-function ymKeyFromISO(iso) { const [y, m] = iso.split("-"); return `${y}-${m}`; }
+function ymKeyFromISO(iso) {
+  const [y, m] = iso.split("-");
+  return `${y}-${m}`;
+}
 function ymLabel(ym) {
   const [y, m] = ym.split("-");
   const monthNames = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
   return `${monthNames[Number(m)-1]} ${y}`;
 }
-function ymSort(a, b) { return a.localeCompare(b); }
+function ymSort(a, b) {
+  return a.localeCompare(b);
+}
 
 function openModalScadenzeWizard() {
   const groups = loadData(STORAGE_KEYS.SCADENZE, []);
@@ -772,16 +1124,18 @@ function openModalScadenzeWizard() {
         <select id="scad-ym">${options}</select>
       </label>
 
-      <label class="field">
-        <span>Oppure crea nuovo (mese)</span>
-        <input type="month" id="scad-new-ym" />
-      </label>
+      <div class="inline-row">
+        <label class="field">
+          <span>Oppure crea nuovo (mese)</span>
+          <input type="month" id="scad-new-ym" />
+        </label>
+      </div>
 
       <button class="primary" type="submit">Avanti</button>
     </form>
   `;
 
-  openModal("Nuova scadenza", html, () => {
+  openModal("Nuova scadenza (scegli mese/anno)", html, () => {
     document.getElementById("form-scad-step1").addEventListener("submit", (e) => {
       e.preventDefault();
       const sel = document.getElementById("scad-ym").value;
@@ -789,6 +1143,62 @@ function openModalScadenzeWizard() {
       const ym = newYm || sel;
       if (!ym) return alert("Seleziona o crea un mese/anno.");
       openModalScadenzeRighe(ym);
+    });
+  });
+}
+
+function openModalScadenzeRighe(ym) {
+  const html = `
+    <form id="form-scad-step2">
+      <p class="hint-text"><strong>${ymLabel(ym)}</strong> – Inserisci i prodotti (nome, pezzi, minsan opzionale).</p>
+
+      <div id="scad-rows">
+        ${scadRowHtml("", "", "")}
+      </div>
+
+      <button class="small-secondary" type="button" id="btn-add-row">+ AGGIUNGI RIGA</button>
+      <button class="primary" type="submit">Salva scadenze</button>
+    </form>
+  `;
+  openModal("Nuove scadenze prodotti", html, () => {
+    const rows = document.getElementById("scad-rows");
+    document.getElementById("btn-add-row").addEventListener("click", () => {
+      rows.insertAdjacentHTML("beforeend", scadRowHtml("", "", ""));
+    });
+
+    document.getElementById("form-scad-step2").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const names = Array.from(document.querySelectorAll(".scad-name"));
+      const pcs   = Array.from(document.querySelectorAll(".scad-pcs"));
+      const mins  = Array.from(document.querySelectorAll(".scad-minsan"));
+
+      const items = [];
+      for (let i = 0; i < names.length; i++) {
+        const nome = names[i].value.trim();
+        const pezzi = Number(pcs[i].value || 0);
+        const minsan = mins[i].value.trim();
+        if (!nome || !pezzi) continue;
+
+        const [y, m] = ym.split("-");
+        const iso = `${y}-${m}-28`;
+        items.push({ id: "si_" + Date.now() + "_" + i, nome, pezzi, minsan, dataScadenza: iso });
+      }
+      if (items.length === 0) return alert("Inserisci almeno 1 riga valida (nome + pezzi).");
+
+      let groups = loadData(STORAGE_KEYS.SCADENZE, []);
+      let g = groups.find(x => x.ym === ym);
+      if (!g) {
+        g = { id: "sg_" + Date.now(), ym, items: [] };
+        groups.push(g);
+      }
+      g.items.push(...items);
+      g.items.sort((a,b) => a.nome.localeCompare(b.nome, "it"));
+      groups.sort((a,b) => ymSort(a.ym, b.ym));
+      saveData(STORAGE_KEYS.SCADENZE, groups);
+
+      closeModal();
+      updatePanoramica();
+      renderScadenzeGruppi();
     });
   });
 }
@@ -812,86 +1222,31 @@ function scadRowHtml(nome, pezzi, minsan) {
   `;
 }
 
-function openModalScadenzeRighe(ym) {
-  const html = `
-    <form id="form-scad-step2">
-      <p style="color:rgba(241,245,255,.72); font-weight:900;">
-        ${ymLabel(ym)} – Inserisci i prodotti (nome, pezzi, minsan opzionale).
-      </p>
-
-      <div id="scad-rows">${scadRowHtml("", "", "")}</div>
-
-      <button class="small-secondary" type="button" id="btn-add-row">+ AGGIUNGI RIGA</button>
-      <button class="primary" type="submit">Salva</button>
-    </form>
-  `;
-  openModal("Scadenze prodotti", html, () => {
-    const rows = document.getElementById("scad-rows");
-    document.getElementById("btn-add-row").addEventListener("click", () => {
-      rows.insertAdjacentHTML("beforeend", scadRowHtml("", "", ""));
-    });
-
-    document.getElementById("form-scad-step2").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const names = Array.from(document.querySelectorAll(".scad-name"));
-      const pcs   = Array.from(document.querySelectorAll(".scad-pcs"));
-      const mins  = Array.from(document.querySelectorAll(".scad-minsan"));
-
-      const items = [];
-      for (let i = 0; i < names.length; i++) {
-        const nome = names[i].value.trim();
-        const pezzi = Number(pcs[i].value || 0);
-        const minsan = mins[i].value.trim();
-        if (!nome || !pezzi) continue;
-
-        const [y, m] = ym.split("-");
-        const iso = `${y}-${m}-28`;
-        items.push({ id: "si_" + Date.now() + "_" + i, nome, pezzi, minsan, dataScadenza: iso });
-      }
-      if (!items.length) return alert("Inserisci almeno 1 riga valida (nome + pezzi).");
-
-      let groups = loadData(STORAGE_KEYS.SCADENZE, []);
-      let g = groups.find(x => x.ym === ym);
-      if (!g) { g = { id: "sg_" + Date.now(), ym, items: [] }; groups.push(g); }
-      g.items.push(...items);
-      g.items.sort((a,b) => a.nome.localeCompare(b.nome, "it"));
-      groups.sort((a,b) => ymSort(a.ym, b.ym));
-      saveData(STORAGE_KEYS.SCADENZE, groups);
-
-      closeModal();
-      updatePanoramica();
-      renderScadenzeList();
-      setActiveTab("scadenze");
-    });
-  });
-}
-
-function renderScadenzeList() {
-  const wrap = document.getElementById("tab-content");
+function renderScadenzeGruppi() {
   const groups = loadData(STORAGE_KEYS.SCADENZE, []).slice().sort((a,b) => ymSort(a.ym, b.ym));
 
-  if (!groups.length) {
-    wrap.innerHTML = `<p style="color:rgba(241,245,255,.72);">Nessuna scadenza registrata.</p>`;
-    return;
+  if (groups.length === 0) {
+    return showSezioneDettaglio("Prodotti in scadenza", `<p>Nessuna scadenza registrata.</p>`);
   }
 
-  let html = `<ul class="simple-list">`;
+  let html = `<p class="hint-text"><strong>Scadenze per mese/anno</strong></p><ul class="simple-list">`;
   groups.forEach(g => {
     html += `
       <li>
         <div class="row-main">
-          <div class="row-title">${ymLabel(g.ym)}</div>
-          <div class="row-sub">${(g.items || []).length} prodotto/i</div>
+          <span class="row-title">${ymLabel(g.ym)}</span>
+          <span class="row-sub">${(g.items || []).length} prodotto/i</span>
         </div>
         <div class="row-actions">
           <button class="small-primary" data-open-ym="${g.ym}">Apri</button>
-          <button class="danger" data-del-ym="${g.ym}">Elimina</button>
+          <button class="danger" data-del-ym="${g.ym}">Elimina mese</button>
         </div>
       </li>
     `;
   });
   html += `</ul>`;
-  wrap.innerHTML = html;
+
+  showSezioneDettaglio("Prodotti in scadenza", html);
 
   document.querySelectorAll("[data-open-ym]").forEach(btn => {
     btn.addEventListener("click", () => openScadenzeMese(btn.getAttribute("data-open-ym")));
@@ -904,9 +1259,11 @@ function renderScadenzeList() {
       gs = gs.filter(x => x.ym !== ym);
       saveData(STORAGE_KEYS.SCADENZE, gs);
       updatePanoramica();
-      renderScadenzeList();
+      renderScadenzeGruppi();
     });
   });
+
+  resetPanoramicaTimer();
 }
 
 function openScadenzeMese(ym) {
@@ -914,7 +1271,14 @@ function openScadenzeMese(ym) {
   const g = groups.find(x => x.ym === ym);
   if (!g) return;
 
-  let html = `<ul class="simple-list">`;
+  let html = `
+    <p class="hint-text"><strong>${ymLabel(ym)}</strong> – Prodotti in scadenza</p>
+    <div class="inline-row">
+      <button class="small-secondary" type="button" id="btn-add-to-ym">+ Aggiungi prodotti a questo mese</button>
+    </div>
+    <ul class="simple-list" style="margin-top:10px;">
+  `;
+
   (g.items || [])
     .slice()
     .sort((a,b) => a.nome.localeCompare(b.nome,"it"))
@@ -922,39 +1286,82 @@ function openScadenzeMese(ym) {
       html += `
         <li>
           <div class="row-main">
-            <div class="row-title">${escapeHtml(it.nome)} <span class="badge yes">${it.pezzi} pz</span></div>
-            <div class="row-sub">${it.minsan ? `Minsan: ${escapeHtml(it.minsan)}` : `Minsan: —`}</div>
+            <span class="row-title">${escapeHtml(it.nome)} <span class="badge yes">${it.pezzi} pz</span></span>
+            <span class="row-sub">${it.minsan ? `Minsan: ${escapeHtml(it.minsan)}` : `Minsan: —`}</span>
           </div>
           <div class="row-actions">
+            <button class="small-secondary" data-edit-item="${it.id}">Modifica</button>
             <button class="danger" data-del-item="${it.id}">Rimuovi</button>
           </div>
         </li>
       `;
     });
+
   html += `</ul>`;
 
-  openModal(`Scadenze – ${ymLabel(ym)}`, `
-    <div style="display:flex; gap:10px; margin-bottom:10px;">
-      <button class="small-secondary" id="btn-add-to-ym" type="button">+ Aggiungi prodotti</button>
-      <button class="small-secondary" id="btn-close-scad" type="button">Chiudi</button>
-    </div>
-    ${html}
-  `, () => {
-    document.getElementById("btn-add-to-ym").onclick = () => { closeModal(); openModalScadenzeRighe(ym); };
-    document.getElementById("btn-close-scad").onclick = closeModal;
+  showSezioneDettaglio(`Scadenze – ${ymLabel(ym)}`, html);
 
-    document.querySelectorAll("[data-del-item]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-del-item");
-        let gs = loadData(STORAGE_KEYS.SCADENZE, []);
-        const gg = gs.find(x => x.ym === ym);
-        if (!gg) return;
-        gg.items = (gg.items || []).filter(x => x.id !== id);
-        saveData(STORAGE_KEYS.SCADENZE, gs);
-        updatePanoramica();
-        closeModal();
-        openScadenzeMese(ym);
-      });
+  const btnAdd = document.getElementById("btn-add-to-ym");
+  if (btnAdd) btnAdd.addEventListener("click", () => openModalScadenzeRighe(ym));
+
+  document.querySelectorAll("[data-del-item]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-del-item");
+      let gs = loadData(STORAGE_KEYS.SCADENZE, []);
+      const gg = gs.find(x => x.ym === ym);
+      if (!gg) return;
+      gg.items = (gg.items || []).filter(x => x.id !== id);
+      saveData(STORAGE_KEYS.SCADENZE, gs);
+      updatePanoramica();
+      openScadenzeMese(ym);
+    });
+  });
+
+  document.querySelectorAll("[data-edit-item]").forEach(btn => {
+    btn.addEventListener("click", () => openModalEditScadenzaItem(ym, btn.getAttribute("data-edit-item")));
+  });
+
+  resetPanoramicaTimer();
+}
+
+function openModalEditScadenzaItem(ym, itemId) {
+  let gs = loadData(STORAGE_KEYS.SCADENZE, []);
+  const g = gs.find(x => x.ym === ym);
+  if (!g) return;
+  const it = (g.items || []).find(x => x.id === itemId);
+  if (!it) return;
+
+  const html = `
+    <form id="form-edit-scad-item">
+      <label class="field">
+        <span>Nome prodotto</span>
+        <input type="text" id="esi-nome" value="${escapeHtml(it.nome)}" />
+      </label>
+      <div class="inline-row">
+        <label class="field">
+          <span>Pezzi</span>
+          <input type="number" min="1" id="esi-pezzi" value="${it.pezzi}" />
+        </label>
+        <label class="field">
+          <span>Minsan (opz.)</span>
+          <input type="text" id="esi-minsan" value="${escapeHtml(it.minsan || "")}" />
+        </label>
+      </div>
+      <button class="primary" type="submit">Salva</button>
+    </form>
+  `;
+  openModal("Modifica scadenza", html, () => {
+    document.getElementById("form-edit-scad-item").addEventListener("submit", (e) => {
+      e.preventDefault();
+      it.nome = document.getElementById("esi-nome").value.trim();
+      it.pezzi = Number(document.getElementById("esi-pezzi").value || 0);
+      it.minsan = document.getElementById("esi-minsan").value.trim();
+      if (!it.nome || !it.pezzi) return alert("Nome e pezzi obbligatori.");
+
+      saveData(STORAGE_KEYS.SCADENZE, gs);
+      closeModal();
+      updatePanoramica();
+      openScadenzeMese(ym);
     });
   });
 }
@@ -962,43 +1369,38 @@ function openScadenzeMese(ym) {
 // ===============================
 // PROCEDURE
 // ===============================
-function renderProcedureList() {
-  const wrap = document.getElementById("tab-content");
+function renderProcedureGrid() {
   const procs = loadData(STORAGE_KEYS.PROCEDURE, []);
 
-  if (!procs.length) {
-    wrap.innerHTML = `
-      <p style="color:rgba(241,245,255,.72);">Nessuna procedura salvata.</p>
-      <button class="small-primary" id="btn-add-proc" type="button">+ Aggiungi procedura</button>
-    `;
-    document.getElementById("btn-add-proc").onclick = () => openModalProcedureManager();
+  let html = `<p class="hint-text"><strong>Procedure</strong> – clicca un’icona.</p>`;
+
+  if (procs.length === 0) {
+    html += `<p>Nessuna procedura salvata.</p>`;
+    html += `<button class="small-primary" id="btn-add-proc">+ Aggiungi procedura</button>`;
+    showSezioneDettaglio("Procedure", html);
+    document.getElementById("btn-add-proc").addEventListener("click", openModalProcedureManager);
     return;
   }
 
-  let html = `<ul class="simple-list">`;
+  html += `<div class="proc-grid">`;
   procs.forEach(p => {
     html += `
-      <li>
-        <div class="row-main">
-          <div class="row-title">${escapeHtml(p.icon || "📄")} ${escapeHtml(p.titolo || "")}</div>
-          <div class="row-sub">${escapeHtml(p.categoria || "Procedura")}</div>
-        </div>
-        <div class="row-actions">
-          <button class="small-primary" data-open-proc="${p.id}">Apri</button>
-          <button class="small-secondary" data-edit-proc="${p.id}">Modifica</button>
-        </div>
-      </li>
+      <button class="proc-tile" data-open-proc="${p.id}" type="button">
+        <div class="proc-ico">${p.icon || "📄"}</div>
+        <div class="proc-name">${escapeHtml(p.titolo || "Procedura")}</div>
+        <div class="proc-mini">${escapeHtml(p.categoria || "Procedura")}</div>
+      </button>
     `;
   });
-  html += `</ul>`;
-  wrap.innerHTML = html;
+  html += `</div>`;
+
+  showSezioneDettaglio("Procedure", html);
 
   document.querySelectorAll("[data-open-proc]").forEach(btn => {
     btn.addEventListener("click", () => openProcedureDetail(btn.getAttribute("data-open-proc")));
   });
-  document.querySelectorAll("[data-edit-proc]").forEach(btn => {
-    btn.addEventListener("click", () => openModalProcedureManager(btn.getAttribute("data-edit-proc")));
-  });
+
+  resetPanoramicaTimer();
 }
 
 function openProcedureDetail(procId) {
@@ -1008,38 +1410,45 @@ function openProcedureDetail(procId) {
 
   const steps = Array.isArray(p.steps) ? p.steps : [];
   const stepsHtml = steps.length
-    ? `<ol style="margin:0; padding-left:18px;">${steps.map(s => `<li style="margin:6px 0;">${escapeHtml(s)}</li>`).join("")}</ol>`
-    : `<p style="color:rgba(241,245,255,.72);">Nessun passaggio inserito.</p>`;
+    ? `<ol class="proc-steps">${steps.map(s => `<li>${escapeHtml(s)}</li>`).join("")}</ol>`
+    : `<p class="hint-text">Nessun passaggio inserito.</p>`;
 
-  openModal("Procedura", `
-    <div style="display:flex; flex-direction:column; gap:10px;">
-      <div style="font-weight:900; font-size:1.05rem;">${escapeHtml(p.icon || "📄")} ${escapeHtml(p.titolo || "")}</div>
-      ${p.descrizione ? `<div style="color:rgba(241,245,255,.72);">${escapeHtml(p.descrizione)}</div>` : ``}
+  let html = `
+    <div class="proc-detail">
+      <h4>${p.icon || "📄"} ${escapeHtml(p.titolo || "")}</h4>
+      ${p.descrizione ? `<p>${escapeHtml(p.descrizione)}</p>` : ``}
       ${stepsHtml}
-      ${p.nota ? `<div class="badge yes" style="padding:10px 12px;">💡 ${escapeHtml(p.nota)}</div>` : ``}
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="small-secondary" id="btn-close-proc">Chiudi</button>
-        <button class="small-primary" id="btn-edit-proc2">Modifica</button>
-        <button class="danger" id="btn-del-proc">Elimina</button>
+      ${p.nota ? `<div class="proc-note">💡 ${escapeHtml(p.nota)}</div>` : ``}
+
+      <div class="row-actions" style="margin-top:12px;">
+        <button class="small-secondary" id="btn-back-proc" type="button">← Indietro</button>
+        <button class="small-primary" id="btn-edit-proc" type="button">Modifica</button>
+        <button class="danger" id="btn-del-proc" type="button">Elimina</button>
       </div>
     </div>
-  `, () => {
-    document.getElementById("btn-close-proc").onclick = closeModal;
-    document.getElementById("btn-edit-proc2").onclick = () => { closeModal(); openModalProcedureManager(procId); };
-    document.getElementById("btn-del-proc").onclick = () => {
-      if (!confirm("Eliminare questa procedura?")) return;
-      let all = loadData(STORAGE_KEYS.PROCEDURE, []);
-      all = all.filter(x => x.id !== procId);
-      saveData(STORAGE_KEYS.PROCEDURE, all);
-      closeModal();
-      renderProcedureList();
-    };
+  `;
+
+  showSezioneDettaglio("Procedure", html);
+
+  document.getElementById("btn-back-proc").addEventListener("click", renderProcedureGrid);
+  document.getElementById("btn-edit-proc").addEventListener("click", () => openModalProcedureManager(procId));
+  document.getElementById("btn-del-proc").addEventListener("click", () => {
+    if (!confirm("Eliminare questa procedura?")) return;
+    let all = loadData(STORAGE_KEYS.PROCEDURE, []);
+    all = all.filter(x => x.id !== procId);
+    saveData(STORAGE_KEYS.PROCEDURE, all);
+    renderProcedureGrid();
+    updatePanoramica();
   });
+
+  resetPanoramicaTimer();
 }
 
 function openModalProcedureManager(editId) {
-  const procs = loadData(STORAGE_KEYS.PROCEDURE, []);
-  let p = editId ? procs.find(x => x.id === editId) : null;
+  let procs = loadData(STORAGE_KEYS.PROCEDURE, []);
+  let p = null;
+  if (editId) p = procs.find(x => x.id === editId);
+
   const steps = p?.steps?.join("\n") || "";
 
   const html = `
@@ -1057,7 +1466,7 @@ function openModalProcedureManager(editId) {
 
       <label class="field">
         <span>Nome procedura</span>
-        <input type="text" id="pr-title" value="${p ? escapeHtml(p.titolo || "") : ""}" />
+        <input type="text" id="pr-title" value="${p ? escapeHtml(p.titolo) : ""}" />
       </label>
 
       <label class="field">
@@ -1088,27 +1497,39 @@ function openModalProcedureManager(editId) {
       const descrizione = document.getElementById("pr-desc").value.trim();
       const stepsRaw = document.getElementById("pr-steps").value.split("\n").map(x => x.trim()).filter(Boolean);
       const nota = document.getElementById("pr-note").value.trim();
+
       if (!titolo) return alert("Inserisci il nome della procedura.");
 
       let all = loadData(STORAGE_KEYS.PROCEDURE, []);
       if (p) {
-        p.icon = icon; p.categoria = categoria; p.titolo = titolo;
-        p.descrizione = descrizione; p.steps = stepsRaw; p.nota = nota;
+        p.icon = icon;
+        p.categoria = categoria;
+        p.titolo = titolo;
+        p.descrizione = descrizione;
+        p.steps = stepsRaw;
+        p.nota = nota;
       } else {
-        all.push({ id: "pr_" + Date.now(), icon, categoria, titolo, descrizione, steps: stepsRaw, nota });
+        all.push({
+          id: "pr_" + Date.now(),
+          icon, categoria, titolo, descrizione,
+          steps: stepsRaw,
+          nota
+        });
       }
       saveData(STORAGE_KEYS.PROCEDURE, all);
       closeModal();
-      renderProcedureList();
+      renderProcedureGrid();
     });
   });
 }
 
 // ===============================
-// DIPENDENTI (solo farmacia)
+// SIDEBAR: crea utente dipendente
 // ===============================
 function openModalNuovoDipendente() {
-  if (!currentUser || currentUser.ruolo !== "farmacia") return alert("Solo la Farmacia può creare utenti dipendente.");
+  if (!currentUser || currentUser.ruolo !== "farmacia") {
+    return alert("Solo la Farmacia può creare utenti dipendente.");
+  }
 
   const html = `
     <form id="form-new-emp">
@@ -1128,9 +1549,7 @@ function openModalNuovoDipendente() {
       </div>
       <button class="primary" type="submit">Crea utente</button>
     </form>
-    <p style="color:rgba(241,245,255,.72); margin-top:8px;">
-      L’utente potrà fare login con le credenziali create qui.
-    </p>
+    <p class="hint-text">L’utente potrà fare login con le credenziali create qui.</p>
   `;
   openModal("Crea utente dipendente", html, () => {
     document.getElementById("form-new-emp").addEventListener("submit", (e) => {
@@ -1143,11 +1562,19 @@ function openModalNuovoDipendente() {
       let users = loadData(STORAGE_KEYS.UTENTI, []);
       if (users.some(u => u.username === username)) return alert("Username già esistente.");
 
-      users.push({ username, password, ruolo: "dipendente", nome, telefono: "", email: "" });
+      users.push({
+        username,
+        password,
+        ruolo: "dipendente",
+        nome,
+        telefono: "",
+        email: ""
+      });
       saveData(STORAGE_KEYS.UTENTI, users);
-
       closeModal();
       alert("Dipendente creato ✅");
     });
   });
+
+  closeSidebarHard();
 }
