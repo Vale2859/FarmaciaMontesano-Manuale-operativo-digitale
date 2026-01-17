@@ -3,25 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <title>Portale Farmacia Montesano</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 <div id="app">
 
-  <!-- TOPBAR MOBILE -->
-  <header class="m-topbar">
-    <button class="icon-btn" id="btn-hamburger" aria-label="Apri menu" type="button">☰</button>
-
-    <div class="m-title">
-      <div class="m-title-main">Farmacia Montesano</div>
-      <div class="m-title-sub" id="topbar-subtitle">Accesso non effettuato</div>
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" id="btn-hamburger" aria-label="Apri menu">
+        <span></span>
+      </button>
+      <div class="topbar-title-wrap">
+        <div class="topbar-title">PORTALE FARMACIA MONTESANO</div>
+        <div class="topbar-subtitle" id="topbar-subtitle">Accesso non effettuato</div>
+      </div>
     </div>
 
-    <button class="icon-btn" id="btn-esci" aria-label="Esci" type="button">⎋</button>
+    <div class="topbar-center quick-links">
+      <a href="mailto:info@farmaciamontesano.it" target="_blank" class="quick-link-btn big">
+        ✉️ <span>Mail</span>
+      </a>
+      <a href="https://www.google.com" target="_blank" class="quick-link-btn big">
+        💊 <span>Medybox</span>
+      </a>
+      <a href="https://www.google.com" target="_blank" class="quick-link-btn big">
+        🚚 <span>Pharmercure</span>
+      </a>
+    </div>
+
+    <div class="topbar-right">
+      <span class="user-label" id="user-label">Ospite</span>
+      <button class="link-button" id="btn-esci" type="button">Esci</button>
+    </div>
   </header>
 
-  <!-- SIDEBAR / MENU -->
+  <!-- SIDEBAR -->
   <div id="sidebar-backdrop" class="sidebar-backdrop hidden"></div>
   <aside id="sidebar" class="sidebar hidden" aria-hidden="true">
     <div class="sidebar-head">
@@ -30,26 +48,23 @@
     </div>
 
     <div class="sidebar-body">
-      <div class="sidebar-section" id="sidebar-admin-box">
+
+      <div class="sidebar-section hidden" id="sidebar-admin-box">
         <div class="sidebar-section-title">Gestione dipendenti (Farmacia)</div>
         <button class="side-btn" data-side-action="nuovo-dipendente">👤 Crea utente dipendente</button>
       </div>
 
       <div class="sidebar-section">
-        <div class="sidebar-section-title">Foto / Logo</div>
+        <div class="sidebar-section-title">Immagine Quadrante 4</div>
         <button class="side-btn" data-side-action="carica-foto">🖼️ Carica / Cambia foto</button>
         <button class="side-btn side-btn-danger" data-side-action="rimuovi-foto">🗑️ Rimuovi foto</button>
       </div>
 
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">Utente</div>
-        <div class="user-pill" id="user-label">Ospite</div>
-      </div>
     </div>
   </aside>
 
-  <!-- ============ AUTH VIEW ============ -->
-  <section id="view-auth" class="auth-view">
+  <!-- ============ AUTH VIEW (LOGIN SOLO) ============ -->
+  <section id="view-auth" class="auth-view app-view">
     <div class="login-wrap">
       <div class="login-card">
         <div class="login-logo">
@@ -74,7 +89,7 @@
         </form>
 
         <p class="login-hint">
-          Nota: la <strong>Farmacia</strong> crea utenti dipendenti dal menu (☰).
+          Nota: la <strong>Farmacia</strong> crea gli utenti dipendenti dal menu laterale.
         </p>
 
         <div class="login-demo">
@@ -84,70 +99,163 @@
     </div>
   </section>
 
-  <!-- ============ APP MOBILE VIEW ============ -->
-  <main id="view-mobile" class="m-view hidden">
+  <!-- ============ DASHBOARD UNICA ============ -->
+  <main id="view-dashboard" class="dashboard-grid app-view hidden">
 
-    <!-- Foto/Logo card (opzionale, bella su mobile) -->
-    <section class="m-hero">
-      <div class="m-hero-photo" id="photo-cover">
-        <div class="photo-placeholder" id="photo-placeholder">
-          <div class="photo-ph-title">Logo / Foto</div>
-          <div class="photo-ph-sub">Caricala dal menu (☰).</div>
-        </div>
-      </div>
+    <!-- PULSANTE RAPIDO CENTRALE -->
+    <div id="quick-btn" aria-label="Apri azioni rapide" title="Azioni rapide"><span>+</span></div>
 
-      <div class="m-panorama">
-        <div class="m-pan-tile">
-          <div class="m-pan-ico">🧑‍⚕️</div>
-          <div class="m-pan-main">
-            <div class="m-pan-title">Assenze oggi (APPROVATE)</div>
-            <div class="m-pan-value" id="val-assenze-oggi">0</div>
-          </div>
-        </div>
-        <div class="m-pan-tile">
-          <div class="m-pan-ico">⏳</div>
-          <div class="m-pan-main">
-            <div class="m-pan-title">Scadenze entro 60 giorni</div>
-            <div class="m-pan-value" id="val-scadenze-60">0</div>
-          </div>
-        </div>
-        <div class="m-pan-tile">
-          <div class="m-pan-ico">🧻</div>
-          <div class="m-pan-main">
-            <div class="m-pan-title">Consumabili in richiesta</div>
-            <div class="m-pan-value" id="val-consumabili-alert">0</div>
-          </div>
-        </div>
-        <div class="m-pan-tile">
-          <div class="m-pan-ico">🏷️</div>
-          <div class="m-pan-main">
-            <div class="m-pan-title">Promozioni attive</div>
-            <div class="m-pan-value" id="val-promo-attive">0</div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div id="quick-menu" class="hidden" aria-hidden="true">
+      <button class="qm-btn qm-top" data-action="richiesta-assenza">
+        <span>🧑‍⚕️</span><small>Assenza</small>
+      </button>
 
-    <!-- CONTENUTO TAB -->
-    <section class="m-content">
-      <header class="m-section-head">
-        <h2 id="tab-title">Assenze</h2>
-        <button class="small-secondary" id="btn-refresh" type="button">Aggiorna</button>
+      <button class="qm-btn qm-right" data-action="richiesta-consumabile">
+        <span>🧻</span><small>Consum.</small>
+      </button>
+
+      <button class="qm-btn qm-bottom" data-action="nuova-promozione">
+        <span>🏷️</span><small>Promo</small>
+      </button>
+
+      <button class="qm-btn qm-left" data-action="nuova-scadenza">
+        <span>⏳</span><small>Scadenze</small>
+      </button>
+
+      <button class="qm-btn qm-center" data-action="procedure-manager">
+        <span>📄</span><small>Proc.</small>
+      </button>
+    </div>
+
+    <!-- Q1 – SEZIONI -->
+    <section class="panel panel-q1">
+      <header class="panel-header">
+        <div>
+          <h2>Sezioni farmacia</h2>
+          <p>Accesso rapido alle aree operative.</p>
+        </div>
       </header>
 
-      <div id="tab-content" class="m-section-body"></div>
+      <div class="sezioni-grid sezioni-4">
+        <button class="sec-card sec-green" data-section="assenti" type="button">
+          <span class="sec-label">Sezione</span>
+          <span class="sec-title">Assenti / Permessi</span>
+        </button>
+
+        <button class="sec-card sec-blue" data-section="procedure" type="button">
+          <span class="sec-label">Sezione</span>
+          <span class="sec-title">Procedure</span>
+        </button>
+
+        <button class="sec-card sec-lime" data-section="consumabili" type="button">
+          <span class="sec-label">Sezione</span>
+          <span class="sec-title">Consumabili</span>
+        </button>
+
+        <button class="sec-card sec-red" data-section="scadenze" type="button">
+          <span class="sec-label">Sezione</span>
+          <span class="sec-title">Prodotti in scadenza</span>
+        </button>
+      </div>
     </section>
 
-    <!-- FLOATING + -->
-    <button id="fab" class="fab" aria-label="Nuova azione" type="button">+</button>
+    <!-- Q2 – AREA CONTENUTI -->
+    <section class="panel panel-q2">
+      <header class="panel-header">
+        <div>
+          <h2>Area contenuti</h2>
+          <p>Panoramica rapida e dettaglio sezioni.</p>
+        </div>
+      </header>
 
-    <!-- BOTTOM TABBAR -->
-    <nav class="tabbar">
-      <button class="tab-btn active" data-tab="assenti" type="button">🧑‍⚕️<span>Assenze</span></button>
-      <button class="tab-btn" data-tab="procedure" type="button">📄<span>Procedure</span></button>
-      <button class="tab-btn" data-tab="consumabili" type="button">🧻<span>Consum.</span></button>
-      <button class="tab-btn" data-tab="scadenze" type="button">⏳<span>Scadenze</span></button>
-    </nav>
+      <div class="area-content-wrapper">
+        <div id="panoramica-box" class="area-panorama">
+          <h3>Panoramica rapida</h3>
+          <p class="hint-text">Dopo 20 secondi senza click torni qui in automatico.</p>
+
+          <!-- ✅ TILE CLICKABILI + VIVACI -->
+          <div class="m-panorama">
+            <button class="m-pan-tile m-pan-green" data-pan="assenti" type="button">
+              <div class="m-pan-ico">🧑‍⚕️</div>
+              <div class="m-pan-main">
+                <div class="m-pan-title">Assenze oggi (APPROVATE)</div>
+                <div class="m-pan-value" id="val-assenze-oggi">0</div>
+                <div class="m-pan-hint">Tocca per vedere e approvare</div>
+              </div>
+            </button>
+
+            <button class="m-pan-tile m-pan-red" data-pan="scadenze60" type="button">
+              <div class="m-pan-ico">⏳</div>
+              <div class="m-pan-main">
+                <div class="m-pan-title">Scadenze entro 60 giorni</div>
+                <div class="m-pan-value" id="val-scadenze-60">0</div>
+                <div class="m-pan-hint">Tocca per elenco completo</div>
+              </div>
+            </button>
+
+            <button class="m-pan-tile m-pan-lime" data-pan="consumabili" type="button">
+              <div class="m-pan-ico">🧻</div>
+              <div class="m-pan-main">
+                <div class="m-pan-title">Consumabili in richiesta</div>
+                <div class="m-pan-value" id="val-consumabili-alert">0</div>
+                <div class="m-pan-hint">Tocca per gestire “Provveduto”</div>
+              </div>
+            </button>
+
+            <button class="m-pan-tile m-pan-blue" data-pan="promozioni" type="button">
+              <div class="m-pan-ico">🏷️</div>
+              <div class="m-pan-main">
+                <div class="m-pan-title">Promozioni attive</div>
+                <div class="m-pan-value" id="val-promo-attive">0</div>
+                <div class="m-pan-hint">Tocca per vedere/creare</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div id="sezione-dettaglio" class="area-detail hidden">
+          <header class="detail-header">
+            <h3 id="detail-title">Dettaglio sezione</h3>
+            <button id="btn-back-panorama" class="small-secondary" type="button">Torna a panoramica</button>
+          </header>
+          <div id="detail-content" class="detail-body"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Q3 – PROMO -->
+    <section class="panel panel-q3">
+      <header class="panel-header">
+        <div>
+          <h2>Promozioni</h2>
+          <p>Offerte attive e archivio.</p>
+        </div>
+        <div class="panel-actions">
+          <button id="btn-view-all-promo" class="small-secondary" type="button">Vedi tutte</button>
+        </div>
+      </header>
+
+      <div class="promo-grid one-col promo-colored" id="promo-colored-wrap">
+        <div class="promo-column scroll-y">
+          <h3>Offerte attive</h3>
+          <div id="lista-offerte-attive" class="promo-cards"></div>
+
+          <h4 class="subsection-title">Offerte scadute</h4>
+          <div id="lista-offerte-scadute" class="promo-cards promo-cards-muted"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Q4 – FOTO -->
+    <section class="panel panel-q4 photo-panel" id="photo-panel">
+      <div class="photo-cover" id="photo-cover">
+        <div class="photo-placeholder" id="photo-placeholder">
+          <div class="photo-ph-title">Logo / Foto</div>
+          <div class="photo-ph-sub">Carica dal menu laterale (hamburger).</div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- MODALE -->
